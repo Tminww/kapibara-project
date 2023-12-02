@@ -1,12 +1,17 @@
 <template>
-    <v-card class="rounded-xl mx-auto" elevation="0" variant="outlined" width="500">
-        <v-card-title class="text-h6 mb-1">
+    <v-card class="rounded-xl mx-auto" elevation="8" width="500">
+        <v-toolbar dense flat class="text-h6 mb-1 px-4" color="grey lighten-2">{{ name }}
+        </v-toolbar>
+        <!-- <v-card-title class="text-h6 mb-1">
             {{ name }}
+        </v-card-title> -->
+        <v-card-title class="text-h6 mb-1">
+            {{ count }}
         </v-card-title>
 
-        <v-card-subtitle class="text-h6 mb-1">
+        <!-- <v-card-subtitle class="text-h6 mb-1">
             {{ count }}
-        </v-card-subtitle>
+        </v-card-subtitle> -->
 
         <v-card-text>
             <doughnut-chart v-if="loaded" :chart-data="this.chartData" :chart-options="this.chartOptions" />
@@ -45,9 +50,9 @@ export default {
                             'rgb(255, 205, 99)',
                         ],
 
-                        data: []
-                    }
-                ]
+                        data: [],
+                    },
+                ],
             },
             chartOptions: {
                 responsive: true,
@@ -55,7 +60,7 @@ export default {
                     padding: {
                         left: 0,
                         right: 0,
-                    }
+                    },
                 },
                 plugins: {
                     legend: {
@@ -65,17 +70,14 @@ export default {
                             // fullSize: true,
                             labels: [],
 
-
                             font: {
                                 size: 14,
                                 family: 'Helvetica',
                                 style: 'bold',
-                            }
-                        }
-                    }
-
-
-                }
+                            },
+                        },
+                    },
+                },
             },
         }
     },

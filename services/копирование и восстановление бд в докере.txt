@@ -1,9 +1,0 @@
-sudo docker exec -ti fastapi-postgres /bin/sh -c 'pg_dump -Fc -U fastapi-postgres fastapi-postgres > /tmp/dump.bkp'
-
-sudo docker cp fastapi-postgres:/tmp/dump.bkp dump.bkp
-
-восстановление 
-
-docker cp dump.bkp fastapi-postgres:/tmp
-
-docker exec -ti fastapi-postgres /bin/sh -c 'pg_restore -v -Fc -U fastapi-postgres -d fastapi-postgres /tmp/dump.bkp'

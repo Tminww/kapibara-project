@@ -9,8 +9,6 @@
                         </template>
                         <v-toolbar-title>TEST</v-toolbar-title>
 
-
-
                         <v-btn variant="text" icon="mdi-dots-vertical"></v-btn>
                     </v-app-bar>
                 </v-container>
@@ -18,9 +16,7 @@
         </v-row>
 
         <v-row>
-
-            <v-col v-if="navBarClicked" cols="3">
-
+            <v-col cols="3" v-if="navBarClicked">
                 <v-container>
                     <template v-if="errorSubjects">
                         {{ errorSubjects }}
@@ -31,13 +27,10 @@
                         </div>
 
                         <template v-else>
-
                             <request-form :districts="getRegionsToRequest" />
-
                         </template>
                     </template>
                 </v-container>
-
             </v-col>
             <v-divider class="mx-3" vertical dark></v-divider>
 
@@ -131,9 +124,7 @@ export default {
     async mounted() {
         await this.loadSubjects()
         await this.loadStatistics()
-
     },
-
 }
 </script>
 

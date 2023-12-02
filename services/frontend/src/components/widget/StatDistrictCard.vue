@@ -1,12 +1,18 @@
 <template>
-    <v-card class="rounded-xl mx-auto" elevation="0" variant="outlined" width="500">
+    <v-card class="rounded-xl mx-auto" elevation="8" width="500">
+        <v-toolbar dense flat class="text-h6 mb-1 px-4" color="primary lighten-2">{{ name }}
+        </v-toolbar>
         <v-card-title class="text-h6 mb-1">
+            {{ count }}
+        </v-card-title>
+
+        <!-- <v-card-title class="text-h6 mb-1">
             {{ name }}
         </v-card-title>
 
         <v-card-subtitle class="text-h6 mb-1">
             {{ count }}
-        </v-card-subtitle>
+        </v-card-subtitle> -->
 
         <v-card-text>
             <div class="justify-center">
@@ -15,12 +21,8 @@
         </v-card-text>
 
         <v-card-actions class="justify-center">
-            <v-btn>
-                Открыть статистику
-            </v-btn>
+            <v-btn> Открыть статистику </v-btn>
         </v-card-actions>
-
-
     </v-card>
 </template>
 
@@ -31,7 +33,6 @@ export default {
 
     components: { DoughnutChart },
     props: {
-
         district: { type: Object, required: true },
     },
 
@@ -59,9 +60,9 @@ export default {
                             'rgb(255, 205, 99)',
                         ],
 
-                        data: []
-                    }
-                ]
+                        data: [],
+                    },
+                ],
             },
             chartOptions: {
                 responsive: true,
@@ -69,49 +70,41 @@ export default {
                     padding: {
                         left: 0,
                         right: 0,
-                    }
+                    },
                 },
                 plugins: {
                     legend: {
                         position: 'right',
                         // display: false,
                         labels: {
-
                             font: {
                                 size: 14,
                                 family: 'Helvetica',
                                 style: 'bold',
-                            }
-                        }
-                    }
-
-
-                }
-            }
+                            },
+                        },
+                    },
+                },
+            },
         }
     },
     methods: {
         setup() {
-            let labels = [];
-            let data = [];
+            let labels = []
+            let data = []
             for (const row of this.stat) {
-                labels.push(row.name);
-                data.push(row.count);
+                labels.push(row.name)
+                data.push(row.count)
             }
-            this.chartData.labels = labels;
-            this.chartData.datasets[0].data = data;
-
-
-        }
+            this.chartData.labels = labels
+            this.chartData.datasets[0].data = data
+        },
     },
     async mounted() {
         this.loaded = false
         this.setup()
         this.loaded = true
-
-    }
-
-
+    },
 }
 </script>
 <style scoped></style>

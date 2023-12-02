@@ -54,6 +54,10 @@ CREATE_DISTRICT_TABLE = """
 
 INSERT_DISTRICTS = """INSERT INTO DISTRICT (id, name) VALUES """
 
+CREATE_ALL_INDEX = """CREATE INDEX IF NOT EXISTS document_id_idx ON document (id);
+                    CREATE INDEX IF NOT EXISTS document_id_reg_idx ON document (id_reg);
+                    CREATE INDEX IF NOT EXISTS document_view_date_idx ON document (view_date);
+                    """
 
 def create_tables():
     create_district_table()
@@ -61,9 +65,14 @@ def create_tables():
     create_region_table()
     create_act_table()
     create_document_table()
+    create_all_index()
 
     logging.info("Таблицы созданы или уже существуют")
 
+def create_all_index():
+        with get_sync_connection() as connection:
+            with connection.cursor() as cursor:
+                cursor.execute(CREATE_ALL_INDEX)
 
 def create_district_table():
     with get_sync_connection() as connection:
