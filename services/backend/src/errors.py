@@ -3,3 +3,4 @@ class DateValidationError(ValueError):
 
 class ResultIsEmptyError(ValueError):
     pass
+    

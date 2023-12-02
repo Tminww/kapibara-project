@@ -13,8 +13,9 @@ import time
 
 def get_count_from_stat(stat: list) -> int:
     count = 0
-    for item in stat:
-        count += item.count
+    if stat:
+        for item in stat:
+            count += item.count
     return count
 
 
@@ -32,12 +33,13 @@ class StatisticsService:
             parameters.regions
         )
         for district in districts_info:
+            print(district)
             regions = []
 
             stat_in_district = await self.statistics_repo.get_stat_in_district(
                 parameters, district.id
             )
-
+            print(stat_in_district)
             regions_info = await self.statistics_repo.get_definite_regions_in_district(
                 parameters, district.id
             )

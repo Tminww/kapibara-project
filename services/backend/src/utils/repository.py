@@ -157,10 +157,11 @@ class SQLAlchemyRepository(AbstractRepository):
             res = await session.execute(stmt)
             res = [StatBaseDTO(name=row.name, count=row.count) for row in res.all()]
 
-            if res:
-                return res
-            else:
-                raise ResultIsEmptyError("Result is empty")
+            return res
+            # if res:
+            #     return res
+            # else:
+            #     raise ResultIsEmptyError("Result is empty")
 
     async def get_districts_by_regions(self, regions):
         async with async_session_maker() as session:

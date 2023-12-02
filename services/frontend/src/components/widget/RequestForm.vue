@@ -1,23 +1,19 @@
 <template>
-    <v-form @submit.prevent>
+    <v-form @submit.prevent="onFormSubmit()">
         <div v-for="district in districts" :key="district.id">
             <v-select density="comfortable" clearable multiple variant="outlined"
                 @update:modelValue="e => modelUpdate(district.id, e)" :label="district.name" item-title="name"
-                item-value="id" :items="getRegionsName(district)">
+                item-value="id" :items="getSubjectItemsAndId(district)">
                 <template v-slot:selection="{ item, index }">
                     <div v-if="index < 1">
                         <span>{{ item.title }}</span>
                     </div>
                     <span v-if="index === 1" class="text-grey text-caption align-self-center">
-                        (+{{ selectedRegions[district.id].length - 1 }} другие)
+                        (+{{ selectedSubjects[district.id].length - 1 }} другие)
                     </span>
                 </template>
             </v-select>
-            <!-- <request-select
-                :key="district.id"
-                :name="district.name"
-                :items="getRegionsName(district)"
-            /> -->
+
         </div>
         <v-divider class="mx-3" dark></v-divider>
 
@@ -28,42 +24,82 @@
             'За прошлый год',
         ]" variant="outlined"></v-combobox>
 
-        <date-picker label="Datepicker" v-model="date"> </date-picker>
-        <v-btn type="submit"> Применить </v-btn>
+        <!-- <date-picker label="Datepicker" v-model="date"> </date-picker> -->
+        <v-row>
+
+            <v-col>
+                <v-text-field density="default" variant="solo" type="date" />
+
+            </v-col>
+            <v-col>
+                <v-text-field density="default" variant="solo" type="date" />
+
+            </v-col>
+
+        </v-row>
+        <v-btn type="submit" :loading="loadingStatistics"> Применить </v-btn>
+        <div v-if="errorStatistics">{{ errorStatistics }}</div>
     </v-form>
 </template>
 
 <script lang="js">
 // import RequestSelect from './RequestSelect.vue'
-import DatePicker from './DatePicker.vue'
+// import DatePicker from './DatePicker.vue'
+import { mapGetters, mapActions } from 'vuex'
+
 export default {
     name: 'request-form',
-    components: { DatePicker },
+    components: {},
     props: {
         districts: { type: Object, required: true },
     },
     data() {
         return {
-            items: [],
-            selectedRegions: {},
+            loadingStatistics: false,
+            errorStatistics: null,
+            selectedSubjects: {},
         }
     },
+    computed: {
+        ...mapActions(["updateStatisticsAPI"])
+    },
+
     methods: {
-        getRegionsName(district) {
-            let regionsName = []
+        ...mapGetters(["getStatistics"]),
+        getSubjectItemsAndId(district) {
+            let regionInfo = []
             for (const region of district.regions) {
-                regionsName.push(region.name)
+                regionInfo.push({ name: region.name, id: region.id })
             }
-            console.log(regionsName)
-            return regionsName
+            return regionInfo
         },
-        onFormSubmit(e) {
-            console.log(e.target.elements)
+        async onFormSubmit() {
+            console.log("work_click")
+            const subjects = [];
+            for (const subjectsInDistrict of Object.values(this.selectedSubjects)) {
+                for (const subjectId of subjectsInDistrict) {
+                    subjects.push(subjectId)
+                }
+            }
+            const parameters = {
+                regions: [1, 2, 3],
+            }
+            try {
+                this.loadingStatistics = true
+                this.errorStatistics = null
+                await this.updateStatisticsAPI(parameters)
+            } catch (e) {
+                this.errorStatistics = e.message
+            } finally {
+                this.loadingStatistics = false
+                console.log(this.getStatistics)
+            }
+
         },
         modelUpdate(id, data) {
-            // Reflect.set(this.selectedRegions, 'id', data)
-            this.selectedRegions[id] = data
-            console.log(this.selectedRegions)
+            // Reflect.set(this.selectedSubjects, 'id', data)
+            this.selectedSubjects[id] = data
+            // console.log(this.selectedSubjects)
         },
     },
     mounted() { },

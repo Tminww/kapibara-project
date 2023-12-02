@@ -73,7 +73,7 @@ export default {
                             font: {
                                 size: 14,
                                 family: 'Helvetica',
-                                style: 'bold',
+
                             },
                         },
                     },
