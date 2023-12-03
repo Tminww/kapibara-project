@@ -71,7 +71,6 @@ const store = createStore({
 			context.commit('setStatistics', statistics)
 		},
 		async updateStatisticsAPI(context, parameters) {
-			console.log('store', parameters)
 			const statistics = await updateSatistics(parameters)
 			console.log(statistics)
 			context.commit('setStatistics', statistics)

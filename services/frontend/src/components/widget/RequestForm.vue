@@ -2,7 +2,7 @@
     <v-form @submit.prevent="onFormSubmit()">
         <div v-for="district in districts" :key="district.id">
             <v-select density="comfortable" clearable multiple variant="outlined"
-                @update:modelValue="e => modelUpdate(district.id, e)" :label="district.name" item-title="name"
+                @update:modelValue="e => selectModelUpdate(district.id, e)" :label="district.name" item-title="name"
                 item-value="id" :items="getSubjectItemsAndId(district)">
                 <template v-slot:selection="{ item, index }">
                     <div v-if="index < 1">
@@ -28,11 +28,13 @@
         <v-row>
 
             <v-col>
-                <v-text-field density="default" variant="solo" type="date" />
+                <v-text-field @update:modelValue="e => startDateModelUpdate(e)" density="default" variant="solo"
+                    type="date" />
 
             </v-col>
             <v-col>
-                <v-text-field density="default" variant="solo" type="date" />
+                <v-text-field @update:modelValue="e => endDateModelUpdate(e)" density="default" variant="solo"
+                    type="date" />
 
             </v-col>
 
@@ -57,6 +59,8 @@ export default {
         return {
             loadingStatistics: false,
             errorStatistics: null,
+            startDate: null,
+            endDate: null,
             selectedSubjects: {},
         }
     },
@@ -79,7 +83,7 @@ export default {
             try {
                 this.loadingStatistics = true
                 this.errorStatistics = null
-                console.log("work_click")
+                console.log("submit_click")
 
                 const subjects = [];
                 for (const subjectsInDistrict of Object.values(this.selectedSubjects)) {
@@ -88,9 +92,12 @@ export default {
                     }
                 }
                 console.log("subjects", subjects)
-                const parameters = {
-                    regions: subjects,
-                }
+                const parameters = {};
+
+                (parameters["regions"] = subjects) ? subjects : null;
+                (parameters["start_date"] = this.startDate) ? this.startDate != null : null;
+                (parameters["end_date"] = this.endDate) ? this.endDate != null : null;
+
                 await this.updateStatisticsAPI(parameters)
             } catch (e) {
                 this.errorStatistics = e.message
@@ -100,10 +107,19 @@ export default {
             }
 
         },
-        modelUpdate(id, data) {
+        selectModelUpdate(id, data) {
             // Reflect.set(this.selectedSubjects, 'id', data)
             this.selectedSubjects[id] = data
             // console.log(this.selectedSubjects)
+        },
+        startDateModelUpdate(data) {
+            this.startDate = data
+            console.log("startDate", this.startDate)
+
+        },
+        endDateModelUpdate(data) {
+            this.endDate = data
+            console.log("endDate", this.endDate)
         },
     },
     mounted() { },
