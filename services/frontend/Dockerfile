@@ -1,13 +1,17 @@
-FROM node:lts-alpine
+# base image
+FROM node:latest
 
+# set working directory
 WORKDIR /code
 
+# add `/app/node_modules/.bin` to $PATH
 ENV PATH /code/node_modules/.bin:$PATH
 
-RUN npm install @vue/cli@5.0.8 -g
-
-COPY package.json .
-COPY package-lock.json .
+# install and cache app dependencies
+COPY package.json /code/package.json
+COPY package-lock.json /code/package-lock.json
 RUN npm install
+RUN npm install @vue/cli@3.7.0 -g
 
-CMD ["npm", "run", "serve"]
+# start app
+CMD ["npm", "run", "dev"]
