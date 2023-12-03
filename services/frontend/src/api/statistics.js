@@ -29,13 +29,23 @@ export async function getAllSubjects() {
 export async function updateSatistics(parameters) {
 	const config = {
 		params: {
-			regions: parameters.regions ? parameters.regions === null : null,
-			start_date: parameters.start_date
-				? parameters.start_date === null
-				: null,
-			end_date: parameters.end_date ? parameters.end_date === null : null,
+			regions: parameters.regions == null ? null : parameters.regions,
+			start_date:
+				parameters.start_date == null ? null : parameters.start_date,
+
+			end_date: parameters.end_date == null ? null : parameters.end_date,
 		},
 	}
-	console.log(config)
-	return (await axios.get('/statistics', config)).data
+
+	console.log('API Conf', config)
+	return (
+		await axios
+			.get('/statistics', config)
+			.then(function (response) {
+				console.log(response)
+			})
+			.catch(function (error) {
+				console.log(error)
+			})
+	).data
 }

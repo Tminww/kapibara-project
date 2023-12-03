@@ -37,7 +37,7 @@
             </v-col>
 
         </v-row>
-        <v-btn type="submit" :loading="loadingStatistics"> Применить </v-btn>
+        <v-btn type="submit" :loading="loadingStatistics" text="Применить" />
         <div v-if="errorStatistics">{{ errorStatistics }}</div>
     </v-form>
 </template>
@@ -61,11 +61,12 @@ export default {
         }
     },
     computed: {
-        ...mapActions(["updateStatisticsAPI"])
+        ...mapGetters(["getStatistics"]),
+
     },
 
     methods: {
-        ...mapGetters(["getStatistics"]),
+        ...mapActions(['updateStatisticsAPI']),
         getSubjectItemsAndId(district) {
             let regionInfo = []
             for (const region of district.regions) {
@@ -73,26 +74,29 @@ export default {
             }
             return regionInfo
         },
-        async onFormSubmit() {
-            console.log("work_click")
-            const subjects = [];
-            for (const subjectsInDistrict of Object.values(this.selectedSubjects)) {
-                for (const subjectId of subjectsInDistrict) {
-                    subjects.push(subjectId)
-                }
-            }
-            const parameters = {
-                regions: [1, 2, 3],
-            }
+        async onFormSubmit(event) {
+
             try {
                 this.loadingStatistics = true
                 this.errorStatistics = null
+                console.log("work_click")
+
+                const subjects = [];
+                for (const subjectsInDistrict of Object.values(this.selectedSubjects)) {
+                    for (const subjectId of subjectsInDistrict) {
+                        subjects.push(subjectId)
+                    }
+                }
+                console.log("subjects", subjects)
+                const parameters = {
+                    regions: subjects,
+                }
                 await this.updateStatisticsAPI(parameters)
             } catch (e) {
                 this.errorStatistics = e.message
             } finally {
                 this.loadingStatistics = false
-                console.log(this.getStatistics)
+                // console.log(this.getStatistics())
             }
 
         },
