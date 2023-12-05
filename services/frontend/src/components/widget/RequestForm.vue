@@ -40,8 +40,9 @@
 
         </v-row>
         <v-btn type="submit" :loading="loadingStatistics" text="Применить" />
-        <div v-if="errorStatistics">{{ errorStatistics }}</div>
+
     </v-form>
+    <div v-if="errorStatistics">{{ errorStatistics }}</div>
 </template>
 
 <script lang="js">
@@ -78,6 +79,28 @@ export default {
             }
             return regionInfo
         },
+
+        paramsProcessing(selected, startDate, endDate) {
+            const params = {};
+            if (startDate !== null) {
+                params["start_date"] = startDate;
+            }
+            if (endDate !== null) {
+                params["end_date"] = endDate;
+            }
+            if (selected.length != 0) {
+                const subjects = [];
+                for (const subjectsInDistrict of Object.values(selected)) {
+                    for (const subjectId of subjectsInDistrict) {
+                        subjects.push(subjectId)
+                    }
+                }
+
+                params["regions"] = subjects.toString();
+            }
+            return params
+
+        },
         async onFormSubmit(event) {
 
             try {
@@ -85,32 +108,21 @@ export default {
                 this.errorStatistics = null
                 console.log("submit_click")
 
-                const subjects = [];
-                for (const subjectsInDistrict of Object.values(this.selectedSubjects)) {
-                    for (const subjectId of subjectsInDistrict) {
-                        subjects.push(subjectId)
-                    }
-                }
-                console.log("subjects", subjects)
-                const parameters = {};
-
-                (parameters["regions"] = subjects) ? subjects : null;
-                (parameters["start_date"] = this.startDate) ? this.startDate != null : null;
-                (parameters["end_date"] = this.endDate) ? this.endDate != null : null;
-
+                const parameters = this.paramsProcessing(this.selectedSubjects, this.startDate, this.endDate)
+                console.log(parameters)
                 await this.updateStatisticsAPI(parameters)
             } catch (e) {
                 this.errorStatistics = e.message
             } finally {
                 this.loadingStatistics = false
-                // console.log(this.getStatistics())
+                console.log(this.getStatistics)
             }
 
         },
         selectModelUpdate(id, data) {
             // Reflect.set(this.selectedSubjects, 'id', data)
             this.selectedSubjects[id] = data
-            // console.log(this.selectedSubjects)
+            console.log("Selected", this.selectedSubjects)
         },
         startDateModelUpdate(data) {
             this.startDate = data

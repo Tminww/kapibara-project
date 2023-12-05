@@ -7,7 +7,7 @@
                         <template v-slot:prepend>
                             <v-app-bar-nav-icon @click="navBarClicked = !navBarClicked"></v-app-bar-nav-icon>
                         </template>
-                        <v-toolbar-title>TEST</v-toolbar-title>
+                        <v-toolbar-title>Отображение статистики</v-toolbar-title>
 
                         <v-btn variant="text" icon="mdi-dots-vertical"></v-btn>
                     </v-app-bar>

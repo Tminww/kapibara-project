@@ -27,28 +27,7 @@ export async function getAllSubjects() {
 }
 
 export async function updateSatistics(parameters) {
-	// const config = {
-	// 	params: {
-	// 		regions: parameters.regions == null ? null : parameters.regions,
-	// 		start_date:
-	// 			parameters.start_date == null ? null : parameters.start_date,
-
-	// 		end_date: parameters.end_date == null ? null : parameters.end_date,
-	// 	},
-	// }
-
 	const params = new URLSearchParams(parameters)
 	console.log(params)
-
-	// console.log('API Conf', config)
-	return (
-		await axios
-			.get(`/statistics?${params}`)
-			.then(function (response) {
-				console.log(response)
-			})
-			.catch(function (error) {
-				console.log(error)
-			})
-	).data
+	return (await axios.get(`/statistics?${params}`)).data
 }

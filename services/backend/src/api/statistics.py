@@ -16,11 +16,19 @@ router = APIRouter(
 @router.get("")
 async def get_documents_in_districts(
     statistics_service: Annotated[StatisticsService, Depends(statistics_service)],
-    regions: Union[List[int], None] = Query(None),
+    regions: Union[str, None] = None,
     start_date: Union[str, None] = None,
     end_date: Union[str, None] = None,
 ):
     try:
+        print(regions)
+        print(start_date)
+        print(end_date)
+        
+        if regions:
+            regions = [int(region) for region in str(regions).split(",")]
+            print(regions)
+            
         parameters = RequestBodySchema(
             regions=regions, start_date=start_date, end_date=end_date
         )

@@ -115,6 +115,7 @@ class RequestBodySchema(BaseModel):
                 datetime.strptime(value, "%Y-%m-%d")
                 return value
             except ValueError:
+                print(value)
                 raise ValueError(value)
         else:
             return value
@@ -126,10 +127,11 @@ class RequestBodySchema(BaseModel):
                 datetime.strptime(value, "%Y-%m-%d")
                 return value
             except ValueError:
+                print(value)
                 raise ValueError(value)
         else:
             return value
 
     class Config:
-        from_attributes = True
+        # from_attributes = True
         validate_assignment = True
