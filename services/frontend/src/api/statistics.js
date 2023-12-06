@@ -14,7 +14,7 @@ export async function getAllStatistics() {
 	// } else {
 	// 	return (await axios.get('/statistics')).data
 	// }
-	return (await axios.get('/statistics')).data
+	return (await axios.get('/statistics?regions=12')).data
 }
 
 export async function getAllSubjects() {
@@ -31,5 +31,7 @@ export async function getAllSubjects() {
 export async function updateSatistics(parameters) {
 	const params = new URLSearchParams(parameters)
 	console.log(params)
+	console.log('URL', `http://localhost:8080/statistics?${params}`)
 	return (await axios.get(`/statistics?${params}`)).data
+	// return (await axios.get(`/statistics`, parameters)).data
 }

@@ -16,8 +16,8 @@
         </v-row>
 
         <v-row>
-            <v-col cols="3" v-if="navBarClicked">
-                <!-- <v-col cols="3"> -->
+            <!-- <v-col cols="3" v-if="navBarClicked"> -->
+            <v-col cols="3">
                 <v-container>
                     <div v-if="errorSubjects">
                         {{ errorSubjects }}

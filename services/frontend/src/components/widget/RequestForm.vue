@@ -88,16 +88,19 @@ export default {
             if (endDate !== null) {
                 params["end_date"] = endDate;
             }
-            if (selected.length != 0) {
-                const subjects = [];
-                for (const subjectsInDistrict of Object.values(selected)) {
-                    for (const subjectId of subjectsInDistrict) {
-                        subjects.push(subjectId)
-                    }
-                }
 
+            const subjects = [];
+            for (const subjectsInDistrict of Object.values(selected)) {
+                for (const subjectId of subjectsInDistrict) {
+                    subjects.push(subjectId)
+                }
+            }
+            if (subjects.length > 0) {
                 params["regions"] = subjects.toString();
             }
+
+
+
             return params
 
         },
@@ -109,7 +112,7 @@ export default {
                 console.log("submit_click")
 
                 const parameters = this.paramsProcessing(this.selectedSubjects, this.startDate, this.endDate)
-                console.log(parameters)
+                console.log("PARAMS", parameters)
                 await this.updateStatisticsAPI(parameters)
             } catch (e) {
                 this.errorStatistics = e.message

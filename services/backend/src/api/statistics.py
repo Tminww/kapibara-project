@@ -32,7 +32,7 @@ async def get_documents_in_districts(
         parameters = RequestBodySchema(
             regions=regions, start_date=start_date, end_date=end_date
         )
-        # return(parameters)
+        print(parameters)
     except ValueError as e:
         raise DateValidationError(e)
     else:

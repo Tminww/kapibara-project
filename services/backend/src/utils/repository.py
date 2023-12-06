@@ -83,7 +83,7 @@ class SQLAlchemyRepository(AbstractRepository):
             elif parameters.start_date is not None and parameters.end_date is not None:
                 start_date = datetime.strptime(parameters.start_date, "%Y-%m-%d")
                 end_date = datetime.strptime(parameters.end_date, "%Y-%m-%d")
-
+            print(type(start_date), end_date, sep=" ")
             stmt = (
                 select(
                     self.act.name.label("name"),
@@ -107,11 +107,13 @@ class SQLAlchemyRepository(AbstractRepository):
                 .order_by(self.act.name)
             )
             res = await session.execute(stmt)
+            print(res)
             res = [StatBaseDTO(name=row.name, count=row.count) for row in res.all()]
-
+            print(res)
             if res:
                 return res
             else:
+                print("get_stat_all")
                 raise ResultIsEmptyError("Result is empty")
 
     async def get_stat_in_district(self, parameters: RequestBodySchema, id_dist):
@@ -147,8 +149,8 @@ class SQLAlchemyRepository(AbstractRepository):
                         or self.region.id.in_(parameters.regions)
                     ),
                     (
-                        parameters.start_date is None
-                        and parameters.end_date is None
+                        start_date is None
+                        and end_date is None
                         or self.document.view_date.between(start_date, end_date)
                     ),
                 )
@@ -186,6 +188,7 @@ class SQLAlchemyRepository(AbstractRepository):
             if res:
                 return res
             else:
+                print("get_stat_in_district")
                 raise ResultIsEmptyError("Result is empty")
 
     async def get_districts(self):
@@ -198,6 +201,7 @@ class SQLAlchemyRepository(AbstractRepository):
             if res:
                 return res
             else:
+                print("get_districts")
                 raise ResultIsEmptyError("Result is empty")
 
     async def get_regions_in_district(self, id_dist):
@@ -210,6 +214,7 @@ class SQLAlchemyRepository(AbstractRepository):
             if res:
                 return res
             else:
+                print("get_regions_in_district")
                 raise ResultIsEmptyError("Result is empty")
 
     async def get_stat_in_region(self, parameters: RequestBodySchema, id_reg):

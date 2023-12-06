@@ -1,9 +1,9 @@
 <template>
-    <v-card class="rounded-xl mx-auto" elevation="8" width="500">
-        <v-toolbar dense flat class="text-h6 mb-1 px-4" color="primary lighten-2">{{ name }}
+    <v-card class="mx-auto" elevation="8" width="500">
+        <v-toolbar dense flat class="text-h6 mb-1 px-4" color="primary lighten-2">{{ district.name }}
         </v-toolbar>
         <v-card-title class="text-h6 mb-1">
-            {{ count }}
+            {{ district.count }}
         </v-card-title>
 
         <!-- <v-card-title class="text-h6 mb-1">
@@ -39,10 +39,6 @@ export default {
     data() {
         return {
             loaded: false,
-            name: this.district.name,
-            count: this.district.count,
-            stat: this.district.stat,
-
             chartData: {
                 labels: [],
                 datasets: [
@@ -92,7 +88,7 @@ export default {
         setup() {
             let labels = []
             let data = []
-            for (const row of this.stat) {
+            for (const row of this.district.stat) {
                 labels.push(row.name)
                 data.push(row.count)
             }
