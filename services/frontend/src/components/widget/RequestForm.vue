@@ -115,6 +115,9 @@ export default {
                 this.errorStatistics = e.message
             } finally {
                 this.loadingStatistics = false
+                // this.selectedSubjects = {};
+                // this.startDate = null;
+                // this.endDate = null;
                 console.log(this.getStatistics)
             }
 

@@ -11,6 +11,8 @@ class SubjectsService:
         districts = await self.subjects_repo.get_districts()
         for district in districts:
             regions = await self.subjects_repo.get_regions_in_district(district.id)
+            response.append(RegionsInDistrictDTO(name=district.name, id=district.id, regions=regions))
 
-        return districts
+        print(response)
+        return response
 

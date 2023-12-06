@@ -17,10 +17,11 @@
 
         <v-row>
             <v-col cols="3" v-if="navBarClicked">
+                <!-- <v-col cols="3"> -->
                 <v-container>
-                    <template v-if="errorSubjects">
+                    <div v-if="errorSubjects">
                         {{ errorSubjects }}
-                    </template>
+                    </div>
                     <template v-else>
                         <div v-if="loadingSubjests" class="d-flex align-center justify-center">
                             <v-progress-circular indeterminate />
@@ -118,6 +119,7 @@ export default {
             } finally {
                 this.loadingSubjests = false
             }
+
         },
     },
 

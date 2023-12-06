@@ -1,12 +1,12 @@
 <template>
     <v-card class="rounded-xl mx-auto" elevation="8" width="500">
-        <v-toolbar dense flat class="text-h6 mb-1 px-4" color="grey lighten-2">{{ name }}
+        <v-toolbar dense flat class="text-h6 mb-1 px-4" color="grey lighten-2">{{ all.name }}
         </v-toolbar>
         <!-- <v-card-title class="text-h6 mb-1">
             {{ name }}
         </v-card-title> -->
         <v-card-title class="text-h6 mb-1">
-            {{ count }}
+            {{ all.count }}
         </v-card-title>
 
         <!-- <v-card-subtitle class="text-h6 mb-1">
@@ -30,9 +30,6 @@ export default {
     data() {
         return {
             loaded: false,
-            name: this.all.name,
-            count: this.all.count,
-            stat: this.all.stat,
             chartData: {
                 labels: [],
                 datasets: [
@@ -86,7 +83,7 @@ export default {
         setup() {
             let labels = []
             let data = []
-            for (const row of this.stat) {
+            for (const row of this.all.stat) {
                 labels.push(row.name)
                 data.push(row.count)
             }

@@ -25,7 +25,6 @@ class StatisticsService:
 
     async def get_stat_in_districts(self, parameters: RequestBodySchema):
         start_time = time.time()
-        response = []
         districts = []
         stat_all = await self.statistics_repo.get_stat_all(parameters)
 
@@ -68,14 +67,13 @@ class StatisticsService:
                 )
             )
 
-        response.append(
-            StatAllDTO(
+        
+        end_time = time.time()
+        print(end_time - start_time)
+        
+        return StatAllDTO(
                 name="Вся статистика",
                 count=get_count_from_stat(stat_all),
                 stat=stat_all,
                 districts=districts,
             )
-        )
-        end_time = time.time()
-        print(end_time - start_time)
-        return response
