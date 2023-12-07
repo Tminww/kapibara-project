@@ -20,9 +20,9 @@
             </div>
         </v-card-text>
 
-        <v-card-actions class="justify-center">
+        <!-- <v-card-actions class="justify-center">
             <v-btn> Открыть статистику </v-btn>
-        </v-card-actions>
+        </v-card-actions> -->
     </v-card>
 </template>
 
@@ -39,8 +39,19 @@ export default {
     data() {
         return {
             loaded: false,
-            chartData: {
-                labels: [],
+
+        }
+    },
+    computed: {
+        chartData() {
+            let labels = []
+            let data = []
+            for (const row of this.district.stat) {
+                labels.push(row.name)
+                data.push(row.count)
+            }
+            return {
+                labels,
                 datasets: [
                     {
                         borderWidth: 2,
@@ -56,11 +67,14 @@ export default {
                             'rgb(255, 205, 99)',
                         ],
 
-                        data: [],
+                        data,
                     },
                 ],
-            },
-            chartOptions: {
+            }
+        },
+
+        chartOptions() {
+            return {
                 responsive: true,
                 layout: {
                     padding: {
@@ -81,11 +95,12 @@ export default {
                         },
                     },
                 },
-            },
-        }
+            }
+        },
     },
     methods: {
         setup() {
+
             let labels = []
             let data = []
             for (const row of this.district.stat) {
@@ -93,7 +108,11 @@ export default {
                 data.push(row.count)
             }
             this.chartData.labels = labels
-            this.chartData.datasets[0].data = data
+            this.chartData = {
+                ...this.chartData,
+                datasets: [{ ...this.chartData.datasets[0], data }],
+            }
+            // this.chartData.datasets[0].data = data
         },
     },
     async mounted() {
