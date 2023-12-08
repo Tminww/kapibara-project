@@ -107,6 +107,14 @@ export default {
             return params
 
         },
+        dateFormat(date) {
+
+            const year = date.getFullYear();
+            const month = date.getMonth() >= 9 ? date.getMonth() + 1 : "0" + (date.getMonth() + 1);
+            const day = date.getDate() >= 9 ? date.getDate() : "0" + date.getDate();
+            console.log(`${year}-${month}-${day}`)
+            return `${year}-${month}-${day}`
+        },
         async onFormSubmit(event) {
 
             try {
@@ -144,91 +152,63 @@ export default {
         },
         comboBoxModelUpdate(data) {
             console.log("COMBOBOX", data)
+
+            const currentDate = new Date();
+            const currentMonth = currentDate.getMonth();
+            const currentYear = currentDate.getFullYear();
+
             if (data === "За прошлый месяц") {
-                // Получение текущей даты
-                const currentDate = new Date();
-
-                // Получение месяца и года текущей даты
-                const currentMonth = currentDate.getMonth();
-                const currentYear = currentDate.getFullYear();
-
-                // Определение начальной даты прошлого месяца
                 const startDate = new Date(currentYear, currentMonth - 1, 1);
-
-                // Определение конечной даты прошлого месяца
                 const endDate = new Date(currentYear, currentMonth, 0);
 
-                // Преобразование дат в строковый формат
-                const startDateString = startDate.toISOString().split('T')[0];
-                const endDateString = endDate.toISOString().split('T')[0];
+                this.startDate = this.dateFormat(startDate)
+                this.endDate = this.dateFormat(endDate);
 
-                // Вывод результатов
-                console.log("Интервал дат прошлого месяца:");
-                console.log("Начальная дата: " + startDateString);
-                console.log("Конечная дата: " + endDateString);
-                this.startDate = startDateString;
-                this.endDate = endDateString;
             } else if (data === "За прошлый квартал") {
-                // Получение текущей даты
-                const currentDate = new Date();
+                switch (currentYear % 3) {
+                    case 2:
+                        {
+                            const startDate = new Date(currentYear, currentMonth - 3, 1);
+                            const endDate = new Date(currentYear, currentMonth, 0);
 
-                // Получение года и месяца текущей даты
-                const currentYear = currentDate.getFullYear();
-                const currentMonth = currentDate.getMonth();
+                            this.startDate = this.dateFormat(startDate)
+                            this.endDate = this.dateFormat(endDate)
+                            break;
+                        }
 
-                // Определение номера квартала текущей даты
-                const currentQuarter = Math.floor((currentMonth + 3) / 3);
+                    case 1:
+                        {
+                            const startDate = new Date(currentYear, currentMonth - 6, 1);
+                            const endDate = new Date(currentYear, currentMonth - 3, 0);
 
-                // Определение начальной даты прошлого квартала
-                const startMonth = (currentQuarter - 2) * 3 - 1;
-                const startYear = currentQuarter === 1 ? currentYear - 1 : currentYear;
-                const startDate = new Date(startYear, startMonth, 1);
+                            this.startDate = this.dateFormat(startDate)
+                            this.endDate = this.dateFormat(endDate)
+                            break;
+                        }
+                    case 0:
+                        {
+                            const startDate = new Date(currentYear, currentMonth - 6, 1);
+                            const endDate = new Date(currentYear, currentMonth - 3, 0);
 
-                // Определение конечной даты прошлого квартала
-                const endMonth = currentQuarter * 3 - 1;
-                const endYear = currentYear;
-                const endDate = new Date(endYear, endMonth + 1, 0);
+                            this.startDate = this.dateFormat(startDate)
+                            this.endDate = this.dateFormat(endDate)
+                            break;
+                        }
 
-                // Преобразование дат в строковый формат
-                const startDateString = startDate.toISOString().split('T')[0];
-                const endDateString = endDate.toISOString().split('T')[0];
 
-                // Вывод результатов
-                console.log("Интервал дат прошлого квартала:");
-                console.log("Начальная дата: " + startDateString);
-                console.log("Конечная дата: " + endDateString);
+                    default:
+                        break;
+                }
 
-                this.startDate = startDateString;
-                this.endDate = endDateString;
 
             } else if (data === "За прошлый год") {
-                // Получение текущей даты
-                const currentDate = new Date();
 
-                // Получение года текущей даты
-                const currentYear = currentDate.getFullYear();
+                const startDate = new Date(currentYear - 1, 0, 1);
+                const endDate = new Date(currentYear, 11, 31);
 
-                // Определение начальной даты прошлого года
-                const startYear = currentYear - 1;
-                const startDate = new Date(startYear, 0, 1);
-
-                // Определение конечной даты прошлого года
-                const endYear = startYear;
-                const endDate = new Date(endYear, 11, 31);
-
-                // Преобразование дат в строковый формат
-                const startDateString = startDate.toISOString().split('T')[0];
-                const endDateString = endDate.toISOString().split('T')[0];
-
-                // Вывод результатов
-                console.log("Интервал дат прошлого года:");
-                console.log("Начальная дата: " + startDateString);
-                console.log("Конечная дата: " + endDateString);
-
-                this.startDate = startDateString;
-                this.endDate = endDateString;
+                this.startDate = this.dateFormat(startDate)
+                this.endDate = this.dateFormat(endDate)
             }
-
         }
     },
     mounted() { },
