@@ -1,5 +1,6 @@
 <template>
     <v-form @submit.prevent="onFormSubmit()">
+
         <div v-for="district in districts" :key="district.id">
             <v-select density="comfortable" clearable multiple variant="outlined"
                 @update:modelValue="e => selectModelUpdate(district.id, e)" :label="district.name" item-title="name"
@@ -13,19 +14,19 @@
                     </span>
                 </template>
             </v-select>
-
         </div>
-        <v-divider class="mx-3" dark></v-divider>
 
-        <v-combobox @update:modelValue="e => comboBoxModelUpdate(e)" clearable density="comfortable" label="Выбор периода"
-            :items="[
-                // 'За прошлую неделю',
+
+
+        <v-divider class="mb-5"></v-divider>
+
+        <v-select density="comfortable" variant="outlined" @update:modelValue="e => comboBoxModelUpdate(e)"
+            label="Выбор периода" :items="[
                 'За прошлый месяц',
                 'За прошлый квартал',
-                'За прошлый год',
-            ]" variant="outlined"></v-combobox>
+                'За прошлый год',]">
+        </v-select>
 
-        <!-- <date-picker label="Datepicker" v-model="date"> </date-picker> -->
         <v-row>
 
             <v-col>
@@ -120,38 +121,28 @@ export default {
             try {
                 this.loadingStatistics = true
                 this.errorStatistics = null
-                console.log("submit_click")
 
                 const parameters = this.paramsProcessing(this.selectedSubjects, this.startDate, this.endDate)
-                console.log("PARAMS", parameters)
                 await this.updateStatisticsAPI(parameters)
             } catch (e) {
                 this.errorStatistics = e.message
             } finally {
                 this.loadingStatistics = false
-                // this.selectedSubjects = {};
-                // this.startDate = null;
-                // this.endDate = null;
-                console.log(this.getStatistics)
             }
 
         },
         selectModelUpdate(id, data) {
             // Reflect.set(this.selectedSubjects, 'id', data)
             this.selectedSubjects[id] = data
-            console.log("Selected", this.selectedSubjects)
         },
         startDateModelUpdate(data) {
             this.startDate = data
-            console.log("startDate", this.startDate)
 
         },
         endDateModelUpdate(data) {
             this.endDate = data
-            console.log("endDate", this.endDate)
         },
         comboBoxModelUpdate(data) {
-            console.log("COMBOBOX", data)
 
             const currentDate = new Date();
             const currentMonth = currentDate.getMonth();
@@ -165,41 +156,23 @@ export default {
                 this.endDate = this.dateFormat(endDate);
 
             } else if (data === "За прошлый квартал") {
-                switch (currentYear % 3) {
-                    case 2:
-                        {
-                            const startDate = new Date(currentYear, currentMonth - 3, 1);
-                            const endDate = new Date(currentYear, currentMonth, 0);
+                // Определяем номер квартала на основе текущего месяца
+                const currentQuarter = Math.floor(currentMonth / 3) + 1;
 
-                            this.startDate = this.dateFormat(startDate)
-                            this.endDate = this.dateFormat(endDate)
-                            break;
-                        }
+                // Вычисляем номер предыдущего квартала
+                const previousQuarter = currentQuarter - 1;
 
-                    case 1:
-                        {
-                            const startDate = new Date(currentYear, currentMonth - 6, 1);
-                            const endDate = new Date(currentYear, currentMonth - 3, 0);
+                // Вычисляем год предыдущего квартала
+                const previousYear = currentYear - (previousQuarter === 0 ? 1 : 0);
 
-                            this.startDate = this.dateFormat(startDate)
-                            this.endDate = this.dateFormat(endDate)
-                            break;
-                        }
-                    case 0:
-                        {
-                            const startDate = new Date(currentYear, currentMonth - 6, 1);
-                            const endDate = new Date(currentYear, currentMonth - 3, 0);
+                // Определяем дату начала предыдущего квартала
+                const startOfPreviousQuarter = new Date(previousYear, (previousQuarter - 1) * 3, 1);
 
-                            this.startDate = this.dateFormat(startDate)
-                            this.endDate = this.dateFormat(endDate)
-                            break;
-                        }
+                // Вычисляем последний день предыдущего квартала
+                const endOfPreviousQuarter = new Date(previousYear, previousQuarter * 3, 0);
 
-
-                    default:
-                        break;
-                }
-
+                this.startDate = this.dateFormat(startOfPreviousQuarter)
+                this.endDate = this.dateFormat(endOfPreviousQuarter)
 
             } else if (data === "За прошлый год") {
 

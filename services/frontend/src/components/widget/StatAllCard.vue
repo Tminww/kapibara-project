@@ -1,6 +1,6 @@
 <template>
 	<v-card class="mx-auto" elevation="8" width="500">
-		<v-toolbar dense flat class="text-h6 mb-1 px-4" color="grey lighten-2">{{ all.name }}
+		<v-toolbar dense flat class="text-h6 mb-1 px-4" color="red lighten-2">{{ all.name }}
 		</v-toolbar>
 		<!-- <v-card-title class="text-h6 mb-1">
             {{ name }}

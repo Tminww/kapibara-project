@@ -1,39 +1,55 @@
 <template>
     <v-app>
+
         <v-row>
             <v-col>
                 <v-container>
-                    <v-app-bar scroll-behavior="collapse" color="primary" prominent>
+                    <v-app-bar color="primary" prominent>
                         <template v-slot:prepend>
-                            <v-app-bar-nav-icon @click="navBarClicked = !navBarClicked"></v-app-bar-nav-icon>
+                            <v-app-bar-nav-icon @click.stop="navBarClicked = !navBarClicked"></v-app-bar-nav-icon>
                         </template>
                         <v-toolbar-title>Отображение статистики</v-toolbar-title>
-
-                        <v-btn variant="text" icon="mdi-dots-vertical"></v-btn>
                     </v-app-bar>
+
+                    <v-navigation-drawer v-model="navBarClicked" location="left" temporary :width="400">
+
+                        <v-container>
+                            <div v-if="errorSubjects">
+                                {{ errorSubjects }}
+                            </div>
+                            <template v-else>
+                                <div v-if="loadingSubjests" class="d-flex align-center justify-center">
+                                    <v-progress-circular indeterminate />
+                                </div>
+
+                                <template v-else>
+                                    <request-form :districts="getRegionsToRequest" />
+                                </template>
+                            </template>
+                        </v-container>
+                    </v-navigation-drawer><v-navigation-drawer v-model="draver" location="left" temporary :width="400">
+
+                        <v-container>
+                            <div v-if="errorSubjects">
+                                {{ errorSubjects }}
+                            </div>
+                            <template v-else>
+                                <div v-if="loadingSubjests" class="d-flex align-center justify-center">
+                                    <v-progress-circular indeterminate />
+                                </div>
+
+                                <template v-else>
+                                    <request-form :districts="getRegionsToRequest" />
+                                </template>
+                            </template>
+                        </v-container>
+                    </v-navigation-drawer>
                 </v-container>
             </v-col>
         </v-row>
 
         <v-row>
-            <!-- <v-col cols="3" v-if="navBarClicked"> -->
-            <v-col cols="3">
-                <v-container>
-                    <div v-if="errorSubjects">
-                        {{ errorSubjects }}
-                    </div>
-                    <template v-else>
-                        <div v-if="loadingSubjests" class="d-flex align-center justify-center">
-                            <v-progress-circular indeterminate />
-                        </div>
 
-                        <template v-else>
-                            <request-form :districts="getRegionsToRequest" />
-                        </template>
-                    </template>
-                </v-container>
-            </v-col>
-            <v-divider class="mx-3" vertical dark></v-divider>
 
             <v-col>
                 <v-container>
@@ -86,6 +102,12 @@ export default {
             'getDistricts',
             'getAllStatistics',
         ]),
+        draver() {
+            if (this.navBarClicked) {
+
+            }
+            return this.navBarClicked && !this.loadingStatistics
+        }
     },
 
     methods: {
@@ -122,7 +144,11 @@ export default {
 
         },
     },
-
+    watch: {
+        group() {
+            this.navBarClicked = false
+        },
+    },
     async mounted() {
         await this.loadSubjects()
         await this.loadStatistics()
