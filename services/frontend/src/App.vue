@@ -6,12 +6,12 @@
                 <v-container>
                     <v-app-bar color="primary" prominent>
                         <template v-slot:prepend>
-                            <v-app-bar-nav-icon @click.stop="navBarClicked = !navBarClicked"></v-app-bar-nav-icon>
+                            <v-app-bar-nav-icon @click.stop="leftMenu = !leftMenu"></v-app-bar-nav-icon>
                         </template>
                         <v-toolbar-title>Отображение статистики</v-toolbar-title>
                     </v-app-bar>
 
-                    <v-navigation-drawer v-model="navBarClicked" location="left" temporary :width="400">
+                    <v-navigation-drawer v-model="leftMenu" location="left" temporary :width="400">
 
                         <v-container>
                             <div v-if="errorSubjects">
@@ -23,23 +23,9 @@
                                 </div>
 
                                 <template v-else>
-                                    <request-form :districts="getRegionsToRequest" />
-                                </template>
-                            </template>
-                        </v-container>
-                    </v-navigation-drawer><v-navigation-drawer v-model="draver" location="left" temporary :width="400">
-
-                        <v-container>
-                            <div v-if="errorSubjects">
-                                {{ errorSubjects }}
-                            </div>
-                            <template v-else>
-                                <div v-if="loadingSubjests" class="d-flex align-center justify-center">
-                                    <v-progress-circular indeterminate />
-                                </div>
-
-                                <template v-else>
-                                    <request-form :districts="getRegionsToRequest" />
+                                    <request-form @loading-successful="leftMenu = false, resultIsEmpty = false"
+                                        @loading-error="leftMenu = false, resultIsEmpty = true"
+                                        :districts="getRegionsToRequest" />
                                 </template>
                             </template>
                         </v-container>
@@ -52,29 +38,46 @@
 
 
             <v-col>
-                <v-container>
+                <template v-if="resultIsEmpty">
                     <v-row>
-                        <v-col v-if="errorStatistics">
-                            {{ errorStatistics }}
-                        </v-col>
-                        <template v-else>
-                            <v-col v-if="loadingStatistics" class="d-flex align-center justify-center">
-                                <v-progress-circular indeterminate />
+                        Нет результатов
+                    </v-row>
+                </template>
+
+                <template v-else>
+                    <v-container>
+                        <v-row>
+                            <v-col v-if="errorStatistics">
+                                {{ errorStatistics }}
                             </v-col>
                             <template v-else>
-                                <v-col>
-                                    <stat-all-card :all="this.getAllStatistics" />
+                                <v-col v-if="loadingStatistics" class="d-flex align-center justify-center">
+                                    <v-progress-circular indeterminate />
                                 </v-col>
+                                <template v-else>
+                                    <v-col>
+                                        <stat-all-card :all="this.getAllStatistics" />
+                                    </v-col>
 
-                                <v-col v-for="district in this.getDistricts">
-                                    <stat-district-card :district="district" />
-                                </v-col>
+                                    <v-col v-for="district in this.getDistricts">
+                                        <stat-district-card :district="district" />
+                                    </v-col>
+                                </template>
                             </template>
-                        </template>
-                    </v-row>
-                </v-container>
+                        </v-row>
+                    </v-container>
+                </template>
+
             </v-col>
         </v-row>
+        <v-footer class="text-center d-flex flex-column" color="primary">
+
+
+            <div>
+                {{ new Date().getFullYear() }} — <strong>Vuetify</strong>
+            </div>
+
+        </v-footer>
     </v-app>
 </template>
 
@@ -91,7 +94,8 @@ export default {
             loadingSubjests: false,
             errorStatistics: null,
             errorSubjects: null,
-            navBarClicked: false,
+            leftMenu: false,
+            resultIsEmpty: false,
         }
     },
     computed: {
@@ -102,12 +106,12 @@ export default {
             'getDistricts',
             'getAllStatistics',
         ]),
-        draver() {
-            if (this.navBarClicked) {
+        // draver() {
+        //     if (this.leftMenu) {
 
-            }
-            return this.navBarClicked && !this.loadingStatistics
-        }
+        //     }
+        //     return this.leftMenu && !this.loadingStatistics
+        // }
     },
 
     methods: {
@@ -143,10 +147,11 @@ export default {
             }
 
         },
+
     },
     watch: {
         group() {
-            this.navBarClicked = false
+            this.leftMenu = false
         },
     },
     async mounted() {
@@ -156,8 +161,4 @@ export default {
 }
 </script>
 
-<style scoped>
-.main-container {
-    margin-top: 100px;
-}
-</style>
+<style scoped></style>

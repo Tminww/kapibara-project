@@ -45,7 +45,13 @@
             </v-col>
 
         </v-row>
-        <v-btn type=" submit" :loading="loadingStatistics" text="Применить" />
+        <v-row>
+            <v-col>
+                <v-btn type=" submit" :loading="loadingStatistics" text="Применить" />
+            </v-col>
+        </v-row>
+
+
 
     </v-form>
     <div v-if="errorStatistics">{{ errorStatistics }}</div>
@@ -62,6 +68,8 @@ export default {
     props: {
         districts: { type: Object, required: true },
     },
+    emits: ['loadingSuccessful', 'loadingError'],
+
     data() {
         return {
             loadingStatistics: false,
@@ -78,7 +86,7 @@ export default {
     },
 
     methods: {
-        ...mapActions(['updateStatisticsAPI']),
+        ...mapActions(['updateStatisticsAPI', 'dropStatistics']),
         getSubjectItemsAndId(district) {
             let regionInfo = []
             for (const region of district.regions) {
@@ -116,6 +124,13 @@ export default {
             console.log(`${year}-${month}-${day}`)
             return `${year}-${month}-${day}`
         },
+        setDefaultValue() {
+            this.loadingStatistics = false;
+            this.errorStatistics = null;
+            this.startDate = null;
+            this.endDate = null;
+            this.selectedSubjects = {};
+        },
         async onFormSubmit(event) {
 
             try {
@@ -126,8 +141,12 @@ export default {
                 await this.updateStatisticsAPI(parameters)
             } catch (e) {
                 this.errorStatistics = e.message
+                this.dropStatistics()
+                this.$emit('loadingError')
             } finally {
                 this.loadingStatistics = false
+                this.$emit('loadingSuccessful')
+                this.setDefaultValue()
             }
 
         },
@@ -156,19 +175,11 @@ export default {
                 this.endDate = this.dateFormat(endDate);
 
             } else if (data === "За прошлый квартал") {
-                // Определяем номер квартала на основе текущего месяца
+
                 const currentQuarter = Math.floor(currentMonth / 3) + 1;
-
-                // Вычисляем номер предыдущего квартала
                 const previousQuarter = currentQuarter - 1;
-
-                // Вычисляем год предыдущего квартала
                 const previousYear = currentYear - (previousQuarter === 0 ? 1 : 0);
-
-                // Определяем дату начала предыдущего квартала
                 const startOfPreviousQuarter = new Date(previousYear, (previousQuarter - 1) * 3, 1);
-
-                // Вычисляем последний день предыдущего квартала
                 const endOfPreviousQuarter = new Date(previousYear, previousQuarter * 3, 0);
 
                 this.startDate = this.dateFormat(startOfPreviousQuarter)
