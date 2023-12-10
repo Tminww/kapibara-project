@@ -6,7 +6,7 @@
             {{ name }}
         </v-card-title> -->
 		<v-card-title class="text-h6 mb-1">
-			{{ all.count }}
+			Всего НПА: {{ all.count }}
 		</v-card-title>
 
 		<!-- <v-card-subtitle class="text-h6 mb-1">
@@ -30,51 +30,6 @@ export default {
 	data() {
 		return {
 			loaded: false,
-			// chartData: {
-			// 	labels: [],
-			// 	datasets: [
-			// 		{
-			// 			borderWidth: 2,
-			// 			backgroundColor: [
-			// 				'rgb(255, 99, 132)',
-			// 				'rgb(54, 162, 235)',
-			// 				'rgb(255, 205, 86)',
-			// 				'rgb(255, 99, 132)',
-			// 				'rgb(54, 99, 235)',
-			// 				'rgb(255, 99, 86)',
-			// 				'rgb(255, 99, 99)',
-			// 				'rgb(54, 162, 99)',
-			// 				'rgb(255, 205, 99)',
-			// 			],
-
-			// 			data: [],
-			// 		},
-			// 	],
-			// },
-			chartOptions: {
-				responsive: true,
-				layout: {
-					padding: {
-						left: 0,
-						right: 0,
-					},
-				},
-				plugins: {
-					legend: {
-						position: 'right',
-						display: true,
-						labels: {
-							// fullSize: true,
-							labels: [],
-
-							font: {
-								size: 14,
-								family: 'Helvetica',
-							},
-						},
-					},
-				},
-			},
 		}
 	},
 
@@ -112,6 +67,30 @@ export default {
 						data,
 					},
 				],
+			}
+		},
+		chartOptions() {
+			return {
+				responsive: true,
+				layout: {
+					padding: {
+						left: 0,
+						right: 0,
+					},
+				},
+				plugins: {
+					legend: {
+						position: 'right',
+						// display: false,
+						labels: {
+							font: {
+								size: 14,
+								family: 'Helvetica',
+
+							},
+						},
+					},
+				},
 			}
 		},
 	},

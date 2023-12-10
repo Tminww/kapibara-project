@@ -3,7 +3,7 @@
         <v-toolbar dense flat class="text-h6 mb-1 px-4" color="primary lighten-2">{{ district.name }}
         </v-toolbar>
         <v-card-title class="text-h6 mb-1">
-            {{ district.count }}
+            Всего НПА: {{ district.count }}
         </v-card-title>
 
         <!-- <v-card-title class="text-h6 mb-1">

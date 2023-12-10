@@ -56,7 +56,7 @@
                                 </v-col>
                                 <template v-else>
                                     <v-col>
-                                        <stat-all-card :all="this.getAllStatistics" />
+                                        <stat-all-card :all="this.getStatistics" />
                                     </v-col>
 
                                     <v-col v-for="district in this.getDistricts">

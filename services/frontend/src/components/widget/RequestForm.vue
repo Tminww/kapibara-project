@@ -2,7 +2,7 @@
     <v-form @submit.prevent="onFormSubmit()">
 
         <div v-for="district in districts" :key="district.id">
-            <v-select density="comfortable" clearable multiple variant="outlined"
+            <v-select cache-items density="comfortable" clearable multiple variant="outlined"
                 @update:modelValue="e => selectModelUpdate(district.id, e)" :label="district.name" item-title="name"
                 item-value="id" :items="getSubjectItemsAndId(district)">
                 <template v-slot:selection="{ item, index }">
@@ -130,6 +130,7 @@ export default {
             this.startDate = null;
             this.endDate = null;
             this.selectedSubjects = {};
+
         },
         async onFormSubmit(event) {
 
@@ -150,6 +151,7 @@ export default {
             }
 
         },
+
         selectModelUpdate(id, data) {
             // Reflect.set(this.selectedSubjects, 'id', data)
             this.selectedSubjects[id] = data
