@@ -6,14 +6,6 @@
             Всего НПА: {{ district.count }}
         </v-card-title>
 
-        <!-- <v-card-title class="text-h6 mb-1">
-            {{ name }}
-        </v-card-title>
-
-        <v-card-subtitle class="text-h6 mb-1">
-            {{ count }}
-        </v-card-subtitle> -->
-
         <v-card-text>
             <div class="justify-center">
                 <doughnut-chart v-if="loaded" :chart-data="this.chartData" :chart-options="this.chartOptions" />
@@ -116,6 +108,7 @@ export default {
         },
     },
     async mounted() {
+        console.log('DISTRICT', this.district)
         this.loaded = false
         this.setup()
         this.loaded = true

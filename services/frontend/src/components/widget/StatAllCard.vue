@@ -2,16 +2,9 @@
 	<v-card class="mx-auto" elevation="8" width="500">
 		<v-toolbar dense flat class="text-h6 mb-1 px-4" color="red lighten-2">{{ all.name }}
 		</v-toolbar>
-		<!-- <v-card-title class="text-h6 mb-1">
-            {{ name }}
-        </v-card-title> -->
 		<v-card-title class="text-h6 mb-1">
 			Всего НПА: {{ all.count }}
 		</v-card-title>
-
-		<!-- <v-card-subtitle class="text-h6 mb-1">
-            {{ count }}
-        </v-card-subtitle> -->
 
 		<v-card-text>
 			<doughnut-chart v-if="loaded" :chart-data="this.chartData" :chart-options="this.chartOptions" />
@@ -112,6 +105,7 @@ export default {
 		},
 	},
 	async mounted() {
+		console.log('ALL', this.all)
 		this.loaded = false
 		this.setup()
 		this.loaded = true
