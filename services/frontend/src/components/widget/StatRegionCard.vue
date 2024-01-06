@@ -1,48 +1,104 @@
 <template>
-    <v-card class="rounded-xl mx-auto" elevation="0" variant="tonal" width="400">
+        <v-card class="mx-auto" elevation="8" max-width="500" hover>
+        <v-toolbar dense flat class="text-h6 mb-1 px-4" color="primary lighten-2">{{ region.name }}
+        </v-toolbar>
         <v-card-title class="text-h6 mb-1">
-            {{ name }}
+            Всего НПА: {{ region.count }}
         </v-card-title>
 
-        <v-card-subtitle class="text-subtitle-2">
-            {{ count }}
-        </v-card-subtitle>
+        <v-card-text>
+            <div class="justify-center">
+                <doughnut-chart v-if="loaded" :chart-data="this.chartData" :chart-options="this.chartOptions" />
+            </div>
+        </v-card-text>
 
-        <v-img src="./src/assets/pie.jpg" height="200px"> </v-img>
-
-        <v-card-actions>
-            <v-btn color="indigo" @click="visible = !visible">
-                <template v-if="visible == true"> Закрыть Статистику </template>
-                <template v-else> Открыть статистику </template>
-            </v-btn>
-        </v-card-actions>
-
-        <!-- <v-card-text v-show="visible">
-
-            <stat-base :stat="stat" />
-
-        </v-card-text> -->
 
     </v-card>
 </template>
 
 <script lang="js">
-
+import DoughnutChart from './DoughnutChart.vue'
 export default {
     name: 'stat-region-card',
-    components: {},
+    components: {DoughnutChart},
     props: {
         region: { type: Object, required: true },
     },
     data() {
         return {
-            visible: false,
-            name: this.region.name,
-            count: this.region.count,
-            stat: this.region.stat
+            loaded: false,
         }
+    },
+    computed: {
+        chartData() {
+            let labels = [];
+            let data = [];
+            for (const row of this.region.stat) {
+                labels.push(row.name);
+                data.push(row.count);
+            }
+            return {
+                labels,
+                datasets: [
+                    {
+                        borderWidth: 2,
+                        backgroundColor: [
+                            'rgb(255, 99, 132)',
+                            'rgb(54, 162, 235)',
+                            'rgb(255, 205, 86)',
+                            'rgb(255, 99, 132)',
+                            'rgb(54, 99, 235)',
+                            'rgb(255, 99, 86)',
+                            'rgb(255, 99, 99)',
+                            'rgb(54, 162, 99)',
+                            'rgb(255, 205, 99)',
+                        ],
+
+                        data,
+                    },
+                ],
+            }
+        },
+
+        chartOptions() {
+        
+            return {
+                responsive: true,
+                layout: {
+                    padding: {
+                        left: 0,
+                        right: 0,
+                    },
+                },
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        // display: false,
+                        labels: {
+                            font: {
+                                size: 14,
+                                family: 'Helvetica',
+
+                            },
+                        },
+                    },
+                },
+            }
+        },
+    },
+    methods: {
+        setup() {
+			this.chartData
+			this.chartOptions
+		},
+        
+    },
+    async mounted() {
+        console.log('REGION', this.region)
+        this.loaded = false
+        this.setup()
+        this.loaded = true
     },
 }
 </script>
-
 <style scoped></style>

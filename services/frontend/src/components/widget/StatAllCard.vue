@@ -1,13 +1,16 @@
 <template>
-	<v-card class="mx-auto" elevation="8" width="500">
-		<v-toolbar dense flat class="text-h6 mb-1 px-4" color="red lighten-2">{{ all.name }}
+	<v-card class="mx-auto" elevation="8" max-width="500" hover>
+		<v-toolbar dense flat class="text-h6 mb-1 px-4" color="red lighten-2">
+			{{ all.name }}
 		</v-toolbar>
 		<v-card-title class="text-h6 mb-1">
 			Всего НПА: {{ all.count }}
 		</v-card-title>
 
 		<v-card-text>
-			<doughnut-chart v-if="loaded" :chart-data="this.chartData" :chart-options="this.chartOptions" />
+			<div class="justify-center">
+				<doughnut-chart v-if="loaded" :chart-data="this.chartData" :chart-options="this.chartOptions" />
+			</div>
 		</v-card-text>
 	</v-card>
 </template>
@@ -25,12 +28,6 @@ export default {
 			loaded: false,
 		}
 	},
-
-	// watch: {
-	// 	all() {
-	// 		this.setup()
-	// 	},
-	// },
 
 	computed: {
 		chartData() {
@@ -90,18 +87,8 @@ export default {
 
 	methods: {
 		setup() {
-			let labels = []
-			let data = []
-			for (const row of this.all.stat) {
-				labels.push(row.name)
-				data.push(row.count)
-			}
-			this.chartData.labels = labels
-			this.chartData = {
-				...this.chartData,
-				datasets: [{ ...this.chartData.datasets[0], data }],
-			}
-			// this.chartData.datasets[0].data = data
+			this.chartData
+			this.chartOptions
 		},
 	},
 	async mounted() {

@@ -10,7 +10,6 @@ const store = createStore({
 		return {
 			statistics: {},
 			regionsToRequest: [],
-			regionsFromDistrict: [],
 		}
 	},
 	getters: {
