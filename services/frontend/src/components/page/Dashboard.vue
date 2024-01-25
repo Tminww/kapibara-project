@@ -3,15 +3,6 @@
 		<v-row>
 			<v-col>
 				<v-container>
-					<v-app-bar color="primary" prominent>
-						<template v-slot:prepend>
-							<v-app-bar-nav-icon
-								@click.stop="leftMenu = !leftMenu"
-							></v-app-bar-nav-icon>
-						</template>
-						<v-toolbar-title>Капибара</v-toolbar-title>
-					</v-app-bar>
-
 					<v-navigation-drawer
 						v-model="leftMenu"
 						location="left"
