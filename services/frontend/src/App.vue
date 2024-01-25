@@ -6,7 +6,7 @@
 			</template>
 			<template v-slot:append>
 				<v-btn
-					@click="goToDashboard"
+					@click="goToDashboard()"
 					icon="mdi-monitor-dashboard"
 				></v-btn>
 			</template>
@@ -20,8 +20,10 @@
 		name: 'app',
 		components: {},
 		methods: {
-			goToDashboard() {
-				this.$router.push({ name: 'dashboard' })
+			async goToDashboard() {
+				await this.$router.push({
+					name: 'dashboard',
+				})
 				console.log('go to Dashboard')
 			},
 		},

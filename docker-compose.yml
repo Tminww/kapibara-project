@@ -46,16 +46,16 @@ services:
     ports:
       - "8080:80"
 
-  frontend:
-    build: ./services/frontend/
-    container_name: frontend
-    volumes:
-      - './services/frontend:/code/'
-      - '/code/node_modules'
-    depends_on:
-      - backend
-    ports:
-      - "8081:5173"
+  # frontend:
+  #   build: ./services/frontend/
+  #   container_name: frontend
+  #   volumes:
+  #     - './services/frontend:/code/'
+  #     - '/code/node_modules'
+  #   depends_on:
+  #     - backend
+  #   ports:
+  #     - "8081:5173"
 
 volumes:
   postgres-data:
