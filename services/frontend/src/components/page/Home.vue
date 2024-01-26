@@ -31,6 +31,7 @@
 						<v-list-item
 							prepend-icon="mdi-view-dashboard"
 							title="Dashboard"
+							@click="clickDashboard = !clickDashboard"
 						></v-list-item>
 					</v-list>
 				</v-navigation-drawer>
@@ -54,11 +55,18 @@
 	export default {
 		name: 'home',
 		components: {},
+		emits: ['clickOnDashboard'],
 		data() {
 			return {
 				drawer: true,
 				rail: true,
+				clickDashboard: false,
 			}
+		},
+		computed: {
+			clickOnDashboard() {
+				this.$emit('clickOnDashboard')
+			},
 		},
 	}
 </script>

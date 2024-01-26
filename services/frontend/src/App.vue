@@ -26,7 +26,9 @@
 			</template>
 		</v-app-bar>
 
-		<router-view></router-view>
+		<router-view
+			@clickOnDashboard="console.log('clickOnDash')"
+		></router-view>
 	</v-app>
 </template>
 
