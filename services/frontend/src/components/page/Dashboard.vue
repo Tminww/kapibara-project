@@ -3,12 +3,49 @@
 		<v-row>
 			<v-col>
 				<v-container>
+					<v-app-bar color="primary">
+						<v-toolbar-title
+							><strong>Dashboard</strong></v-toolbar-title
+						>
+						<template v-slot:prepend>
+							<v-app-bar-nav-icon @click="leftMenu = !leftMenu" />
+						</template>
+						<template v-slot:append>
+							<v-btn
+								@click="goToHome()"
+								prepend-icon="mdi-home"
+								variant="plain"
+								:ripple="false"
+							>
+								<strong>Go Home</strong>
+							</v-btn>
+						</template>
+					</v-app-bar>
 					<v-navigation-drawer
-						v-model="leftMenu"
 						location="left"
 						temporary
 						:width="500"
+						v-model="leftMenu"
+						:rail="rail"
+						permanent
+						@click="rail = false"
 					>
+						<v-list-item
+							prepend-avatar="https://randomuser.me/api/portraits/men/85.jpg"
+							title="John Leider"
+							nav
+						>
+							<template v-slot:append>
+								<v-btn
+									variant="text"
+									icon="mdi-chevron-left"
+									@click.stop="rail = !rail"
+								></v-btn>
+							</template>
+						</v-list-item>
+
+						<v-divider></v-divider>
+
 						<v-container>
 							<div v-if="errorSubjects">
 								<v-alert
@@ -106,6 +143,7 @@
             </div>
 
         </v-footer> -->
+		<!-- <router-view></router-view> -->
 	</v-app>
 </template>
 
@@ -128,6 +166,7 @@
 				errorStatistics: null,
 				errorSubjects: null,
 				leftMenu: false,
+				rail: false,
 				resultIsEmpty: false,
 			}
 		},
@@ -153,6 +192,12 @@
 				'loadStatisticsAPI',
 				'updateStatisticsAPI',
 			]),
+			async goToHome() {
+				await this.$router.push({
+					name: 'home',
+				})
+				console.log('go to Home')
+			},
 			async loadStatistics() {
 				try {
 					this.loadingStatistics = true
