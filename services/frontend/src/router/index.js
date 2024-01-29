@@ -1,23 +1,20 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 
-// 1. Define route components.
-// These can be imported from other files
 import { Dashboard } from '@/components/page'
 import { Home } from '@/components/page'
-// 2. Define some routes
-// Each route should map to a component.
-// We'll talk about nested routes later.
+import { Login } from '@/components/page'
+import { SignUp } from '@/components/page'
+
 const routes = [
 	{ path: '/', name: 'home', component: Home },
 	{ path: '/dashboard', name: 'dashboard', component: Dashboard },
+	{ path: '/login', name: 'login', component: Login },
+	{ path: '/sign-up', name: 'sign-up', component: SignUp },
 ]
 
-// 3. Create the router instance and pass the `routes` option
-// You can pass in additional options here, but let's
-// keep it simple for now.
 const router = createRouter({
 	// 4. Provide the history implementation to use. We are using the hash history for simplicity here.
-	history: createWebHashHistory(),
+	history: createWebHistory(),
 	routes, // short for `routes: routes`
 })
 

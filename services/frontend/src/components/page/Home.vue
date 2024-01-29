@@ -13,6 +13,22 @@
 						</template>
 						<template v-slot:append>
 							<v-btn
+								@click="goToLogin()"
+								prepend-icon="mdi-login"
+								variant="plain"
+								:ripple="false"
+							>
+								<strong>Login</strong>
+							</v-btn>
+							<!-- <v-btn
+								@click="goToSignUp()"
+								prepend-icon="mdi-monitor-dashboard"
+								variant="plain"
+								:ripple="false"
+							>
+								<strong>Sign Up</strong>
+							</v-btn> -->
+							<v-btn
 								@click="goToDashboard()"
 								prepend-icon="mdi-monitor-dashboard"
 								variant="plain"
@@ -27,21 +43,7 @@
 		</v-row>
 		<v-row>
 			<v-col>
-				<v-container>
-					<v-hover>
-						<template v-slot:default="{ isHovering, props }">
-							<v-card
-								v-bind="props"
-								:color="isHovering ? 'primary' : undefined"
-							>
-								<v-card-title>
-									<strong> {{ title }} </strong></v-card-title
-								>
-								<v-card-text> {{ text }}</v-card-text></v-card
-							>
-						</template>
-					</v-hover>
-				</v-container>
+				<wellcome-card />
 			</v-col>
 		</v-row>
 	</v-app>
@@ -49,30 +51,13 @@
 
 <script lang="js">
 	import { VAppBarNavIcon } from 'vuetify/lib/components/index.mjs'
+	import { WellcomeCard } from '../widget'
 
 	export default {
 		name: 'home',
-		components: { VAppBarNavIcon },
+		components: { VAppBarNavIcon, WellcomeCard },
 		data() {
-			return {
-				drawer: true,
-				rail: true,
-				title: 'Добро пожаловать на сайт!',
-				text: `Мы рады приветствовать вас на платформе, посвященной отображению
-				статистики нормативно-правовых актов по всей стране, включая информацию
-				по округам и регионам. Здесь вы сможете удобно ознакомиться с ключевыми
-				нормами, анализировать законодательные требования и отслеживать изменения
-				в правовом поле.
-				Наши инструменты предоставляют широкий обзор законодательства,
-				позволяя вам легко навигировать по различным уровням власти и местам действия.
-				Мы стремимся сделать процесс работы с нормативами максимально удобным и
-				информативным.
-				Не забывайте использовать доступные фильтры и инструменты
-				аналитики для более глубокого понимания юридической среды в различных регионах.
-				Если у вас есть вопросы или предложения, наша команда готова помочь вам
-				получить максимум от использования нашего ресурса.
-				Спасибо за выбор нашего сайта. Приятной работы!`,
-			}
+			return {}
 		},
 
 		methods: {
@@ -81,6 +66,18 @@
 					name: 'dashboard',
 				})
 				console.log('go to Dashboard')
+			},
+			async goToLogin() {
+				await this.$router.push({
+					name: 'login',
+				})
+				console.log('go to Login')
+			},
+			async goToSignUp() {
+				await this.$router.push({
+					name: 'sign-up',
+				})
+				console.log('go to Sign Up')
 			},
 		},
 	}
