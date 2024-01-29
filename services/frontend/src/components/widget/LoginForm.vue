@@ -9,44 +9,46 @@
 						max-width="448"
 						rounded="lg"
 					>
-						<h2>Vuetify Login Form</h2>
-						<div class="text-subtitle-1 text-medium-emphasis">
-							Account
-						</div>
-						<v-text-field
-							density="compact"
-							placeholder="Email address"
-							prepend-inner-icon="mdi-email-outline"
-							variant="outlined"
-							clearable
-						></v-text-field>
-						<div
-							class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between"
-						>
-							Password
-							<a
-								class="text-caption text-decoration-none text-blue"
-								href="#"
-								rel="noopener noreferrer"
-								target="_blank"
+						<v-form v-model="form" @submit.prevent="onSubmit">
+							<h2 class="d-flex justify-center align-center">
+								Аутентификация
+							</h2>
+							<div class="text-subtitle-1 text-medium-emphasis">
+								Логин
+							</div>
+							<v-text-field
+								autofocus
+								density="compact"
+								placeholder="Введите имя пользователя"
+								prepend-inner-icon="mdi-account-outline"
+								variant="outlined"
+								clearable
+								v-model="username"
+								:readonly="loading"
+								:rules="[required, usernameRules]"
+							></v-text-field>
+							<div
+								class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between"
 							>
-								Forgot login password?</a
-							>
-						</div>
-						<v-text-field
-							:append-inner-icon="
-								visible ? 'mdi-eye-off' : 'mdi-eye'
-							"
-							:type="visible ? 'text' : 'password'"
-							density="compact"
-							placeholder="Enter your password"
-							prepend-inner-icon="mdi-lock-outline"
-							variant="outlined"
-							@click:append-inner="visible = !visible"
-							clearable
-						></v-text-field>
+								Пароль
+							</div>
+							<v-text-field
+								:append-inner-icon="
+									visible ? 'mdi-eye-off' : 'mdi-eye'
+								"
+								:type="visible ? 'text' : 'password'"
+								density="compact"
+								placeholder="Введите свой пароль"
+								prepend-inner-icon="mdi-lock-outline"
+								variant="outlined"
+								@click:append-inner="visible = !visible"
+								clearable
+								v-model="password"
+								:readonly="loading"
+								:rules="[required, passwordRules]"
+							></v-text-field>
 
-						<v-card
+							<!-- <v-card
 							class="mb-12"
 							color="surface-variant"
 							variant="tonal"
@@ -60,24 +62,28 @@
 								also click "Forgot login password?" below to
 								reset the login password.
 							</v-card-text>
-						</v-card>
+						</v-card> -->
 
-						<v-btn
-							block
-							class="mb-8"
-							color="blue"
-							size="large"
-							variant="tonal"
-						>
-							Log In
-						</v-btn>
+							<v-btn
+								block
+								class="mb-8"
+								color="blue"
+								size="large"
+								variant="tonal"
+								:disabled="!form"
+								:loading="loading"
+								type="submit"
+							>
+								<strong>Войти</strong>
+							</v-btn>
 
-						<v-card-text class="text-center">
-							<router-link :to="{ name: 'sign-up' }">
-								Sign up now
-								<v-icon icon="mdi-chevron-right"></v-icon
-							></router-link>
-						</v-card-text>
+							<v-card-text class="text-center">
+								<router-link :to="{ name: 'sign-up' }">
+									Зарегистрироваться
+									<v-icon icon="mdi-chevron-right"></v-icon
+								></router-link>
+							</v-card-text>
+						</v-form>
 					</v-card>
 				</v-col>
 			</v-main>
@@ -91,32 +97,39 @@
 			return {
 				visible: false,
 				loading: false,
-				snackbar: false,
-				passwordShow: false,
-				email: '',
-				emailRules: [
-					v => !!v || 'E-mail is required',
-					v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
-				],
-				password: '',
-				passwordRules: [
-					v => !!v || 'Password is required',
-					v =>
-						(v && v.length >= 6) ||
-						'Password must be 6  characters or more!',
-				],
+				form: false,
+				username: null,
+				password: null,
 			}
 		},
+
 		methods: {
-			submitHandler() {
-				if (this.$refs.form.validate()) {
+			async onSubmit(event) {
+				if (!this.form) return
+				try {
 					this.loading = true
-					setTimeout(() => {
-						this.loading = false
-						this.snackbar = true
-					}, 3000)
+					await new Promise((resolve, reject) => {
+						setTimeout(() => {
+							this.loading = false
+							resolve()
+						}, 2000)
+					})
+				} catch (error) {
+					console.log('ERROR')
+				} finally {
+					this.password = null
 				}
 			},
+			required(v) {
+				return !!v || 'Обязательное поле'
+			},
+			passwordRules(v) {
+				return (
+					(v && v.length >= 8) ||
+					'Пароль должен быть больше 8 символов!'
+				)
+			},
+			usernameRules(v) {},
 		},
 	}
 </script>

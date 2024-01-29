@@ -18,7 +18,7 @@
 								variant="plain"
 								:ripple="false"
 							>
-								<strong>Login</strong>
+								<strong>Log in</strong>
 							</v-btn>
 							<!-- <v-btn
 								@click="goToSignUp()"
