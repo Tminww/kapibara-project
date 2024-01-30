@@ -4,12 +4,11 @@
 			<v-col>
 				<v-container>
 					<v-app-bar color="primary">
-						<v-toolbar-title><strong>Home</strong></v-toolbar-title>
+						<v-toolbar-title
+							><strong>Главная</strong></v-toolbar-title
+						>
 						<template v-slot:prepend>
-							<v-app-bar-nav-icon
-								icon="mdi-home"
-								:ripple="false"
-							/>
+							<v-icon icon="mdi-home" :ripple="false" />
 						</template>
 						<template v-slot:append>
 							<v-btn

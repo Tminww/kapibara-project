@@ -88,7 +88,7 @@
 
 							<v-card-text class="text-center">
 								Уже есть аккаунт?
-								<router-link :to="{ name: 'login' }">
+								<router-link :to="{ name: 'login' }" replace>
 									Войти
 								</router-link>
 							</v-card-text>

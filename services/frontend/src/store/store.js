@@ -4,6 +4,7 @@ import {
 	getAllSubjects,
 	updateSatistics,
 } from '../api/statistics.js'
+import api from '../api/api.js'
 
 const store = createStore({
 	state() {
