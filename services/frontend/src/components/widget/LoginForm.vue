@@ -78,7 +78,11 @@
 							</v-btn>
 
 							<v-card-text class="text-center">
-								<router-link :to="{ name: 'sign-up' }" replace>
+								<router-link
+									:to="{ name: 'sign-up' }"
+									replace
+									style="text-decoration: none"
+								>
 									Зарегистрироваться
 									<v-icon icon="mdi-chevron-right"></v-icon
 								></router-link>

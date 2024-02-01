@@ -70,7 +70,6 @@
 									passwordRules,
 									passwordComparison,
 								]"
-								:error-messages="passwordComparison"
 							></v-text-field>
 
 							<v-btn
@@ -88,7 +87,11 @@
 
 							<v-card-text class="text-center">
 								Уже есть аккаунт?
-								<router-link :to="{ name: 'login' }" replace>
+								<router-link
+									:to="{ name: 'login' }"
+									replace
+									style="text-decoration: none"
+								>
 									Войти
 								</router-link>
 							</v-card-text>
