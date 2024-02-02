@@ -40,8 +40,8 @@ def get_document_api(code):
                     npa_id=npa["id"], code=code, index=str(current_page)
                 )
             )
-            logger.info(
-                url=parser.get_documents_on_page_type(
+            logger.debug(
+                parser.get_documents_on_page_type(
                     npa_id=npa["id"], code=code, index=str(current_page)
                 )
             )
