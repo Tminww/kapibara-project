@@ -6,7 +6,7 @@ from data.subjects import get_subjects_data
 from log.createLogger import get_logger
 
 
-logging = get_logger("database.query")
+logger = get_logger("database.query")
 
 INSERT_ACT = """INSERT INTO ACT (name, npa_id) VALUES """
 
@@ -27,7 +27,7 @@ def insert_act(name_npaId):
                 )
                 cursor.execute(INSERT_ACT + args + " ON CONFLICT DO NOTHING;")
             except errors.lookup(UNIQUE_VIOLATION) as e:
-                logging.exception(UNIQUE_VIOLATION)
+                logger.exception(UNIQUE_VIOLATION)
 
 
 def insert_region(name_code):
@@ -41,7 +41,7 @@ def insert_region(name_code):
                 cursor.execute(INSERT_REGION + args + " ON CONFLICT DO NOTHING;")
 
             except errors.lookup(UNIQUE_VIOLATION) as e:
-                logging.exception(UNIQUE_VIOLATION)
+                logger.exception(UNIQUE_VIOLATION)
 
 
 def get_id_reg(code):
@@ -68,7 +68,7 @@ def update_region():
                 for row in values:
                     cursor.execute(UPDATE_REGION_TABLE, (row["id_dist"], row["name"]))
             except errors.lookup(UNIQUE_VIOLATION) as e:
-                logging.exception(UNIQUE_VIOLATION)
+                logger.exception(UNIQUE_VIOLATION)
 
 
 def insert_document(
@@ -93,7 +93,7 @@ def insert_document(
             try:
                 cursor.execute(INSERT_DOCUMENT + args + " ON CONFLICT DO NOTHING;")
             except errors.lookup(UNIQUE_VIOLATION) as e:
-                logging.exception(UNIQUE_VIOLATION)
+                logger.exception(UNIQUE_VIOLATION)
 
 
 def get_total_documents(code):
@@ -110,7 +110,7 @@ def get_total_documents(code):
                 count = cursor.fetchone()[0]
                 return count
             except Exception as e:
-                logging.exception(Exception)
+                logger.exception(Exception)
 
 
 def get_total_documents_type(code, npa_id):
@@ -130,4 +130,4 @@ def get_total_documents_type(code, npa_id):
                 count = cursor.fetchone()[0]
                 return count
             except Exception as e:
-                logging.exception(Exception)
+                logger.exception(Exception)

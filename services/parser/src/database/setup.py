@@ -2,7 +2,7 @@ import psycopg2
 from dbconfig import get_settings
 from log.createLogger import get_logger
 
-logging = get_logger("database.setup")
+logger = get_logger("database.setup")
 
 
 settings = get_settings()
@@ -16,9 +16,9 @@ try:
         database=settings.DB_NAME,
     )
     sync_connection.autocommit = True
-    logging.info("Успешное подключение к базе данных")
+    logger.info(f"Успешное подключение к базе данных {settings.DB_NAME}")
 except Exception as e:
-    logging.critical(f"Ошибка при подключении к базе данных {e}")
+    logger.critical(f"Ошибка при подключении к базе данных: {e}")
 
 
 def get_sync_connection():

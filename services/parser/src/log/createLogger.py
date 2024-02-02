@@ -1,13 +1,13 @@
 import logging
 
 
-def get_logger(logger_name: str) -> None:
+def get_logger(logger_name: str) -> logging:
     logger = logging.getLogger(logger_name)
-    logger.setLevel(logging.INFO)
+    logger.setLevel(logging.DEBUG)
     # создаем обработчик для файла и
     # установим уровень отладки
     ch = logging.FileHandler("./log/dataBase.log", "a")
-    ch.setLevel(logging.INFO)
+    # ch.setLevel(logging.DEBUG)
 
     # строка формата сообщения
     strfmt = "[%(asctime)s] [%(name)s] [%(levelname)s] > %(message)s"

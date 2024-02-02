@@ -6,7 +6,7 @@ from psycopg2 import errors
 from log.createLogger import get_logger
 
 
-logging = get_logger("database.initial")
+logger = get_logger("database.initial")
 
 CREATE_REGION_TABLE = """
         CREATE TABLE IF NOT EXISTS region (
@@ -60,6 +60,7 @@ CREATE_ALL_INDEX = """CREATE INDEX IF NOT EXISTS document_id_idx ON document (id
                     CREATE INDEX IF NOT EXISTS document_view_date_idx ON document (view_date);
                     """
 
+
 def create_tables():
     create_district_table()
     insert_district_table()
@@ -68,12 +69,14 @@ def create_tables():
     create_document_table()
     create_all_index()
 
-    logging.info("Таблицы созданы или уже существуют")
+    logger.info("Таблицы созданы или уже существуют")
+
 
 def create_all_index():
-        with get_sync_connection() as connection:
-            with connection.cursor() as cursor:
-                cursor.execute(CREATE_ALL_INDEX)
+    with get_sync_connection() as connection:
+        with connection.cursor() as cursor:
+            cursor.execute(CREATE_ALL_INDEX)
+
 
 def create_district_table():
     with get_sync_connection() as connection:
@@ -97,7 +100,7 @@ def insert_district_table():
                 )
 
             except errors.lookup(UNIQUE_VIOLATION) as e:
-                logging.exception(UNIQUE_VIOLATION)
+                logger.exception(UNIQUE_VIOLATION)
 
 
 def create_region_table():

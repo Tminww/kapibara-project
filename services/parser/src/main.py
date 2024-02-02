@@ -1,31 +1,21 @@
 import requests
-import time
+
 from datetime import datetime
 
 import database.initial as initial
 import database.query as query
 import api.parser as parser
+import utils.utils as utils
 
 from log.createLogger import get_logger
+import time
+
+logger = get_logger("main")
 
 
-logging = get_logger("main")
-
-
-def check_time(func):
-    def wrapper(*args, **kwargs):
-        start_time = time.time()
-        res = func(*args, **kwargs)
-        end_time = time.time()
-        logging.info(f"Функция {func.__name__} затратила времени: {end_time - start_time} секунд")
-        return res
-
-    return wrapper
-
-
-@check_time
+@utils.check_time
 def get_document_api(code):
-    logging.info(f"Блок {code} начат")
+    logger.info(f"Блок {code} начат")
 
     req_total_documents = requests.get(
         url=parser.get_documents_on_page(code),
@@ -35,7 +25,7 @@ def get_document_api(code):
         query.get_total_documents(code=code)
         == req_total_documents.json()["itemsTotalCount"]
     ):
-        logging.info(f"Блок {code} уже заполнен")
+        logger.info(f"Блок {code} уже заполнен")
         return
 
     req_type = requests.get(
@@ -46,6 +36,11 @@ def get_document_api(code):
         while True:
             time.sleep(0.5)
             req = requests.get(
+                url=parser.get_documents_on_page_type(
+                    npa_id=npa["id"], code=code, index=str(current_page)
+                )
+            )
+            logger.info(
                 url=parser.get_documents_on_page_type(
                     npa_id=npa["id"], code=code, index=str(current_page)
                 )
@@ -92,7 +87,7 @@ def get_document_api(code):
                 or req.json()["pagesTotalCount"] == 0
             ):
                 break
-    logging.info(f"Блок {code} закончен")
+    logger.info(f"Блок {code} закончен")
 
 
 def get_npa_api() -> list:
@@ -103,7 +98,7 @@ def get_npa_api() -> list:
     for npa in req.json():
         names.append(npa["name"])
         npa_id.append(npa["id"])
-    logging.info(list(zip(names, npa_id)))
+    logger.debug(list(zip(names, npa_id)))
     return list(zip(names, npa_id))
 
 
@@ -114,7 +109,7 @@ def get_subject_api() -> list:
     for subject in req.json():
         names.append(subject["name"])
         codes.append(subject["code"])
-    logging.info(list(zip(names, codes)))
+    logger.debug(list(zip(names, codes)))
     return list(zip(names, codes))
 
 
@@ -131,7 +126,7 @@ def main():
     for name, code in name_code:
         get_document_api(code=code)
 
-    logging.info("Заполнение завершено!")
+    logger.info("Заполнение завершено!")
 
 
 if __name__ == "__main__":

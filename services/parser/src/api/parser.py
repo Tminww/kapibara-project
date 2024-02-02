@@ -88,6 +88,14 @@ def get_blocks():
 
 
 def get_documents_on_page(code):
+    """Получение документов для первой страницы заданного блока
+
+    Args:
+        code (_type_): название блока
+
+    Returns:
+        str: возвращает api по которому будет идти обращение
+    """
     return f"http://publication.pravo.gov.ru/api/Documents?block={code}&PageSize=200&Index=1"
 
 
