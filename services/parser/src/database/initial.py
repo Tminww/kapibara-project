@@ -2,10 +2,11 @@ from database.setup import get_sync_connection
 from data.districts import get_districts_data
 from psycopg2.errorcodes import UNIQUE_VIOLATION
 from psycopg2 import errors
+
 from log.createLogger import get_logger
 
 
-logging = get_logger()
+logging = get_logger("database.initial")
 
 CREATE_REGION_TABLE = """
         CREATE TABLE IF NOT EXISTS region (

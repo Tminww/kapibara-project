@@ -1,8 +1,8 @@
 import logging
 
 
-def get_logger() -> None:
-    logger = logging.getLogger("logger")
+def get_logger(logger_name: str) -> None:
+    logger = logging.getLogger(logger_name)
     logger.setLevel(logging.INFO)
     # создаем обработчик для файла и
     # установим уровень отладки

@@ -2,7 +2,7 @@ import psycopg2
 from dbconfig import get_settings
 from log.createLogger import get_logger
 
-logging = get_logger()
+logging = get_logger("database.setup")
 
 
 settings = get_settings()

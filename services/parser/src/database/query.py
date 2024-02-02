@@ -6,7 +6,7 @@ from data.subjects import get_subjects_data
 from log.createLogger import get_logger
 
 
-logging = get_logger()
+logging = get_logger("database.query")
 
 INSERT_ACT = """INSERT INTO ACT (name, npa_id) VALUES """
 
