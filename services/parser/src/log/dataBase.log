@@ -202,3 +202,218 @@
 [2024-02-02 21:16:14] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=0790e34b-784b-4372-884e-3282622a24bd&block=region17&PageSize=200&Index=1
 [2024-02-02 21:16:21] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=0790e34b-784b-4372-884e-3282622a24bd&block=region17&PageSize=200&Index=2
 [2024-02-02 21:16:23] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=fd5a8766-f6fd-4ac2-8fd9-66f414d314ac&block=region17&PageSize=200&Index=1
+[2024-02-02 21:16:28] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=fd5a8766-f6fd-4ac2-8fd9-66f414d314ac&block=region17&PageSize=200&Index=2
+[2024-02-02 21:16:30] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=7ff5b3b5-3757-44f1-bb76-3766cabe3593&block=region17&PageSize=200&Index=1
+[2024-02-02 21:16:32] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=7ff5b3b5-3757-44f1-bb76-3766cabe3593&block=region17&PageSize=200&Index=2
+[2024-02-02 21:16:34] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=7a766fb3-5104-4579-a777-25bc88c0ddc9&block=region17&PageSize=200&Index=1
+[2024-02-02 21:16:36] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region17&PageSize=200&Index=1
+[2024-02-02 21:16:38] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region17&PageSize=200&Index=2
+[2024-02-02 21:16:39] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=97d902b9-cc94-4b01-9576-b4a7d4fde1fb&block=region17&PageSize=200&Index=1
+[2024-02-02 21:16:42] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=8910e61f-371d-490c-a1b8-aa7b8a5a48be&block=region17&PageSize=200&Index=1
+[2024-02-02 21:16:42] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=34f574b3-5342-465d-9aad-fb692d9d27f2&block=region17&PageSize=200&Index=1
+[2024-02-02 21:16:42] [main] [INFO] > Блок region17 закончен
+[2024-02-02 21:16:42] [utils.utils] [INFO] > Функция get_document_api затратила времени: 32.26336646080017 секунд
+[2024-02-02 21:16:42] [main] [INFO] > Блок region18 начат
+[2024-02-02 21:16:44] [main] [INFO] > Блок region18 уже заполнен
+[2024-02-02 21:16:44] [utils.utils] [INFO] > Функция get_document_api затратила времени: 1.7019474506378174 секунд
+[2024-02-02 21:16:44] [main] [INFO] > Блок region19 начат
+[2024-02-02 21:16:49] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=fd5a8766-f6fd-4ac2-8fd9-66f414d314ac&block=region19&PageSize=200&Index=1
+[2024-02-02 21:16:52] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=fd5a8766-f6fd-4ac2-8fd9-66f414d314ac&block=region19&PageSize=200&Index=2
+[2024-02-02 21:16:54] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=fd5a8766-f6fd-4ac2-8fd9-66f414d314ac&block=region19&PageSize=200&Index=3
+[2024-02-02 21:16:56] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=fd5a8766-f6fd-4ac2-8fd9-66f414d314ac&block=region19&PageSize=200&Index=4
+[2024-02-02 21:17:01] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=fd5a8766-f6fd-4ac2-8fd9-66f414d314ac&block=region19&PageSize=200&Index=5
+[2024-02-02 21:17:03] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=fd5a8766-f6fd-4ac2-8fd9-66f414d314ac&block=region19&PageSize=200&Index=6
+[2024-02-02 21:17:05] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=fd5a8766-f6fd-4ac2-8fd9-66f414d314ac&block=region19&PageSize=200&Index=7
+[2024-02-02 21:17:07] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=fd5a8766-f6fd-4ac2-8fd9-66f414d314ac&block=region19&PageSize=200&Index=8
+[2024-02-02 21:17:09] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=fd5a8766-f6fd-4ac2-8fd9-66f414d314ac&block=region19&PageSize=200&Index=9
+[2024-02-02 21:17:11] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=fd5a8766-f6fd-4ac2-8fd9-66f414d314ac&block=region19&PageSize=200&Index=10
+[2024-02-02 21:17:13] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=fd5a8766-f6fd-4ac2-8fd9-66f414d314ac&block=region19&PageSize=200&Index=11
+[2024-02-02 21:17:15] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=fd5a8766-f6fd-4ac2-8fd9-66f414d314ac&block=region19&PageSize=200&Index=12
+[2024-02-02 21:17:17] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=fd5a8766-f6fd-4ac2-8fd9-66f414d314ac&block=region19&PageSize=200&Index=13
+[2024-02-02 21:17:19] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=fd5a8766-f6fd-4ac2-8fd9-66f414d314ac&block=region19&PageSize=200&Index=14
+[2024-02-02 21:17:21] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=fd5a8766-f6fd-4ac2-8fd9-66f414d314ac&block=region19&PageSize=200&Index=15
+[2024-02-02 21:17:23] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=fd5a8766-f6fd-4ac2-8fd9-66f414d314ac&block=region19&PageSize=200&Index=16
+[2024-02-02 21:17:27] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=fd5a8766-f6fd-4ac2-8fd9-66f414d314ac&block=region19&PageSize=200&Index=17
+[2024-02-02 21:17:29] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=fd5a8766-f6fd-4ac2-8fd9-66f414d314ac&block=region19&PageSize=200&Index=18
+[2024-02-02 21:17:32] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=fd5a8766-f6fd-4ac2-8fd9-66f414d314ac&block=region19&PageSize=200&Index=19
+[2024-02-02 21:17:34] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=fd5a8766-f6fd-4ac2-8fd9-66f414d314ac&block=region19&PageSize=200&Index=20
+[2024-02-02 21:17:37] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=fd5a8766-f6fd-4ac2-8fd9-66f414d314ac&block=region19&PageSize=200&Index=21
+[2024-02-02 21:17:39] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=fd5a8766-f6fd-4ac2-8fd9-66f414d314ac&block=region19&PageSize=200&Index=22
+[2024-02-02 21:17:40] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=fd5a8766-f6fd-4ac2-8fd9-66f414d314ac&block=region19&PageSize=200&Index=23
+[2024-02-02 21:17:43] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=fd5a8766-f6fd-4ac2-8fd9-66f414d314ac&block=region19&PageSize=200&Index=24
+[2024-02-02 21:17:45] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=fd5a8766-f6fd-4ac2-8fd9-66f414d314ac&block=region19&PageSize=200&Index=25
+[2024-02-02 21:17:47] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=fd5a8766-f6fd-4ac2-8fd9-66f414d314ac&block=region19&PageSize=200&Index=26
+[2024-02-02 21:17:49] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=fd5a8766-f6fd-4ac2-8fd9-66f414d314ac&block=region19&PageSize=200&Index=27
+[2024-02-02 21:17:51] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=fd5a8766-f6fd-4ac2-8fd9-66f414d314ac&block=region19&PageSize=200&Index=28
+[2024-02-02 21:17:54] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=fd5a8766-f6fd-4ac2-8fd9-66f414d314ac&block=region19&PageSize=200&Index=29
+[2024-02-02 21:17:56] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=fd5a8766-f6fd-4ac2-8fd9-66f414d314ac&block=region19&PageSize=200&Index=30
+[2024-02-02 21:17:58] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=fd5a8766-f6fd-4ac2-8fd9-66f414d314ac&block=region19&PageSize=200&Index=31
+[2024-02-02 21:17:58] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=fd5a8766-f6fd-4ac2-8fd9-66f414d314ac&block=region19&PageSize=200&Index=32
+[2024-02-02 21:18:00] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=a4719334-d2b8-4965-9c0e-95675800e1e5&block=region19&PageSize=200&Index=1
+[2024-02-02 21:18:01] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2037d729-6259-4249-9d7b-804854b17778&block=region19&PageSize=200&Index=1
+[2024-02-02 21:18:03] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=b7d925b6-2190-4794-a7ee-f5e3993e1954&block=region19&PageSize=200&Index=1
+[2024-02-02 21:18:08] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region19&PageSize=200&Index=1
+[2024-02-02 21:18:10] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region19&PageSize=200&Index=2
+[2024-02-02 21:18:11] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=97d902b9-cc94-4b01-9576-b4a7d4fde1fb&block=region19&PageSize=200&Index=1
+[2024-02-02 21:18:14] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=8910e61f-371d-490c-a1b8-aa7b8a5a48be&block=region19&PageSize=200&Index=1
+[2024-02-02 21:18:15] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=34f574b3-5342-465d-9aad-fb692d9d27f2&block=region19&PageSize=200&Index=1
+[2024-02-02 21:18:15] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=c8df27f2-89a6-4014-8b3b-f224eb4448d2&block=region19&PageSize=200&Index=1
+[2024-02-02 21:18:15] [main] [INFO] > Блок region19 закончен
+[2024-02-02 21:18:15] [utils.utils] [INFO] > Функция get_document_api затратила времени: 91.26456308364868 секунд
+[2024-02-02 21:18:15] [main] [INFO] > Блок region20 начат
+[2024-02-02 21:18:18] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=0790e34b-784b-4372-884e-3282622a24bd&block=region20&PageSize=200&Index=1
+[2024-02-02 21:18:20] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=fd5a8766-f6fd-4ac2-8fd9-66f414d314ac&block=region20&PageSize=200&Index=1
+[2024-02-02 21:18:21] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=97d902b9-cc94-4b01-9576-b4a7d4fde1fb&block=region20&PageSize=200&Index=1
+[2024-02-02 21:18:23] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=8910e61f-371d-490c-a1b8-aa7b8a5a48be&block=region20&PageSize=200&Index=1
+[2024-02-02 21:18:24] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=8910e61f-371d-490c-a1b8-aa7b8a5a48be&block=region20&PageSize=200&Index=2
+[2024-02-02 21:18:24] [main] [INFO] > Блок region20 закончен
+[2024-02-02 21:18:24] [utils.utils] [INFO] > Функция get_document_api затратила времени: 8.648523807525635 секунд
+[2024-02-02 21:18:24] [main] [INFO] > Блок region21 начат
+[2024-02-02 21:18:28] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=0790e34b-784b-4372-884e-3282622a24bd&block=region21&PageSize=200&Index=1
+[2024-02-02 21:18:29] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=0790e34b-784b-4372-884e-3282622a24bd&block=region21&PageSize=200&Index=2
+[2024-02-02 21:18:31] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=fd5a8766-f6fd-4ac2-8fd9-66f414d314ac&block=region21&PageSize=200&Index=1
+[2024-02-02 21:18:33] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=fd5a8766-f6fd-4ac2-8fd9-66f414d314ac&block=region21&PageSize=200&Index=2
+[2024-02-02 21:18:34] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=7ff5b3b5-3757-44f1-bb76-3766cabe3593&block=region21&PageSize=200&Index=1
+[2024-02-02 21:18:35] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2037d729-6259-4249-9d7b-804854b17778&block=region21&PageSize=200&Index=1
+[2024-02-02 21:18:37] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region21&PageSize=200&Index=1
+[2024-02-02 21:18:40] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region21&PageSize=200&Index=2
+[2024-02-02 21:18:41] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=a60db81f-1834-41fe-99dd-c8cf3746745d&block=region21&PageSize=200&Index=1
+[2024-02-02 21:18:42] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=8910e61f-371d-490c-a1b8-aa7b8a5a48be&block=region21&PageSize=200&Index=1
+[2024-02-02 21:18:43] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=34f574b3-5342-465d-9aad-fb692d9d27f2&block=region21&PageSize=200&Index=1
+[2024-02-02 21:18:43] [main] [INFO] > Блок region21 закончен
+[2024-02-02 21:18:43] [utils.utils] [INFO] > Функция get_document_api затратила времени: 19.011143684387207 секунд
+[2024-02-02 21:18:43] [main] [INFO] > Блок region22 начат
+[2024-02-02 21:18:47] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=0790e34b-784b-4372-884e-3282622a24bd&block=region22&PageSize=200&Index=1
+[2024-02-02 21:18:51] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=fd5a8766-f6fd-4ac2-8fd9-66f414d314ac&block=region22&PageSize=200&Index=1
+[2024-02-02 21:18:53] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=fd5a8766-f6fd-4ac2-8fd9-66f414d314ac&block=region22&PageSize=200&Index=2
+[2024-02-02 21:18:55] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=7ff5b3b5-3757-44f1-bb76-3766cabe3593&block=region22&PageSize=200&Index=1
+[2024-02-02 21:18:55] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2037d729-6259-4249-9d7b-804854b17778&block=region22&PageSize=200&Index=1
+[2024-02-02 21:18:58] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region22&PageSize=200&Index=1
+[2024-02-02 21:19:00] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region22&PageSize=200&Index=2
+[2024-02-02 21:19:02] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=8910e61f-371d-490c-a1b8-aa7b8a5a48be&block=region22&PageSize=200&Index=1
+[2024-02-02 21:19:04] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=8910e61f-371d-490c-a1b8-aa7b8a5a48be&block=region22&PageSize=200&Index=2
+[2024-02-02 21:19:06] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=34f574b3-5342-465d-9aad-fb692d9d27f2&block=region22&PageSize=200&Index=1
+[2024-02-02 21:19:09] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=34f574b3-5342-465d-9aad-fb692d9d27f2&block=region22&PageSize=200&Index=2
+[2024-02-02 21:19:09] [main] [INFO] > Блок region22 закончен
+[2024-02-02 21:19:09] [utils.utils] [INFO] > Функция get_document_api затратила времени: 25.684151649475098 секунд
+[2024-02-02 21:19:09] [main] [INFO] > Блок region75 начат
+[2024-02-02 21:19:12] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=fd5a8766-f6fd-4ac2-8fd9-66f414d314ac&block=region75&PageSize=200&Index=1
+[2024-02-02 21:19:15] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=fd5a8766-f6fd-4ac2-8fd9-66f414d314ac&block=region75&PageSize=200&Index=2
+[2024-02-02 21:19:17] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=7ff5b3b5-3757-44f1-bb76-3766cabe3593&block=region75&PageSize=200&Index=1
+[2024-02-02 21:19:17] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=a4719334-d2b8-4965-9c0e-95675800e1e5&block=region75&PageSize=200&Index=1
+[2024-02-02 21:19:18] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2037d729-6259-4249-9d7b-804854b17778&block=region75&PageSize=200&Index=1
+[2024-02-02 21:19:21] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region75&PageSize=200&Index=1
+[2024-02-02 21:19:24] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region75&PageSize=200&Index=2
+[2024-02-02 21:19:26] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=8910e61f-371d-490c-a1b8-aa7b8a5a48be&block=region75&PageSize=200&Index=1
+[2024-02-02 21:19:26] [main] [INFO] > Блок region75 закончен
+[2024-02-02 21:19:26] [utils.utils] [INFO] > Функция get_document_api затратила времени: 17.310242891311646 секунд
+[2024-02-02 21:19:26] [main] [INFO] > Блок region41 начат
+[2024-02-02 21:19:30] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=fd5a8766-f6fd-4ac2-8fd9-66f414d314ac&block=region41&PageSize=200&Index=1
+[2024-02-02 21:19:32] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=fd5a8766-f6fd-4ac2-8fd9-66f414d314ac&block=region41&PageSize=200&Index=2
+[2024-02-02 21:19:33] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=7ff5b3b5-3757-44f1-bb76-3766cabe3593&block=region41&PageSize=200&Index=1
+[2024-02-02 21:19:34] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=a4719334-d2b8-4965-9c0e-95675800e1e5&block=region41&PageSize=200&Index=1
+[2024-02-02 21:19:35] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2037d729-6259-4249-9d7b-804854b17778&block=region41&PageSize=200&Index=1
+[2024-02-02 21:19:38] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region41&PageSize=200&Index=1
+[2024-02-02 21:19:40] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region41&PageSize=200&Index=2
+[2024-02-02 21:19:41] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=8910e61f-371d-490c-a1b8-aa7b8a5a48be&block=region41&PageSize=200&Index=1
+[2024-02-02 21:19:42] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=c8df27f2-89a6-4014-8b3b-f224eb4448d2&block=region41&PageSize=200&Index=1
+[2024-02-02 21:19:42] [main] [INFO] > Блок region41 закончен
+[2024-02-02 21:19:42] [utils.utils] [INFO] > Функция get_document_api затратила времени: 16.02104163169861 секунд
+[2024-02-02 21:19:42] [main] [INFO] > Блок region23 начат
+[2024-02-02 21:19:46] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=fd5a8766-f6fd-4ac2-8fd9-66f414d314ac&block=region23&PageSize=200&Index=1
+[2024-02-02 21:19:49] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=fd5a8766-f6fd-4ac2-8fd9-66f414d314ac&block=region23&PageSize=200&Index=2
+[2024-02-02 21:19:51] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=7ff5b3b5-3757-44f1-bb76-3766cabe3593&block=region23&PageSize=200&Index=1
+[2024-02-02 21:19:51] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=7ff5b3b5-3757-44f1-bb76-3766cabe3593&block=region23&PageSize=200&Index=2
+[2024-02-02 21:19:54] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region23&PageSize=200&Index=1
+[2024-02-02 21:19:58] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region23&PageSize=200&Index=2
+[2024-02-02 21:20:01] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region23&PageSize=200&Index=3
+[2024-02-02 21:20:04] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region23&PageSize=200&Index=4
+[2024-02-02 21:20:08] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region23&PageSize=200&Index=5
+[2024-02-02 21:20:10] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region23&PageSize=200&Index=6
+[2024-02-02 21:20:12] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region23&PageSize=200&Index=7
+[2024-02-02 21:20:14] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region23&PageSize=200&Index=8
+[2024-02-02 21:20:17] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region23&PageSize=200&Index=9
+[2024-02-02 21:20:21] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region23&PageSize=200&Index=10
+[2024-02-02 21:20:23] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region23&PageSize=200&Index=11
+[2024-02-02 21:20:26] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region23&PageSize=200&Index=12
+[2024-02-02 21:20:28] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region23&PageSize=200&Index=13
+[2024-02-02 21:20:31] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region23&PageSize=200&Index=14
+[2024-02-02 21:20:33] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region23&PageSize=200&Index=15
+[2024-02-02 21:20:36] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region23&PageSize=200&Index=16
+[2024-02-02 21:20:38] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region23&PageSize=200&Index=17
+[2024-02-02 21:20:41] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region23&PageSize=200&Index=18
+[2024-02-02 21:20:43] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region23&PageSize=200&Index=19
+[2024-02-02 21:20:47] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region23&PageSize=200&Index=20
+[2024-02-02 21:20:50] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region23&PageSize=200&Index=21
+[2024-02-02 21:20:53] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region23&PageSize=200&Index=22
+[2024-02-02 21:20:55] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region23&PageSize=200&Index=23
+[2024-02-02 21:20:58] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region23&PageSize=200&Index=24
+[2024-02-02 21:21:03] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region23&PageSize=200&Index=25
+[2024-02-02 21:21:06] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region23&PageSize=200&Index=26
+[2024-02-02 21:21:08] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region23&PageSize=200&Index=27
+[2024-02-02 21:21:11] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region23&PageSize=200&Index=28
+[2024-02-02 21:21:13] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region23&PageSize=200&Index=29
+[2024-02-02 21:21:15] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region23&PageSize=200&Index=30
+[2024-02-02 21:21:17] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region23&PageSize=200&Index=31
+[2024-02-02 21:21:19] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region23&PageSize=200&Index=32
+[2024-02-02 21:21:22] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region23&PageSize=200&Index=33
+[2024-02-02 21:21:24] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region23&PageSize=200&Index=34
+[2024-02-02 21:21:27] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region23&PageSize=200&Index=35
+[2024-02-02 21:21:29] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region23&PageSize=200&Index=36
+[2024-02-02 21:21:32] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region23&PageSize=200&Index=37
+[2024-02-02 21:21:35] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region23&PageSize=200&Index=38
+[2024-02-02 21:21:37] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region23&PageSize=200&Index=39
+[2024-02-02 21:21:39] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region23&PageSize=200&Index=40
+[2024-02-02 21:21:42] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region23&PageSize=200&Index=41
+[2024-02-02 21:21:44] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region23&PageSize=200&Index=42
+[2024-02-02 21:21:46] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region23&PageSize=200&Index=43
+[2024-02-02 21:21:47] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region23&PageSize=200&Index=44
+[2024-02-02 21:21:49] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=8910e61f-371d-490c-a1b8-aa7b8a5a48be&block=region23&PageSize=200&Index=1
+[2024-02-02 21:21:49] [main] [INFO] > Блок region23 закончен
+[2024-02-02 21:21:49] [utils.utils] [INFO] > Функция get_document_api затратила времени: 126.84998226165771 секунд
+[2024-02-02 21:21:49] [main] [INFO] > Блок region24 начат
+[2024-02-02 21:21:53] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=0790e34b-784b-4372-884e-3282622a24bd&block=region24&PageSize=200&Index=1
+[2024-02-02 21:21:56] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=fd5a8766-f6fd-4ac2-8fd9-66f414d314ac&block=region24&PageSize=200&Index=1
+[2024-02-02 21:21:58] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=fd5a8766-f6fd-4ac2-8fd9-66f414d314ac&block=region24&PageSize=200&Index=2
+[2024-02-02 21:21:59] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2037d729-6259-4249-9d7b-804854b17778&block=region24&PageSize=200&Index=1
+[2024-02-02 21:22:01] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=2dddb344-d3e2-4785-a899-7aa12bd47b6f&block=region24&PageSize=200&Index=1
+[2024-02-02 21:22:02] [main] [DEBUG] > http://publication.pravo.gov.ru/api/Documents?DocumentTypes=cdafe085-10fe-4199-92a5-9aa82b2b6c99&block=region24&PageSize=200&Index=1
+[2024-02-02 21:40:31] [database.setup] [INFO] > Успешное подключение к базе данных fastapi-postgres
+[2024-02-02 21:40:31] [database.initial] [INFO] > Округа созданы или уже существуют
+[2024-02-02 21:40:31] [database.initial] [INFO] > Регионы созданы или уже существуют
+[2024-02-02 21:40:31] [database.initial] [INFO] > Номенклатура созданы или уже существуют
+[2024-02-02 21:40:31] [database.initial] [INFO] > Документы созданы или уже существуют
+[2024-02-02 21:40:31] [database.initial] [INFO] > Индексы созданы или уже существуют
+[2024-02-02 21:40:31] [database.initial] [INFO] > Таблицы созданы или уже существуют
+[2024-02-02 21:40:35] [main] [DEBUG] > [('Республика Адыгея', 'region01'), ('Республика Алтай', 'region04'), ('Республика Башкортостан', 'region02'), ('Республика Бурятия', 'region03'), ('Республика Дагестан', 'region05'), ('Донецкая Народная Республика', 'region80'), ('Республика Ингушетия', 'region06'), ('Кабардино-Балкарская Республика', 'region07'), ('Республика Калмыкия', 'region08'), ('Карачаево-Черкесская Республика', 'region09'), ('Республика Карелия', 'region10'), ('Республика Коми', 'region11'), ('Республика Крым', 'region91'), ('Луганская Народная Республика', 'region81'), ('Республика Марий Эл', 'region12'), ('Республика Мордовия', 'region13'), ('Республика Саха (Якутия)', 'region14'), ('Республика Северная Осетия - Алания', 'region15'), ('Республика Татарстан', 'region16'), ('Республика Тыва', 'region17'), ('Удмуртская Республика', 'region18'), ('Республика Хакасия', 'region19'), ('Чеченская Республика', 'region20'), ('Чувашская Республика - Чувашия', 'region21'), ('Алтайский край', 'region22'), ('Забайкальский край', 'region75'), ('Камчатский край', 'region41'), ('Краснодарский край', 'region23'), ('Красноярский край', 'region24'), ('Пермский край', 'region59'), ('Приморский край', 'region25'), ('Ставропольский край', 'region26'), ('Хабаровский край', 'region27'), ('Амурская область', 'region28'), ('Архангельская область', 'region29'), ('Астраханская область', 'region30'), ('Белгородская область', 'region31'), ('Брянская область', 'region32'), ('Владимирская область', 'region33'), ('Волгоградская область', 'region34'), ('Вологодская область', 'region35'), ('Воронежская область', 'region36'), ('Запорожская область', 'region85'), ('Ивановская область', 'region37'), ('Иркутская область', 'region38'), ('Калининградская область', 'region39'), ('Калужская область', 'region40'), ('Кемеровская область - Кузбасс', 'region42'), ('Кировская область', 'region43'), ('Костромская область', 'region44'), ('Курганская область', 'region45'), ('Курская область', 'region46'), ('Ленинградская область', 'region47'), ('Липецкая область', 'region48'), ('Магаданская область', 'region49'), ('Московская область', 'region50'), ('Мурманская область', 'region51'), ('Нижегородская область', 'region52'), ('Новгородская область', 'region53'), ('Новосибирская область', 'region54'), ('Омская область', 'region55'), ('Оренбургская область', 'region56'), ('Орловская область', 'region57'), ('Пензенская область', 'region58'), ('Псковская область', 'region60'), ('Ростовская область', 'region61'), ('Рязанская область', 'region62'), ('Самарская область', 'region63'), ('Саратовская область', 'region64'), ('Сахалинская область', 'region65'), ('Свердловская область', 'region66'), ('Смоленская область', 'region67'), ('Тамбовская область', 'region68'), ('Тверская область', 'region69'), ('Томская область', 'region70'), ('Тульская область', 'region71'), ('Тюменская область', 'region72'), ('Ульяновская область', 'region73'), ('Херсонская область', 'region84'), ('Челябинская область', 'region74'), ('Ярославская область', 'region76'), ('Москва', 'region77'), ('Санкт-Петербург', 'region78'), ('Севастополь', 'region92'), ('Еврейская автономная область', 'region79'), ('Ненецкий автономный округ', 'region83'), ('Ханты-Мансийский автономный округ - Югра', 'region86'), ('Чукотский автономный округ', 'region87'), ('Ямало-Ненецкий автономный округ', 'region89')]
+[2024-02-02 21:40:36] [main] [DEBUG] > [('Конституция', '8fb60238-9fee-4a1b-9534-6d99ad0ceff0'), ('Закон Российской Федерации о поправке к Конституции Российской Федерации', 'e0c56da5-17f1-40ac-a10f-8a9a1cee0c4e'), ('Федеральный конституционный закон', '93273da3-3133-4acf-96c2-4adc1ae70e19'), ('Федеральный закон', '82a8bf1c-3bc7-47ed-827f-7affd43a7f27'), ('Указ', '0790e34b-784b-4372-884e-3282622a24bd'), ('Постановление', 'fd5a8766-f6fd-4ac2-8fd9-66f414d314ac'), ('Постановление Правления', '49a1ee72-097d-44e6-985d-f0cb7b036150'), ('Распоряжение', '7ff5b3b5-3757-44f1-bb76-3766cabe3593'), ('Резолюция', '397f9cc4-dc88-41a1-b009-802c99f9d9fd'), ('Соглашение', '7732b2a0-c522-436f-8172-a251912e2fc9'), ('Конвенция', '7c112925-ceaf-4bb4-93b4-16618b5dbdba'), ('Международный договор', '7ccde0f1-39b0-49b9-9a61-2fee55402189'), ('Договор', '63c6ff4f-ed74-45b3-86e2-8a76b75d674d'), ('Апелляционное определение', 'a4719334-d2b8-4965-9c0e-95675800e1e5'), ('Определение', '7a766fb3-5104-4579-a777-25bc88c0ddc9'), ('Протокол', 'ac9e6a29-59cd-4c3d-8c14-ceb9843ef2da'), ('Поправки', 'e39a5fe7-2e9f-4023-a7af-f17b5f2dec56'), ('Дополнение', '03f36e50-3912-4921-865a-3d34abdebf1e'), ('Дополнительный протокол', '337bbf47-7cc0-481d-8eb7-1f21ace58bfe'), ('Меморандум', '8dbf81e3-c061-4f28-939b-cf9a2c95421c'), ('Исполнительный протокол', 'a9fc04ed-758b-4b6e-a35a-e55e4c69f825'), ('Сообщение Президента Российской Федерации', '4d76ef2a-6181-4e1c-bbd9-23ff836f8aca'), ('Сообщение о принятии Решения', '2037d729-6259-4249-9d7b-804854b17778'), ('Сообщение о судебном Решении', 'b7d925b6-2190-4794-a7ee-f5e3993e1954'), ('Официальное сообщение МИД России', '4735e463-35e6-4ee9-a2c6-3ba2fba6f4d2'), ('Приказ', '2dddb344-d3e2-4785-a899-7aa12bd47b6f'), ('Положение', 'a60db81f-1834-41fe-99dd-c8cf3746745d'), ('Конституционный закон', '97d902b9-cc94-4b01-9576-b4a7d4fde1fb'), ('Регламент', 'd84850fc-c3f6-4595-a55c-bc8bcae02328'), ('Устав', 'c0281bbe-6be1-45be-8acd-f319c99b85ad'), ('Устав (Основной Закон)', '50acf12d-2461-466e-bada-de5d8b7737a1'), ('Закон о поправках к Уставу', '1ee8f2cc-d23f-4ac1-a0e4-1fd202ecc736'), ('Поправки к Уставу', '5cf51861-5b6f-4210-9776-8086c05fdc8b'), ('Закон о внесении поправок в Устав Красноярского края', 'cdafe085-10fe-4199-92a5-9aa82b2b6c99'), ('Закон Республики Бурятия о внесении поправок в Конституцию Республики Бурятия', 'bdfe8274-cfc2-4a62-b413-91a201646ced'), ('Закон', '8910e61f-371d-490c-a1b8-aa7b8a5a48be'), ('Областной закон', 'e880fa45-e4f4-4db9-bba0-847666adebab'), ('Уставный закон', '16b9a101-4ce2-47d0-8a92-8b1aff72867a'), ('Решение правления', '49322bdb-8137-4b5f-bc94-792e88992fab'), ('Решение', '34f574b3-5342-465d-9aad-fb692d9d27f2'), ('Заключение', 'cf7ebd4b-506a-4794-ae32-3705c98f5535'), ('Извещение', 'b1f44e8e-7699-4fe5-a9d1-7f6f62c7b89c'), ('Указание', '28b0f778-037b-456d-b510-2029cd6ed4ca'), ('Сообщение о принятии апелляционного решения', 'c8df27f2-89a6-4014-8b3b-f224eb4448d2')]
+[2024-02-02 21:40:36] [database.query] [INFO] > Вставленно 44 номенклатур
+[2024-02-02 21:40:36] [database.query] [INFO] > Вставленно 89 регионов
+[2024-02-02 21:40:36] [main] [INFO] > Блок region01 начат
+[2024-02-02 21:40:39] [main] [INFO] > Блок region01 уже заполнен
+[2024-02-02 21:40:39] [utils.utils] [INFO] > Функция get_document_api затратила времени: 3.3984153270721436 секунд
+[2024-02-02 21:40:39] [main] [INFO] > Блок region04 начат
+[2024-02-02 21:40:42] [main] [INFO] > Блок region04 уже заполнен
+[2024-02-02 21:40:42] [utils.utils] [INFO] > Функция get_document_api затратила времени: 3.067699909210205 секунд
+[2024-02-02 21:40:42] [main] [INFO] > Блок region02 начат
+[2024-02-02 21:40:45] [main] [INFO] > Блок region02 уже заполнен
+[2024-02-02 21:40:45] [utils.utils] [INFO] > Функция get_document_api затратила времени: 3.0329384803771973 секунд
+[2024-02-02 21:40:45] [main] [INFO] > Блок region03 начат
+[2024-02-02 21:40:47] [main] [INFO] > Блок region03 уже заполнен
+[2024-02-02 21:40:47] [utils.utils] [INFO] > Функция get_document_api затратила времени: 1.5750200748443604 секунд
+[2024-02-02 21:40:47] [main] [INFO] > Блок region05 начат
+[2024-02-02 21:40:49] [main] [INFO] > Блок region05 уже заполнен
+[2024-02-02 21:40:49] [utils.utils] [INFO] > Функция get_document_api затратила времени: 2.134376049041748 секунд
+[2024-02-02 21:40:49] [main] [INFO] > Блок region80 начат
+[2024-02-02 21:40:50] [main] [INFO] > Блок region80 уже заполнен
+[2024-02-02 21:40:50] [utils.utils] [INFO] > Функция get_document_api затратила времени: 1.2503516674041748 секунд
+[2024-02-02 21:40:50] [main] [INFO] > Блок region06 начат
+[2024-02-02 21:40:53] [main] [INFO] > Блок region06 уже заполнен
+[2024-02-02 21:40:53] [utils.utils] [INFO] > Функция get_document_api затратила времени: 2.7079126834869385 секунд
+[2024-02-02 21:40:53] [main] [INFO] > Блок region07 начат
+[2024-02-02 21:41:01] [main] [INFO] > Блок region07 уже заполнен
+[2024-02-02 21:41:01] [utils.utils] [INFO] > Функция get_document_api затратила времени: 7.630112171173096 секунд
+[2024-02-02 21:41:01] [main] [INFO] > Блок region08 начат
+[2024-02-02 21:41:03] [main] [INFO] > Блок region08 уже заполнен
+[2024-02-02 21:41:03] [utils.utils] [INFO] > Функция get_document_api затратила времени: 2.6996912956237793 секунд
+[2024-02-02 21:41:03] [main] [INFO] > Блок region09 начат

@@ -75,13 +75,23 @@ def create_tables():
 def create_all_index():
     with get_sync_connection() as connection:
         with connection.cursor() as cursor:
-            cursor.execute(CREATE_ALL_INDEX)
+            try:
+                cursor.execute(CREATE_ALL_INDEX)
+                logger.info("Индексы созданы или уже существуют")
+            except Exception as e:
+                logger.critical(f"Индексы не созданы! {e}")
+                
+            
 
 
 def create_district_table():
     with get_sync_connection() as connection:
         with connection.cursor() as cursor:
-            cursor.execute(CREATE_DISTRICT_TABLE)
+            try:
+                cursor.execute(CREATE_DISTRICT_TABLE)
+                logger.info("Округа созданы или уже существуют")
+            except Exception as e:
+                logger.critical(f"Округа не созданы! {e}")
 
 
 def insert_district_table():
@@ -106,16 +116,26 @@ def insert_district_table():
 def create_region_table():
     with get_sync_connection() as connection:
         with connection.cursor() as cursor:
-            cursor.execute(CREATE_REGION_TABLE)
-
+            try:
+                cursor.execute(CREATE_REGION_TABLE)
+                logger.info("Регионы созданы или уже существуют")
+            except Exception as e:
+                logger.critical(f"Регионы не созданы! {e}")
 
 def create_act_table():
     with get_sync_connection() as connection:
         with connection.cursor() as cursor:
-            cursor.execute(CREATE_ACT_TABLE)
-
+            try:
+                cursor.execute(CREATE_ACT_TABLE)
+                logger.info("Номенклатура созданы или уже существуют")
+            except Exception as e:
+                logger.critical(f"Номенклатура не созданы! {e}")
 
 def create_document_table():
     with get_sync_connection() as connection:
         with connection.cursor() as cursor:
-            cursor.execute(CREATE_DOCUMENT_TABLE)
+            try:
+                cursor.execute(CREATE_DOCUMENT_TABLE)
+                logger.info("Документы созданы или уже существуют")
+            except Exception as e:
+                logger.critical(f"Документы не созданы! {e}")

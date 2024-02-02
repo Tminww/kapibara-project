@@ -26,6 +26,7 @@ def insert_act(name_npaId):
                     cursor.mogrify("(%s, %s)", i).decode("utf-8") for i in values
                 )
                 cursor.execute(INSERT_ACT + args + " ON CONFLICT DO NOTHING;")
+                logger.info(f"Вставленно {len(values)} номенклатур")
             except errors.lookup(UNIQUE_VIOLATION) as e:
                 logger.exception(UNIQUE_VIOLATION)
 
@@ -39,6 +40,7 @@ def insert_region(name_code):
                     cursor.mogrify("(%s, %s)", i).decode("utf-8") for i in values
                 )
                 cursor.execute(INSERT_REGION + args + " ON CONFLICT DO NOTHING;")
+                logger.info(f"Вставленно {len(values)} регионов")
 
             except errors.lookup(UNIQUE_VIOLATION) as e:
                 logger.exception(UNIQUE_VIOLATION)
@@ -67,6 +69,7 @@ def update_region():
                 values = get_subjects_data()
                 for row in values:
                     cursor.execute(UPDATE_REGION_TABLE, (row["id_dist"], row["name"]))
+                    
             except errors.lookup(UNIQUE_VIOLATION) as e:
                 logger.exception(UNIQUE_VIOLATION)
 
