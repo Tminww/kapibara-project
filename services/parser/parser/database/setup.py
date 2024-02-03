@@ -1,4 +1,4 @@
-import psycopg2
+import psycopg2 as db
 from parser.dbconfig import get_settings
 from parser.log.createLogger import get_logger
 
@@ -8,7 +8,7 @@ logger = get_logger("database.setup")
 settings = get_settings()
 
 try:
-    sync_connection = psycopg2.connect(
+    sync_connection = db.connect(
         user=settings.DB_USER,
         password=settings.DB_PASS,
         host=settings.DB_HOST,

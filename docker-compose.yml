@@ -28,12 +28,12 @@ services:
     volumes:
       - pgadmin-data:/var/lib/pgadmin
 
-  parser:
-    build: ./services/parser/
-    container_name: parser
-    restart: unless-stopped
-    depends_on:
-      - postgres
+  # parser:
+  #   build: ./services/parser/
+  #   container_name: parser
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - postgres
 
   backend:
     build: ./services/backend/

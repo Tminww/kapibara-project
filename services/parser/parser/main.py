@@ -4,11 +4,14 @@ from datetime import datetime
 
 import parser.database.initial as initial
 import parser.database.query as query
-import parser.api.api as api
+
+# import services.parser.parser.api.publication.publication as request_api
+from parser.api.api import api
 import parser.utils.utils as utils
 
-from parser.log.createLogger import get_logger
 import time
+from parser.log.createLogger import get_logger
+
 
 logger = get_logger("main")
 
@@ -17,41 +20,35 @@ logger = get_logger("main")
 def get_document_api(code):
     logger.info(f"Блок {code} начат")
 
-    req_total_documents = requests.get(
-        url=api.get_documents_on_page(code),
-    )
+    req_total_documents = api.publication.documents_on_page(code)
 
-    if (
-        query.get_total_documents(code=code)
-        == req_total_documents.json()["itemsTotalCount"]
-    ):
+    if query.get_total_documents(code=code) == req_total_documents["itemsTotalCount"]:
         logger.info(f"Блок {code} уже заполнен")
         return
 
-    req_type = requests.get(
-        url=api.get_type_in_subject(code),
-    )
-    for npa in req_type.json():
+    req_type = api.publication.type_in_subject(code)
+
+    for npa in req_type:
         current_page = 1
         while True:
             time.sleep(0.5)
-            req = requests.get(
-                url=api.get_documents_on_page_type(
-                    npa_id=npa["id"], code=code, index=str(current_page)
-                )
+            print(npa)
+            req = api.publication.documents_on_page_type(
+                npa_id=npa["id"], block=code, index=current_page
             )
+
             logger.debug(
-                api.get_documents_on_page_type(
-                    npa_id=npa["id"], code=code, index=str(current_page)
+                api.publication.documents_on_page_type(
+                    npa_id=npa["id"], block=code, index=str(current_page)
                 )
             )
             if (
                 query.get_total_documents_type(code=code, npa_id=npa["id"])
-                == req.json()["itemsTotalCount"]
+                == req["itemsTotalCount"]
             ):
                 break
 
-            if current_page <= req.json()["pagesTotalCount"]:
+            if current_page <= req["pagesTotalCount"]:
                 complex_names: list = []
                 eo_numbers: list = []
                 pages_counts: list = []
@@ -61,7 +58,7 @@ def get_document_api(code):
                 id_reg = query.get_id_reg(code=code)
                 id_act = query.get_id_act(npa_id=npa["id"])
 
-                for item in req.json()["items"]:
+                for item in req["items"]:
                     complex_names.append(item["complexName"])
                     eo_numbers.append(item["eoNumber"])
                     pages_counts.append(item["pagesCount"])
@@ -82,10 +79,7 @@ def get_document_api(code):
                 )
                 current_page += 1
 
-            elif (
-                current_page > req.json()["pagesTotalCount"]
-                or req.json()["pagesTotalCount"] == 0
-            ):
+            elif current_page > req["pagesTotalCount"] or req["pagesTotalCount"] == 0:
                 break
     logger.info(f"Блок {code} закончен")
 
@@ -93,9 +87,9 @@ def get_document_api(code):
 def get_npa_api() -> list:
     names: list = []
     npa_id: list = []
-    req = requests.get(url=api.get_type_all())
+    req = api.publication.type_all()
 
-    for npa in req.json():
+    for npa in req:
         names.append(npa["name"])
         npa_id.append(npa["id"])
     logger.debug(list(zip(names, npa_id)))
@@ -103,10 +97,10 @@ def get_npa_api() -> list:
 
 
 def get_subject_api() -> list:
-    req = requests.get(url=api.get_subjects())
+    req = api.publication.subjects()
     names: list = []
     codes: list = []
-    for subject in req.json():
+    for subject in req:
         names.append(subject["name"])
         codes.append(subject["code"])
     logger.debug(list(zip(names, codes)))
@@ -115,6 +109,7 @@ def get_subject_api() -> list:
 
 def main():
     logger.info("Начало работы скрипта")
+
     initial.create_tables()
     name_code = get_subject_api()
     name_npa_id = get_npa_api()
