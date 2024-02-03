@@ -1,0 +1,7 @@
+sudo apt install pipx
+pipx install poetry
+poetry init
+poetry shell
+poetry install
+curl https://pyenv.run | bash
+apt-get install build-essential

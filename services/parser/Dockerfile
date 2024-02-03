@@ -1,23 +1,23 @@
-FROM python:3.9
+FROM python:3.10
 
 WORKDIR /code
 
 RUN apt-get update 
 
-# RUN apt-get update && apt-get install -y \
-#     cron \
-#     rsyslog
-# COPY ./cron.config /etc/cron.d/sample
-# RUN mkdir /data
-# CMD service rsyslog start && service cron start && tail -f /var/log/syslog
+RUN apt install pipx -y
 
-COPY ./requirements.txt /code/requirements.txt
+RUN pipx install poetry -y
 
-RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
+COPY ./pyproject.toml /code/pyproject.toml
+COPY ./poetry.lock /code/poetry.lock
 
-COPY ./src/ /code/
+RUN poetry init
+RUN poetry shell
+RUN poetry install
 
-CMD [ "python3.9", "main.py" ]
+COPY ./parser/ /code/
+
+CMD [ "poetry", "run", "dev" ]
 
 
 
