@@ -45,7 +45,7 @@ def check_time(logger):
     return decorate
 
 
-def retry(logger, exception_to_check, num_retries=5, sleep_time=1):
+def retry_request(logger, exception_to_check, num_retries=5, sleep_time=1):
     """
     Decorator that retries the execution of a function if it raises a specific exception.
     """
@@ -68,3 +68,36 @@ def retry(logger, exception_to_check, num_retries=5, sleep_time=1):
         return wrapper
 
     return decorate
+
+
+def response_status(response):
+    status = True
+    if response.status_code != 200:
+        status = False
+    return {"status": status, "code": response.status_code, "reason": response.reason}
+
+
+def get_response(url):
+    s = requests.Session()
+    user = fake_useragent.UserAgent().random
+    header = {"user-agent": user}
+    response = s.get(url, headers=header)
+    logging.info(f"{url}, {res.status_code}, {s.cookies}")
+    return response
+
+
+def try_request(req):
+    def wrap(url):
+        status = False
+        try:
+            response = req(url)
+            error = 0
+            status = True
+        except Exception as ex:
+            response = Response()
+            response.reason = ex
+            response.status_code = 444
+            error = sys.exc_info()[1]
+        return {"status": status, "response": response, "error": error}
+
+    return wrap
