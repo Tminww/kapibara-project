@@ -1,5 +1,4 @@
 import requests
-import feedparser
 import sys
 from requests.models import Response
 import fake_useragent
@@ -81,9 +80,9 @@ def pool_data(rss_list):
 
 def main():
     rss_list = [
-        "https://feed1.xml",
-        "https://feed2.xml",
-        "https://feed3.xml",
+        "https://api.tminww.site",
+        "https://api.tminww.site/subjects",
+        "https://api.tminww.site/statistics",
     ]
     feeds = pool_data(rss_list)
     for item in feeds:

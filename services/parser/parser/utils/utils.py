@@ -3,6 +3,8 @@ import time
 
 import logging
 
+from requests import Response
+
 
 def get_logger(logger_name: str) -> logging:
     logger = logging.getLogger(logger_name)
@@ -56,7 +58,11 @@ def retry_request(logger, exception_to_check, num_retries=5, sleep_time=1):
             for retry in range(1, num_retries + 1):
                 try:
                     return func(*args, **kwargs)
-                except exception_to_check as e:
+                except Exception as e:
+                    response = Response()
+                    response.reason = e
+                    response.status_code = 444
+                    return {"status": status, "response": response, "error": error}
                     logger.error(
                         f"{func.__name__} вернула ошибку {e.__class__.__name__}. {retry} попытка..."
                     )
