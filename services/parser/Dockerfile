@@ -7,8 +7,10 @@ RUN apt-get update
 RUN python3 -m pip install pipx
 RUN python3 -m userpath append ~/.local/bin
 
+
 RUN pipx install poetry
 
+RUN pipx ensurepath
 
 COPY ./pyproject.toml /code/pyproject.toml
 COPY ./poetry.lock /code/poetry.lock

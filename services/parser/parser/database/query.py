@@ -3,10 +3,10 @@ from psycopg2.errorcodes import UNIQUE_VIOLATION
 from psycopg2 import errors
 from parser.data.subjects import get_subjects_data
 
-from parser.log.createLogger import get_logger
+import parser.utils.utils as utils
 
 
-logger = get_logger("database.query")
+logger = utils.get_logger("database.query")
 
 INSERT_ACT = """INSERT INTO ACT (name, npa_id) VALUES """
 
@@ -69,7 +69,7 @@ def update_region():
                 values = get_subjects_data()
                 for row in values:
                     cursor.execute(UPDATE_REGION_TABLE, (row["id_dist"], row["name"]))
-                    
+
             except errors.lookup(UNIQUE_VIOLATION) as e:
                 logger.exception(UNIQUE_VIOLATION)
 

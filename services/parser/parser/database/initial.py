@@ -3,10 +3,10 @@ from parser.data.districts import get_districts_data
 from psycopg2.errorcodes import UNIQUE_VIOLATION
 from psycopg2 import errors
 
-from parser.log.createLogger import get_logger
+import parser.utils.utils as utils
 
 
-logger = get_logger("database.initial")
+logger = utils.get_logger("database.initial")
 
 CREATE_REGION_TABLE = """
         CREATE TABLE IF NOT EXISTS region (
@@ -80,8 +80,6 @@ def create_all_index():
                 logger.info("Индексы созданы или уже существуют")
             except Exception as e:
                 logger.critical(f"Индексы не созданы! {e}")
-                
-            
 
 
 def create_district_table():
@@ -122,6 +120,7 @@ def create_region_table():
             except Exception as e:
                 logger.critical(f"Регионы не созданы! {e}")
 
+
 def create_act_table():
     with get_sync_connection() as connection:
         with connection.cursor() as cursor:
@@ -130,6 +129,7 @@ def create_act_table():
                 logger.info("Номенклатура созданы или уже существуют")
             except Exception as e:
                 logger.critical(f"Номенклатура не созданы! {e}")
+
 
 def create_document_table():
     with get_sync_connection() as connection:

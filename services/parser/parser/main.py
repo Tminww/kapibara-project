@@ -1,3 +1,4 @@
+import random
 import requests
 
 from datetime import datetime
@@ -10,13 +11,13 @@ from parser.api.api import api
 import parser.utils.utils as utils
 
 import time
-from parser.log.createLogger import get_logger
+import parser.utils.utils as utils
 
 
-logger = get_logger("main")
+logger = utils.get_logger("main")
 
 
-@utils.check_time
+@utils.check_time(logger=logger)
 def get_document_api(code):
     logger.info(f"Блок {code} начат")
 
@@ -37,11 +38,11 @@ def get_document_api(code):
                 npa_id=npa["id"], block=code, index=current_page
             )
 
-            logger.debug(
-                api.publication.documents_on_page_type(
-                    npa_id=npa["id"], block=code, index=str(current_page)
-                )
-            )
+            # logger.debug(
+            #     api.publication.documents_on_page_type(
+            #         npa_id=npa["id"], block=code, index=str(current_page)
+            #     )
+            # )
             if (
                 query.get_total_documents_type(code=code, npa_id=npa["id"])
                 == req["itemsTotalCount"]
@@ -92,7 +93,7 @@ def get_npa_api() -> list:
     for npa in req:
         names.append(npa["name"])
         npa_id.append(npa["id"])
-    logger.debug(list(zip(names, npa_id)))
+    # logger.debug(list(zip(names, npa_id)))
     return list(zip(names, npa_id))
 
 
@@ -103,7 +104,7 @@ def get_subject_api() -> list:
     for subject in req:
         names.append(subject["name"])
         codes.append(subject["code"])
-    logger.debug(list(zip(names, codes)))
+    # logger.debug(list(zip(names, codes)))
     return list(zip(names, codes))
 
 
