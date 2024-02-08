@@ -28,12 +28,12 @@ services:
     volumes:
       - pgadmin-data:/var/lib/pgadmin
 
-  # parser:
-  #   build: ./services/parser/
-  #   container_name: parser
-  #   restart: unless-stopped
-  #   depends_on:
-  #     - postgres
+  parser:
+    build: ./services/parser/
+    container_name: parser
+    restart: unless-stopped
+    depends_on:
+      - postgres
 
   backend:
     build: ./services/backend/
@@ -56,6 +56,15 @@ services:
   #     - backend
   #   ports:
   #     - "8081:5173"
+  # dbeaver:
+  #   image: dbeaver/cloudbeaver:latest
+  #   container_name: dbeaver
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - postgres
+  #   ports:
+  #     - "5600:8978"
+
 
 volumes:
   postgres-data:

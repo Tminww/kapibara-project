@@ -1,0 +1,110 @@
+
+
+CREATE TABLE IF NOT EXISTS Districts (
+	id SERIAL PRIMARY KEY,
+	name VARCHAR(50),
+	short_name VARCHAR(10),
+
+	UNIQUE (name, short_name)
+);
+
+CREATE TABLE IF NOT EXISTS Regions (
+	id SERIAL PRIMARY KEY, 
+	name VARCHAR(128), 
+	short_name VARCHAR(10),
+	code VARCHAR(10),
+	id_dist INTEGER, 
+
+	UNIQUE (name, short_name, code),
+	FOREIGN KEY(id_dist) REFERENCES Districts (id)
+);
+
+CREATE TABLE IF NOT EXISTS ReceivingAuthorities (
+	id SERIAL PRIMARY KEY, 
+	name VARCHAR(128), 
+	short_name VARCHAR(50),
+	code VARCHAR(50),
+
+	UNIQUE (name, short_name, code)
+);
+
+CREATE TABLE IF NOT EXISTS Blocks  (
+	id SERIAL PRIMARY KEY, 
+	name VARCHAR(128), 
+	short_name VARCHAR(50),
+	id_organ INT,
+	id_reg INT NULL,
+
+	FOREIGN KEY(id_organ) REFERENCES ReceivingAuthorities (id), 
+	FOREIGN KEY(id_reg) REFERENCES Regions (id), 
+	UNIQUE (name, short_name, id_organ, id_reg)
+);
+
+CREATE TABLE IF NOT EXISTS Deadlines  (
+	id SERIAL PRIMARY KEY, 
+	day INT, 
+
+	UNIQUE (day)
+);
+
+CREATE TABLE IF NOT EXISTS DocumentTypes  (
+	id SERIAL PRIMARY KEY, 
+	name VARCHAR(128), 
+	short_name VARCHAR(50),
+	external_id VARCHAR(64),
+	id_dl INT,
+	
+	FOREIGN KEY(id_dl) REFERENCES Deadlines (id), 
+	UNIQUE (name, short_name, external_id)
+);
+
+CREATE TABLE IF NOT EXISTS DocumentTypes_Blocks  (
+	id SERIAL PRIMARY KEY, 
+	id_doc_type INT, 
+	id_block INT,
+	
+	FOREIGN KEY(id_doc_type) REFERENCES DocumentTypes (id),
+	FOREIGN KEY(id_block) REFERENCES Blocks (id),
+	UNIQUE (id_doc_type, id_block)
+);
+
+CREATE TABLE IF NOT EXISTS Documents (
+	id BIGSERIAL PRIMARY KEY, 
+	name TEXT NOT NULL,
+	eo_number VARCHAR(16), 
+	view_date DATE, 
+	hash VARCHAR(128),
+	pages_count INT, 
+	id_doc_type_block INT, 
+	
+	UNIQUE (name, eo_number, hash, id_doc_type_block), 
+	FOREIGN KEY(id_doc_type_block) REFERENCES DocumentTypes_Blocks (id)
+);
+
+CREATE TABLE IF NOT EXISTS Roles (
+	id serial PRIMARY KEY, 
+	name VARCHAR(32),
+	
+	UNIQUE (name)
+
+);
+
+CREATE TABLE IF NOT EXISTS Users (
+	id serial PRIMARY KEY, 
+	username VARCHAR(16),
+	id_role INT,
+	hash_password VARCHAR(16), 
+	date_registered TIMESTAMP, 
+	last_login TIMESTAMP,
+	is_active bool, 
+	
+	UNIQUE (username), 
+	FOREIGN KEY(id_role) REFERENCES Roles (id)
+)
+
+
+
+
+
+
+

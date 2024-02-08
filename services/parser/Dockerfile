@@ -1,28 +1,35 @@
 FROM python:3.10
 
-WORKDIR /code
+WORKDIR /parser
 
 RUN apt-get update 
 
-RUN python3 -m pip install pipx
-RUN python3 -m userpath append ~/.local/bin
+# RUN python3 -m pip install pipx
+# RUN python3 -m userpath append ~/.local/bin
 
 
-RUN pipx install poetry
+# RUN pipx install poetry
 
-RUN pipx ensurepath
+# RUN pipx ensurepath
+# RUN export PATH=$PATH:/root/.local/bin
 
-COPY ./pyproject.toml /code/pyproject.toml
-COPY ./poetry.lock /code/poetry.lock
+# RUN curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
 
-COPY ./parser/ /code/
+
+RUN curl -sSL https://install.python-poetry.org | python3 -
+
+ENV PATH="$HOME/.local/bin"
+COPY ./pyproject.toml ./pyproject.toml
+COPY ./poetry.lock ./poetry.lock
+
+COPY . .
 
 RUN poetry init
 RUN poetry shell
 RUN poetry install
 
 
-CMD [ "poetry", "run", "dev" ]
+CMD [ "poetry", "run", "pytest" ]
 
 
 
