@@ -20,6 +20,7 @@ pytest = "^8.0.0"
 
 [tool.poetry.scripts]
 dev = "parser.main:main"
+testdev = "parser.client.client:main"
 
 [build-system]
 requires = ["poetry-core"]
