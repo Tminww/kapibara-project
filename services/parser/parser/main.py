@@ -108,8 +108,21 @@ def get_subject_api() -> list:
     return list(zip(names, codes))
 
 
+@utils.retry_request(logger=logger)
+def test():
+
+    response = requests.get(url="https://api.tminww.site/subjects")
+
+    if response.status_code != 200:
+        raise requests.exceptions.RequestException
+    else:
+        return response
+
+
 def main():
     logger.info("Начало работы скрипта")
+
+    test()
 
     initial.create_tables()
     name_code = get_subject_api()

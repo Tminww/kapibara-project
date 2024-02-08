@@ -1,4 +1,5 @@
 from functools import wraps
+import sys
 import time
 
 import logging
@@ -47,7 +48,7 @@ def check_time(logger):
     return decorate
 
 
-def retry_request(logger, exception_to_check, num_retries=5, sleep_time=1):
+def retry_request(logger, num_retries=5, sleep_time=1):
     """
     Decorator that retries the execution of a function if it raises a specific exception.
     """
@@ -55,21 +56,36 @@ def retry_request(logger, exception_to_check, num_retries=5, sleep_time=1):
     def decorate(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
+            status = False
             for retry in range(1, num_retries + 1):
                 try:
-                    return func(*args, **kwargs)
-                except Exception as e:
-                    response = Response()
-                    response.reason = e
-                    response.status_code = 444
+                    response = func(*args, **kwargs)
+                    error = 0
+                    status = True
+
+                    logger.debug(
+                        f'status: {status}, url: {response.url} response: {response}, error: {error}"'
+                    )
                     return {"status": status, "response": response, "error": error}
+                except Exception as exception:
+                    response = Response()
+                    response.reason = exception
+                    response.status_code = 444
+                    error = sys.exc_info()[1]
                     logger.error(
-                        f"{func.__name__} вернула ошибку {e.__class__.__name__}. {retry} попытка..."
+                        f"status: {status}, \nresponse: {response}, \nerror: {error} \n{retry} попытка..."
                     )
                     if retry < num_retries:
                         time.sleep(sleep_time)
+
+            # logger.error(f"{func.__name__} завершилась с ошибкой")
+            logger.debug(
+                f'status: {status}, url: {response.url} response: {response}, error: {error}"'
+            )
+
+            return {"status": status, "response": response, "error": error}
+
             # Raise the exception if the function was not successful after the specified number of retries
-            logger.error(f"{func.__name__} завершилась с ошибкой")
 
         return wrapper
 
