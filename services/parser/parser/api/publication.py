@@ -4,12 +4,12 @@ from parser.api.http import http
 class Publication:
 
     def blocks(self):
-        path = "/api/PublicBlocks"
+        path = "/PublicBlocks"
         return http.get(path=path)
 
     def documents_on_page(self, block: str, page_size: int = 200, index: int = 1):
 
-        path = "/api/Documents"
+        path = "/Documents"
         payload = {"block": block, "PageSize": page_size, "Index": index}
 
         return http.get(path=path, payload=payload)
@@ -18,7 +18,7 @@ class Publication:
         self, npa_id: str, block: str, index: int, page_size: int = 200
     ):
 
-        path = "/api/Documents"
+        path = "/Documents"
         payload = {
             "DocumentTypes": npa_id,
             "PageSize": page_size,
@@ -30,7 +30,7 @@ class Publication:
 
     def subjects(self, parent: str = "subjects"):
 
-        path = "/api/PublicBlocks"
+        path = "/PublicBlocks"
         payload = {
             "parent": parent,
         }
@@ -39,13 +39,13 @@ class Publication:
 
     def type_all(self):
 
-        path = "/api/DocumentTypes"
+        path = "/DocumentTypes"
 
         return http.get(path=path)
 
     def type_in_subject(self, block: str):
 
-        path = "/api/DocumentTypes"
+        path = "/DocumentTypes"
         payload = {
             "block": block,
         }

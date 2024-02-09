@@ -6,7 +6,7 @@ logger = utils.get_logger("api.http")
 
 
 class Http:
-    BASE_URL = "http://publication.pravo.gov.ru"
+    BASE_URL = "http://publication.pravo.gov.ru/api"
 
     @utils.retry_request(logger=logger)
     def get(self, path: str, payload: dict = None):
