@@ -1,6 +1,6 @@
 
 
-CREATE TABLE IF NOT EXISTS Districts (
+CREATE TABLE IF NOT EXISTS districts (
 	id SERIAL PRIMARY KEY,
 	name VARCHAR(50),
 	short_name VARCHAR(10),
@@ -8,18 +8,20 @@ CREATE TABLE IF NOT EXISTS Districts (
 	UNIQUE (name, short_name)
 );
 
-CREATE TABLE IF NOT EXISTS Regions (
+CREATE TABLE IF NOT EXISTS regions (
 	id SERIAL PRIMARY KEY, 
 	name VARCHAR(128), 
 	short_name VARCHAR(10),
+	external_id VARCHAR(64),
 	code VARCHAR(10),
+	parent_id VARCHAR(64),
 	id_dist INTEGER, 
 
-	UNIQUE (name, short_name, code),
-	FOREIGN KEY(id_dist) REFERENCES Districts (id)
+	UNIQUE (name, short_name, external_id, code),
+	FOREIGN KEY(id_dist) REFERENCES districts (id)
 );
 
-CREATE TABLE IF NOT EXISTS ReceivingAuthorities (
+CREATE TABLE IF NOT EXISTS receiving_authorities (
 	id SERIAL PRIMARY KEY, 
 	name VARCHAR(128), 
 	short_name VARCHAR(50),
@@ -28,47 +30,46 @@ CREATE TABLE IF NOT EXISTS ReceivingAuthorities (
 	UNIQUE (name, short_name, code)
 );
 
-CREATE TABLE IF NOT EXISTS Blocks  (
+CREATE TABLE IF NOT EXISTS blocks  (
 	id SERIAL PRIMARY KEY, 
 	name VARCHAR(128), 
 	short_name VARCHAR(50),
 	id_organ INT,
 	id_reg INT NULL,
 
-	FOREIGN KEY(id_organ) REFERENCES ReceivingAuthorities (id), 
-	FOREIGN KEY(id_reg) REFERENCES Regions (id), 
+	FOREIGN KEY(id_organ) REFERENCES receiving_authorities (id), 
+	FOREIGN KEY(id_reg) REFERENCES regions (id), 
 	UNIQUE (name, short_name, id_organ, id_reg)
 );
 
-CREATE TABLE IF NOT EXISTS Deadlines  (
+CREATE TABLE IF NOT EXISTS deadlines  (
 	id SERIAL PRIMARY KEY, 
 	day INT, 
 
 	UNIQUE (day)
 );
 
-CREATE TABLE IF NOT EXISTS DocumentTypes  (
+CREATE TABLE IF NOT EXISTS document_types  (
 	id SERIAL PRIMARY KEY, 
 	name VARCHAR(128), 
-	short_name VARCHAR(50),
 	external_id VARCHAR(64),
 	id_dl INT,
 	
-	FOREIGN KEY(id_dl) REFERENCES Deadlines (id), 
+	FOREIGN KEY(id_dl) REFERENCES deadlines (id), 
 	UNIQUE (name, short_name, external_id)
 );
 
-CREATE TABLE IF NOT EXISTS DocumentTypes_Blocks  (
+CREATE TABLE IF NOT EXISTS document_types__blocks  (
 	id SERIAL PRIMARY KEY, 
 	id_doc_type INT, 
 	id_block INT,
 	
-	FOREIGN KEY(id_doc_type) REFERENCES DocumentTypes (id),
-	FOREIGN KEY(id_block) REFERENCES Blocks (id),
+	FOREIGN KEY(id_doc_type) REFERENCES document_types (id),
+	FOREIGN KEY(id_block) REFERENCES blocks (id),
 	UNIQUE (id_doc_type, id_block)
 );
 
-CREATE TABLE IF NOT EXISTS Documents (
+CREATE TABLE IF NOT EXISTS documents (
 	id BIGSERIAL PRIMARY KEY, 
 	name TEXT NOT NULL,
 	eo_number VARCHAR(16), 
@@ -78,10 +79,10 @@ CREATE TABLE IF NOT EXISTS Documents (
 	id_doc_type_block INT, 
 	
 	UNIQUE (name, eo_number, hash, id_doc_type_block), 
-	FOREIGN KEY(id_doc_type_block) REFERENCES DocumentTypes_Blocks (id)
+	FOREIGN KEY(id_doc_type_block) REFERENCES document_types__blocks (id)
 );
 
-CREATE TABLE IF NOT EXISTS Roles (
+CREATE TABLE IF NOT EXISTS roles (
 	id serial PRIMARY KEY, 
 	name VARCHAR(32),
 	
@@ -89,7 +90,7 @@ CREATE TABLE IF NOT EXISTS Roles (
 
 );
 
-CREATE TABLE IF NOT EXISTS Users (
+CREATE TABLE IF NOT EXISTS users (
 	id serial PRIMARY KEY, 
 	username VARCHAR(16),
 	id_role INT,
@@ -99,7 +100,7 @@ CREATE TABLE IF NOT EXISTS Users (
 	is_active bool, 
 	
 	UNIQUE (username), 
-	FOREIGN KEY(id_role) REFERENCES Roles (id)
+	FOREIGN KEY(id_role) REFERENCES roles (id)
 )
 
 

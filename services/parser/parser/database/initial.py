@@ -8,63 +8,140 @@ import parser.utils.utils as utils
 
 logger = utils.get_logger("database.initial")
 
-CREATE_REGION_TABLE = """
-        CREATE TABLE IF NOT EXISTS region (
-        id SERIAL NOT NULL, 
-        id_dist INTEGER, 
-        name VARCHAR(128) NOT NULL, 
-        code VARCHAR(16) NOT NULL, 
-        PRIMARY KEY (id), 
-        UNIQUE (name, code),
-        FOREIGN KEY(id_dist) REFERENCES district (id)
+CREATE_TABLE_DISTRICTS = """
+        CREATE TABLE IF NOT EXISTS districts (
+            id SERIAL PRIMARY KEY,
+            name VARCHAR(50),
+            short_name VARCHAR(10),
+
+            UNIQUE (name, short_name)
         )
         """
 
-CREATE_ACT_TABLE = """
-        CREATE TABLE IF NOT EXISTS act (
-        id SERIAL NOT NULL, 
-        name VARCHAR(128) NOT NULL, 
-        npa_id VARCHAR(128) NOT NULL, 
-        PRIMARY KEY (id), 
-        UNIQUE (name, npa_id)
+CREATE_TABLE_REGIONS = """
+        CREATE TABLE IF NOT EXISTS regions (
+            id SERIAL PRIMARY KEY, 
+            name VARCHAR(128), 
+            short_name VARCHAR(10),
+            external_id VARCHAR(64),
+            code VARCHAR(10),
+            parent_id VARCHAR(64),
+            id_dist INTEGER, 
+
+            UNIQUE (name, short_name, external_id, code),
+            FOREIGN KEY(id_dist) REFERENCES districts (id)
+        )
+        """
+CREATE_TABLE_RECEIVING_AUTHORITIES = """
+        CREATE TABLE IF NOT EXISTS receiving_authorities (
+            id SERIAL PRIMARY KEY, 
+            name VARCHAR(128), 
+            short_name VARCHAR(50),
+            code VARCHAR(50),
+
+            UNIQUE (name, short_name, code)
         )
         """
 
-CREATE_DOCUMENT_TABLE = """
-        CREATE TABLE IF NOT EXISTS document (
-        id BIGSERIAL NOT NULL, 
-        complex_name TEXT NOT NULL, 
-        id_act INTEGER NOT NULL, 
-        eo_number VARCHAR(16) NOT NULL, 
-        view_date DATE NOT NULL, 
-        pages_count INTEGER NOT NULL, 
-        id_reg INTEGER NOT NULL, 
-        PRIMARY KEY (id), 
-        UNIQUE (id_reg, complex_name, eo_number), 
-        FOREIGN KEY(id_act) REFERENCES act (id), 
-        FOREIGN KEY(id_reg) REFERENCES region (id)
+CREATE_TABLE_BLOCKS = """
+        CREATE TABLE IF NOT EXISTS blocks  (
+            id SERIAL PRIMARY KEY, 
+            name VARCHAR(128), 
+            short_name VARCHAR(50),
+            id_organ INT,
+            id_reg INT NULL,
+
+            FOREIGN KEY(id_organ) REFERENCES receiving_authorities (id), 
+            FOREIGN KEY(id_reg) REFERENCES regions (id), 
+            UNIQUE (name, short_name, id_organ, id_reg)
         )
         """
 
-CREATE_DISTRICT_TABLE = """
-        CREATE TABLE IF NOT EXISTS district (
-        id INT PRIMARY KEY,
-        name VARCHAR(50)
+CREATE_TABLE_DEADLINES = """
+        CREATE TABLE IF NOT EXISTS deadlines  (
+            id SERIAL PRIMARY KEY, 
+            day INT, 
+
+            UNIQUE (day)
         )
         """
+
+CREATE_DOCUMENT_TYPES_TABLE = """
+        CREATE TABLE IF NOT EXISTS document_types  (
+            id SERIAL PRIMARY KEY, 
+            name VARCHAR(128), 
+            external_id VARCHAR(64),
+            id_dl INT,
+            
+            FOREIGN KEY(id_dl) REFERENCES Deadlines (id), 
+            UNIQUE (name, short_name, external_id)
+        )
+        """
+
+CREATE_DOCUMENT_TYPES__BLOCKS_TABLE = """
+        CREATE TABLE IF NOT EXISTS document_types__blocks  (
+            id SERIAL PRIMARY KEY, 
+            id_doc_type INT, 
+            id_block INT,
+            
+            FOREIGN KEY(id_doc_type) REFERENCES document_types (id),
+            FOREIGN KEY(id_block) REFERENCES blocks (id),
+            UNIQUE (id_doc_type, id_block)
+        )
+        """
+
+CREATE_TEBLE_DOCUMENTS = """
+        CREATE TABLE IF NOT EXISTS documents (
+        id BIGSERIAL PRIMARY KEY, 
+        name TEXT NOT NULL,
+        eo_number VARCHAR(16), 
+        view_date DATE, 
+        hash VARCHAR(128),
+        pages_count INT, 
+        id_doc_type_block INT, 
+        
+        UNIQUE (name, eo_number, hash, id_doc_type_block), 
+        FOREIGN KEY(id_doc_type_block) REFERENCES document_types__blocks (id)
+    )
+    """
+
+CREATE_TABLE_ROLES = """
+        CREATE TABLE IF NOT EXISTS roles (
+            id serial PRIMARY KEY, 
+            name VARCHAR(32),
+            
+            UNIQUE (name)
+        )
+        """
+
+CREATE_TABLE_USERS = """
+        CREATE TABLE IF NOT EXISTS users (
+            id serial PRIMARY KEY, 
+            username VARCHAR(16),
+            id_role INT,
+            hash_password VARCHAR(16), 
+            date_registered TIMESTAMP, 
+            last_login TIMESTAMP,
+            is_active bool, 
+            
+            UNIQUE (username), 
+            FOREIGN KEY(id_role) REFERENCES roles (id)
+        )
+        """
+
 
 INSERT_DISTRICTS = """INSERT INTO DISTRICT (id, name) VALUES """
 
 CREATE_ALL_INDEX = """CREATE INDEX IF NOT EXISTS document_id_idx ON document (id);
-                    CREATE INDEX IF NOT EXISTS document_id_reg_idx ON document (id_reg);
+                    CREATE INDEX IF NOT EXISTS document_id_reg_idx ON document (id_doc_type_block);
                     CREATE INDEX IF NOT EXISTS document_view_date_idx ON document (view_date);
                     """
 
 
 def create_tables():
-    create_district_table()
-    insert_district_table()
-    create_region_table()
+    create_districts_table()
+    insert_districts_table()
+    create_regions_table()
     create_act_table()
     create_document_table()
     create_all_index()
@@ -82,11 +159,21 @@ def create_all_index():
                 logger.critical(f"Индексы не созданы! {e}")
 
 
-def create_district_table():
+def create_table_districts():
     with get_sync_connection() as connection:
         with connection.cursor() as cursor:
             try:
-                cursor.execute(CREATE_DISTRICT_TABLE)
+                cursor.execute(CREATE_TABLE_DISTRICTS)
+                logger.info("Округа созданы или уже существуют")
+            except Exception as e:
+                logger.critical(f"Округа не созданы! {e}")
+
+
+def create_table_districts():
+    with get_sync_connection() as connection:
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute(CREATE_TABLE_DISTRICTS)
                 logger.info("Округа созданы или уже существуют")
             except Exception as e:
                 logger.critical(f"Округа не созданы! {e}")

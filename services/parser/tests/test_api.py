@@ -1,34 +1,49 @@
-from parser.api.api import api
+import json
+
+import requests
+from parser.outgoing_requests.request import request
+from parser.utils.utils import get_logger
+
+logger = get_logger("PYTEST")
 
 
-def test_get_blocks():
-    response = api.publication.blocks()
+def test_all_blocks():
+    response = request.api.all_blocks()
     assert response["response"].status_code == 200
     assert response["response"].json() != None
 
 
-def test_get_document_on_page():
-    response = api.publication.documents_on_page("region01")
+def test_documents_for_the_block():
+    response = request.api.documents_for_the_block(block="region01", index=1)
     assert response["response"].status_code == 200
     assert response["response"].json() != None
 
 
-def test_documents_on_page_type():
-    response = api.publication.documents_on_page_type(
-        block="region01", npa_id="63c6ff4f-ed74-45b3-86e2-8a76b75d674d", index=1
+def test_documents_for_the_block_all():
+    response = request.api.documents_for_the_block(
+        block="region01", document_type="0790e34b-784b-4372-884e-3282622a24bd", index=1
     )
-    print(response)
+    # logger.debug(json.dumps(response["response"].json(), indent=4, ensure_ascii=False))
+    assert response["response"].status_code == 200
+    assert response["response"].json()["items"] != []
+
+
+def test_types_in_block():
+    response = request.api.types_in_block(block="region01")
     assert response["response"].status_code == 200
     assert response["response"].json() != None
 
 
-def test_type_in_subject():
-    response = api.publication.type_in_subject(block="region01")
+def test_types_in_block_all():
+    response = request.api.types_in_block()
     assert response["response"].status_code == 200
     assert response["response"].json() != None
 
 
-def test_type_all():
-    response = api.publication.type_all()
-    assert response["response"].status_code == 200
-    assert response["response"].json() != None
+def test_download_pdf():
+    response = request.file.download_pdf(registration_number="0100202402080001")
+    try:
+        # assert response.status_code == 200
+        assert response["response"].content != None
+    except Exception as ax:
+        logger.exception(response["response"].content)

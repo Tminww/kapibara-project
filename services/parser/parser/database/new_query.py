@@ -8,50 +8,38 @@ import parser.utils.utils as utils
 
 logger = utils.get_logger("database.query")
 
-INSERT_TYPES = """INSERT INTO ACT (name, external_id) VALUES """
+INSERT_ACT = """INSERT INTO ACT (name, npa_id) VALUES """
 
-INSERT_SUBJECTS = (
-    """INSERT INTO REGION (name, short_name, external_id, code, parent_id) VALUES """
-)
+INSERT_REGION = """INSERT INTO REGION (name, code) VALUES """
 
 UPDATE_REGION_TABLE = """UPDATE region SET id_dist = %s WHERE name = %s"""
 
 INSERT_DOCUMENT = """INSERT INTO DOCUMENT (complex_name, id_act, eo_number, view_date, pages_count, id_reg) VALUES """
 
 
-def insert_types(types):
+def insert_act(name_npaId):
     with get_sync_connection() as connection:
         with connection.cursor() as cursor:
             try:
-                values = [(type["name"], type["external_id"]) for type in types]
+                values = name_npaId
                 args = ",".join(
                     cursor.mogrify("(%s, %s)", i).decode("utf-8") for i in values
                 )
-                cursor.execute(INSERT_TYPES + args + " ON CONFLICT DO NOTHING;")
+                cursor.execute(INSERT_ACT + args + " ON CONFLICT DO NOTHING;")
                 logger.info(f"Вставленно {len(values)} номенклатур")
             except errors.lookup(UNIQUE_VIOLATION) as e:
                 logger.exception(UNIQUE_VIOLATION)
 
 
-def insert_regions(blocks):
+def insert_region(name_code):
     with get_sync_connection() as connection:
         with connection.cursor() as cursor:
             try:
-                values = [
-                    (
-                        block["name"],
-                        block["short_name"],
-                        block["external_id"],
-                        block["code"],
-                        block["parent_id"],
-                    )
-                    for block in blocks
-                ]
+                values = name_code
                 args = ",".join(
-                    cursor.mogrify("(%s, %s, %s, %s, %s)", i).decode("utf-8")
-                    for i in values
+                    cursor.mogrify("(%s, %s)", i).decode("utf-8") for i in values
                 )
-                cursor.execute(INSERT_SUBJECTS + args + " ON CONFLICT DO NOTHING;")
+                cursor.execute(INSERT_REGION + args + " ON CONFLICT DO NOTHING;")
                 logger.info(f"Вставленно {len(values)} регионов")
 
             except errors.lookup(UNIQUE_VIOLATION) as e:
@@ -74,7 +62,7 @@ def get_id_act(npa_id):
             return id_act
 
 
-def update_subjects():
+def update_region():
     with get_sync_connection() as connection:
         with connection.cursor() as cursor:
             try:

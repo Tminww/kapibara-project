@@ -1,3 +1,4 @@
+import json
 import random
 import requests
 
@@ -7,7 +8,7 @@ import parser.database.initial as initial
 import parser.database.query as query
 
 # import services.parser.parser.api.publication.publication as request_api
-from parser.api.api import api
+from services.parser.parser.outgoing_requests.request import api
 import parser.utils.utils as utils
 
 import time
@@ -21,7 +22,7 @@ logger = utils.get_logger("main")
 def get_document_api(code):
     logger.info(f"Блок {code} начат")
 
-    req_total_documents = api.publication.documents_on_page(code)
+    req_total_documents = api.publication.documents_for_the_block(code)
 
     if query.get_total_documents(code=code) == req_total_documents["itemsTotalCount"]:
         logger.info(f"Блок {code} уже заполнен")
@@ -85,52 +86,50 @@ def get_document_api(code):
     logger.info(f"Блок {code} закончен")
 
 
-def get_npa_api() -> list:
-    names: list = []
-    npa_id: list = []
-    req = api.publication.type_all()
+def get_all_types() -> list:
 
-    for npa in req:
-        names.append(npa["name"])
-        npa_id.append(npa["id"])
-    # logger.debug(list(zip(names, npa_id)))
-    return list(zip(names, npa_id))
+    response = api.publication.types_in_block()
+    all_types: list = []
 
+    for type in response["response"].json():
+        all_types.append({"name": type["name"], "external_id": type["id"]})
 
-def get_subject_api() -> list:
-    req = api.publication.subjects()
-    names: list = []
-    codes: list = []
-    for subject in req:
-        names.append(subject["name"])
-        codes.append(subject["code"])
-    # logger.debug(list(zip(names, codes)))
-    return list(zip(names, codes))
+    print(json.dumps(all_types[0], ensure_ascii=False, indent=4))
+    logger.debug(json.dumps(all_types[0], indent=4, ensure_ascii=False))
+    return all_types
 
 
-@utils.retry_request(logger=logger)
-def test():
+def get_subjects() -> list:
+    response = api.publication.subblocks(parent="subjects")
+    subjects: list = []
 
-    response = requests.get(url="https://api.tminww.site/subjects")
+    for subject in response["response"].json():
+        subjects.append(
+            {
+                "name": subject["shortName"],
+                "short_name": subject["shortName"],
+                "external_id": subject["id"],
+                "code": subject["code"],
+                "parent_id": subject["parentId"],
+                "categories": subject["categories"],
+            }
+        )
 
-    if response.status_code != 200:
-        raise requests.exceptions.RequestException
-    else:
-        return response
+    print(json.dumps(subjects[0], ensure_ascii=False, indent=4))
+    logger.debug(json.dumps(subjects[0], indent=4, ensure_ascii=False))
+    return subjects
 
 
 def main():
     logger.info("Начало работы скрипта")
 
-    test()
-
     initial.create_tables()
-    name_code = get_subject_api()
-    name_npa_id = get_npa_api()
+    subjects = get_subjects()
+    all_types = get_all_types()
 
-    query.insert_act(name_npa_id)
-    query.insert_region(name_code)
-    query.update_region()
+    query.insert_types(types=all_types)
+    query.insert_regions(blocks=subjects)
+    query.update_subjects()
 
     for name, code in name_code:
         get_document_api(code=code)

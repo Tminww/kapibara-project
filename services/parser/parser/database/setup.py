@@ -22,5 +22,7 @@ except Exception as e:
 
 
 def get_sync_connection():
-    if sync_connection:
+    try:
         return sync_connection
+    except Exception as ax:
+        logger.critical(f"Ошибка при соединении с базой данных: {e}")

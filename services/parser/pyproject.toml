@@ -19,8 +19,8 @@ fake-useragent = "^1.4.0"
 pytest = "^8.0.0"
 
 [tool.poetry.scripts]
-dev = "parser.main:main"
-testdev = "parser.client.client:main"
+main = "parser.main:main"
+scenarios = "parser.scenarios.full_bypass:main"
 
 [build-system]
 requires = ["poetry-core"]
