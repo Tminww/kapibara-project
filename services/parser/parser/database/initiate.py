@@ -16,7 +16,6 @@ class Initiate:
 
     def __init__(self, get_connection) -> None:
         self.connection = get_connection
-        self.
 
     def query(func):
         def wrapper(self, *args, **kwargs):
@@ -76,11 +75,10 @@ class Initiate:
     @query
     def create_all_index(self):
         return raw.CREATE_ALL_INDEX
-    
-    @query 
+
+    @query
     def insert_into_table_districts(self):
         pass
-
 
 
 # def insert_district_table():
