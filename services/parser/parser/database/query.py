@@ -8,16 +8,6 @@ import parser.utils.utils as utils
 
 logger = utils.get_logger("database.query")
 
-INSERT_TYPES = """INSERT INTO ACT (name, external_id) VALUES """
-
-INSERT_SUBJECTS = (
-    """INSERT INTO REGION (name, short_name, external_id, code, parent_id) VALUES """
-)
-
-UPDATE_REGION_TABLE = """UPDATE region SET id_dist = %s WHERE name = %s"""
-
-INSERT_DOCUMENT = """INSERT INTO DOCUMENT (complex_name, id_act, eo_number, view_date, pages_count, id_reg) VALUES """
-
 
 def insert_types(types):
     with get_sync_connection() as connection:

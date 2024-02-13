@@ -4,7 +4,7 @@ import requests
 
 from datetime import datetime
 
-import parser.database.initial as initial
+import services.parser.parser.database.initiate as initiate
 import parser.database.query as query
 
 # import services.parser.parser.api.publication.publication as request_api
@@ -123,7 +123,7 @@ def get_subjects() -> list:
 def main():
     logger.info("Начало работы скрипта")
 
-    initial.create_tables()
+    initiate.create_tables()
     subjects = get_subjects()
     all_types = get_all_types()
 

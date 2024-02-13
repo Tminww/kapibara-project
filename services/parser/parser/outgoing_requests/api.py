@@ -2,10 +2,10 @@ from parser.outgoing_requests.http import http
 
 
 class Api:
-    BASE_URL = "http://publication.pravo.gov.ru/api"
+    URL = "/api"
 
     def all_blocks(self):
-        path = f"{self.BASE_URL}/PublicBlocks"
+        path = f"{self.URL}/PublicBlocks"
         return http.get(path=path)
 
     def documents_for_the_block(
@@ -24,7 +24,7 @@ class Api:
             json: ответ сервера
         """
 
-        path = f"{self.BASE_URL}/Documents"
+        path = f"{self.URL}/Documents"
         payload = {
             "DocumentTypes": document_type,
             "PageSize": page_size,
@@ -36,7 +36,7 @@ class Api:
 
     def subblocks(self, parent: str = "subjects"):
 
-        path = f"{self.BASE_URL}/PublicBlocks"
+        path = f"{self.URL}/PublicBlocks"
         payload = {
             "parent": parent,
         }
@@ -54,12 +54,9 @@ class Api:
             json: ответ сервера
         """
 
-        path = f"{self.BASE_URL}/DocumentTypes"
+        path = f"{self.URL}/DocumentTypes"
         payload = {
             "block": block,
         }
 
         return http.get(path=path, payload=payload)
-
-
-api = Api()

@@ -4,7 +4,7 @@ import requests
 from parser.outgoing_requests.request import request
 from parser.utils.utils import get_logger
 
-logger = get_logger("PYTEST")
+logger = get_logger("pytest")
 
 
 def test_all_blocks():
