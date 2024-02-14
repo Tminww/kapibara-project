@@ -1,3 +1,4 @@
+from abc import ABC, abstractmethod
 from parser.data.districts import get_districts_data
 from psycopg2.errorcodes import UNIQUE_VIOLATION
 
@@ -10,7 +11,58 @@ import parser.utils.utils as utils
 logger = utils.get_logger("database.initiate")
 
 
-class Initiate:
+class InitiateInterface(ABC):
+
+    @abstractmethod
+    def create_table_districts():
+        raise NotImplementedError
+
+    @abstractmethod
+    def create_table_regions():
+        raise NotImplementedError
+
+    @abstractmethod
+    def create_table_receiving_authorities():
+        raise NotImplementedError
+
+    @abstractmethod
+    def create_table_blocks():
+        raise NotImplementedError
+
+    @abstractmethod
+    def create_table_deadlines():
+        raise NotImplementedError
+
+    @abstractmethod
+    def create_table_document_types():
+        raise NotImplementedError
+
+    @abstractmethod
+    def create_table_document_types__blocks():
+        raise NotImplementedError
+
+    @abstractmethod
+    def create_table_documents():
+        raise NotImplementedError
+
+    @abstractmethod
+    def create_table_roles():
+        raise NotImplementedError
+
+    @abstractmethod
+    def create_table_users():
+        raise NotImplementedError
+
+    @abstractmethod
+    def create_all_index():
+        raise NotImplementedError
+
+    @abstractmethod
+    def insert_into_table_districts():
+        raise NotImplementedError
+
+
+class Initiate(InitiateInterface):
 
     connection = None
 
@@ -26,8 +78,8 @@ class Initiate:
                         cursor.execute(func(self, *args, **kwargs))
                         status = True
                         logger.info(f"{func.__name__} успешно выполнена")
-                    except Exception as e:
-                        logger.critical(f"{func.__name__} завершилась с ошибкой {e}")
+                    except Exception as ex:
+                        logger.critical(f"{func.__name__} завершилась с ошибкой {ex}")
             return status
 
         return wrapper
