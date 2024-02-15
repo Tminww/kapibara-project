@@ -125,7 +125,7 @@ CREATE_ALL_INDEX = """CREATE INDEX IF NOT EXISTS document_id_idx ON documents (i
                     CREATE INDEX IF NOT EXISTS document_view_date_idx ON documents (view_date);
                     """
 
-INSERT_DISTRICTS = """INSERT INTO DISTRICT (id, name) VALUES """
+INSERT_DISTRICTS = """INSERT INTO DISTRICT (id, name, short_name) VALUES """
 
 
 INSERT_TYPES = """INSERT INTO ACT (name, external_id) VALUES """

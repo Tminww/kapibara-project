@@ -4,9 +4,64 @@ from psycopg2 import errors
 from parser.data.subjects import get_subjects_data
 
 import parser.utils.utils as utils
+from services.parser.parser.data.districts import get_districts_data
 
 
 logger = utils.get_logger("database.query")
+
+
+class QueryInterface:
+    def create_table_districts():
+        raise NotImplementedError
+
+
+class Query:
+    connection = None
+
+    def __init__(self, get_connection) -> None:
+        self.connection = get_connection
+
+    def query(func):
+        def wrapper(self, *args, **kwargs):
+            status = False
+            with self.connection() as connection:
+                with connection.cursor() as cursor:
+                    try:
+                        cursor.execute(func(self, *args, **kwargs))
+                        status = True
+                        logger.info(f"{func.__name__} успешно выполнена")
+                    except Exception as ex:
+                        logger.critical(f"{func.__name__} завершилась с ошибкой {ex}")
+            return status
+
+        return wrapper
+
+    @query
+    def insert_into_table_districts():
+        values = get_districts_data()
+        args = ",".join(
+            cursor.mogrify("(%s, %s)", (row["id"], row["name"])).decode("utf-8")
+            for row in values
+        )
+
+
+# def insert_district_table():
+#     with get_sync_connection() as connection:
+#         with connection.cursor() as cursor:
+#             try:
+#                 values = get_districts_data()
+#                 args = ",".join(
+#                     cursor.mogrify("(%s, %s)", (row["id"], row["name"])).decode("utf-8")
+#                     for row in values
+#                 )
+#                 cursor.execute(
+#                     INSERT_DISTRICTS
+#                     + args
+#                     + " ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name;"
+#                 )
+
+#             except errors.lookup(UNIQUE_VIOLATION) as e:
+#                 logger.exception(UNIQUE_VIOLATION)
 
 
 def insert_types(types):
