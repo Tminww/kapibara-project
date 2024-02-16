@@ -110,4 +110,4 @@ class InitiateCreate(InitiateCreateInterface):
 
     @query_create
     def index_all(self):
-        return raw.CREATE_ALL_INDEX
+        return raw.CREATE_INDEX_ALL

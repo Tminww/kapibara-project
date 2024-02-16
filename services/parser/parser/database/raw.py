@@ -120,20 +120,24 @@ CREATE_TABLE_USERS = """
         """
 
 
-CREATE_ALL_INDEX = """CREATE INDEX IF NOT EXISTS document_id_idx ON documents (id);
+CREATE_INDEX_ALL = """CREATE INDEX IF NOT EXISTS document_id_idx ON documents (id);
                     CREATE INDEX IF NOT EXISTS document_id_reg_idx ON documents (id_doc_type_block);
                     CREATE INDEX IF NOT EXISTS document_view_date_idx ON documents (view_date);
                     """
 
-INSERT_DISTRICTS = """INSERT INTO DISTRICT (id, name, short_name) VALUES """
+INSERT_INTO_TABLE_DISTRICTS = """INSERT INTO DISTRICTS (id, name, short_name) VALUES """
 
 
-INSERT_TYPES = """INSERT INTO ACT (name, external_id) VALUES """
-
-INSERT_SUBJECTS = (
-    """INSERT INTO REGION (name, short_name, external_id, code, parent_id) VALUES """
+INSERT_INTO_TABLE_TYPES = (
+    """INSERT INTO DOCUMENT_TYPES (name, external_id, id_dl) VALUES """
 )
 
-UPDATE_REGION_TABLE = """UPDATE region SET id_dist = %s WHERE name = %s"""
+INSERT_INTO_TABLE_REGIONS = (
+    """INSERT INTO REGIONS (name, short_name, external_id, code, parent_id) VALUES """
+)
 
-INSERT_DOCUMENT = """INSERT INTO DOCUMENT (complex_name, id_act, eo_number, view_date, pages_count, id_reg) VALUES """
+INSERT_INTO_TABLE_DOCUMENTS = (
+    """INSERT INTO DOCUMENTS (name, eo_number, view_date, hash, pages_count) VALUES """
+)
+
+UPDATE_TABLE_REGIONS = """UPDATE REGIONS SET id_dist = %s WHERE name = %s"""

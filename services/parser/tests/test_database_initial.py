@@ -54,3 +54,8 @@ def test_create_table_users():
 def test_create_all_index():
     status = db.initiate.create.index_all()
     assert status == True
+
+
+def test_insert_table_districts():
+    status = db.initiate.insert.into_table_districts()
+    assert status == True

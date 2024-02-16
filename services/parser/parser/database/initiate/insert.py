@@ -1,3 +1,5 @@
+import json
+import pprint
 from psycopg2.errorcodes import UNIQUE_VIOLATION
 
 import parser.database.raw as raw
@@ -12,7 +14,7 @@ logger = utils.get_logger("database.initiate.insert")
 
 class InitiateInsertInterface:
 
-    def insert_table_districts():
+    def into_table_districts():
         raise NotImplementedError
 
 
@@ -39,17 +41,19 @@ class InitiateInsert(InitiateInsertInterface):
         return wrapper
 
     @query_insert
-    def insert_table_districts(self, cursor):
+    def into_table_districts(self, cursor):
 
-        values = get_districts_data()
+        values = [
+            (district["id"], district["name"], district["short_name"])
+            for district in get_districts_data()
+        ]
+        logger.debug(json.dumps(values, indent=4, ensure_ascii=False))
         args = ",".join(
-            cursor.mogrify(
-                "(%s, %s, %s)", (row["id"], row["name"], row["short_name"])
-            ).decode("utf-8")
-            for row in values
+            cursor.mogrify("(%s, %s, %s)", district).decode("utf-8")
+            for district in values
         )
         return (
-            raw.INSERT_DISTRICTS
+            raw.INSERT_INTO_TABLE_DISTRICTS
             + args
-            + " ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name;"
+            + " ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, short_name = EXCLUDED.short_name;"
         )

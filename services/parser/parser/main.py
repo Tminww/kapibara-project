@@ -4,11 +4,11 @@ import requests
 
 from datetime import datetime
 
-import services.parser.parser.database.initiate.create as create
-import parser.database.query as query
+import parser.database.initiate.create as create
+import parser.database.query.insert as insert
 
-# import services.parser.parser.api.publication.publication as request_api
-from services.parser.parser.outgoing_requests.request import api
+# import parser.api.publication.publication as request_api
+from parser.outgoing_requests.request import api
 import parser.utils.utils as utils
 
 import time
@@ -24,7 +24,7 @@ def get_document_api(code):
 
     req_total_documents = api.publication.documents_for_the_block(code)
 
-    if query.get_total_documents(code=code) == req_total_documents["itemsTotalCount"]:
+    if insert.get_total_documents(code=code) == req_total_documents["itemsTotalCount"]:
         logger.info(f"Блок {code} уже заполнен")
         return
 
@@ -45,7 +45,7 @@ def get_document_api(code):
             #     )
             # )
             if (
-                query.get_total_documents_type(code=code, npa_id=npa["id"])
+                insert.get_total_documents_type(code=code, npa_id=npa["id"])
                 == req["itemsTotalCount"]
             ):
                 break
@@ -57,8 +57,8 @@ def get_document_api(code):
                 view_dates: list = []
                 id_regs: list = []
                 id_acts: list = []
-                id_reg = query.get_id_reg(code=code)
-                id_act = query.get_id_act(npa_id=npa["id"])
+                id_reg = insert.get_id_reg(code=code)
+                id_act = insert.get_id_act(npa_id=npa["id"])
 
                 for item in req["items"]:
                     complex_names.append(item["complexName"])
@@ -71,7 +71,7 @@ def get_document_api(code):
                     )
                     id_regs.append(id_reg)
                     id_acts.append(id_act)
-                query.insert_document(
+                insert.insert_document(
                     complex_names,
                     eo_numbers,
                     pages_counts,
@@ -127,9 +127,9 @@ def main():
     subjects = get_subjects()
     all_types = get_all_types()
 
-    query.insert_types(types=all_types)
-    query.insert_regions(blocks=subjects)
-    query.update_subjects()
+    insert.insert_types(types=all_types)
+    insert.insert_regions(blocks=subjects)
+    insert.update_subjects()
 
     for name, code in name_code:
         get_document_api(code=code)
