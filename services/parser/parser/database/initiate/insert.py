@@ -14,7 +14,10 @@ logger = utils.get_logger("database.initiate.insert")
 
 class InitiateInsertInterface:
 
-    def into_table_districts():
+    def table_districts():
+        raise NotImplementedError
+
+    def table_deadlines():
         raise NotImplementedError
 
 
@@ -41,11 +44,11 @@ class InitiateInsert(InitiateInsertInterface):
         return wrapper
 
     @query_insert
-    def into_table_districts(self, cursor):
+    def table_districts(self, cursor, json_data=get_districts_data()):
 
         values = [
             (district["id"], district["name"], district["short_name"])
-            for district in get_districts_data()
+            for district in json_data
         ]
         logger.debug(json.dumps(values, indent=4, ensure_ascii=False))
         args = ",".join(
@@ -57,3 +60,7 @@ class InitiateInsert(InitiateInsertInterface):
             + args
             + " ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, short_name = EXCLUDED.short_name;"
         )
+
+    @query_insert
+    def table_deadlines():
+        pass

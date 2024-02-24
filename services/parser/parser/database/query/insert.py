@@ -14,13 +14,16 @@ HASH = "x7585xx8969"
 
 class QueryInsertInterface:
 
-    def into_table_regions(blocks: List[dict]):
+    def table_regions(blocks: List[dict]):
         raise NotImplementedError
 
-    def into_table_document_types(types: List[dict]):
+    def table_document_types(types: List[dict]):
         raise NotImplementedError
 
-    def into_table_documents(documents: List[dict]):
+    def table_documents(documents: List[dict]):
+        raise NotImplementedError
+
+    def table_receiving_authorities(types: List[dict]):
         raise NotImplementedError
 
 
@@ -47,7 +50,7 @@ class QueryInsert(QueryInsertInterface):
         return wrapper
 
     @query_insert
-    def into_table_regions(self, cursor, blocks: List[dict]):
+    def table_regions(self, cursor, blocks: List[dict]):
         values = [
             (
                 block["name"],
@@ -64,7 +67,7 @@ class QueryInsert(QueryInsertInterface):
         return raw.INSERT_INTO_TABLE_REGIONS + args + " ON CONFLICT DO NOTHING;"
 
     @query_insert
-    def into_table_document_types(self, cursor, types: List[dict]):
+    def table_document_types(self, cursor, types: List[dict]):
 
         values = [(type["name"], type["external_id"], ID_DEADLINE) for type in types]
         args = ",".join(
@@ -73,7 +76,7 @@ class QueryInsert(QueryInsertInterface):
         return raw.INSERT_INTO_TABLE_TYPES + args + " ON CONFLICT DO NOTHING;"
 
     @query_insert
-    def into_table_documents(self, cursor, documents: List[dict]):
+    def table_documents(self, cursor, documents: List[dict]):
         values = [
             (
                 document["name"],
@@ -91,3 +94,6 @@ class QueryInsert(QueryInsertInterface):
             for document in values
         )
         return raw.INSERT_INTO_TABLE_DOCUMENTS + args + " ON CONFLICT DO NOTHING;"
+
+    def table_receiving_authorities(types: List[dict]):
+        pass

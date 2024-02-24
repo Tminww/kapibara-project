@@ -3,9 +3,7 @@ import random
 import requests
 
 from datetime import datetime
-
-import parser.database.initiate.create as create
-import parser.database.query.insert as insert
+from parser.database.database import db
 
 # import parser.api.publication.publication as request_api
 from parser.outgoing_requests.request import api
@@ -123,10 +121,26 @@ def get_subjects() -> list:
 def main():
     logger.info("Начало работы скрипта")
 
-    create.create_tables()
+    db.initiate.create.table_districts()
+    db.initiate.create.table_regions()
+    db.initiate.create.table_deadlines()
+    db.initiate.create.table_receiving_authorities()
+    db.initiate.create.table_blocks()
+    db.initiate.create.table_document_types()
+    db.initiate.create.table_document_types__blocks()
+    db.initiate.create.table_documents()
+
+    db.initiate.create.table_roles()
+    db.initiate.create.table_users()
+
     subjects = get_subjects()
     all_types = get_all_types()
 
+    db.initiate.insert.table_districts()
+    db.initiate.insert.table_deadlines()
+
+    db.query.insert.table_regions()
+    db.query.insert.
     insert.insert_types(types=all_types)
     insert.insert_regions(blocks=subjects)
     insert.update_subjects()
