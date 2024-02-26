@@ -4,14 +4,14 @@ from parser.database import raw
 logger = utils.get_logger("database.query.select")
 
 
-class QuerySelectInterface:
+# class QuerySelectInterface:
 
-    # def update_table_regions():
-    #     return NotImplementedError
-    pass
+#     # def update_table_regions():
+#     #     return NotImplementedError
+#     pass
 
 
-class QuerySelect(QuerySelectInterface):
+class QuerySelect:
     connection = None
 
     def __init__(self, get_connection) -> None:

@@ -9,43 +9,43 @@ import parser.utils.utils as utils
 logger = utils.get_logger("database.initiate.create")
 
 
-class InitiateCreateInterface:
+# class InitiateCreateInterface:
 
-    def table_districts():
-        raise NotImplementedError
+#     def table_districts():
+#         raise NotImplementedError
 
-    def table_regions():
-        raise NotImplementedError
+#     def table_regions():
+#         raise NotImplementedError
 
-    def table_receiving_authorities():
-        raise NotImplementedError
+#     def table_receiving_authorities():
+#         raise NotImplementedError
 
-    def table_blocks():
-        raise NotImplementedError
+#     def table_blocks():
+#         raise NotImplementedError
 
-    def table_deadlines():
-        raise NotImplementedError
+#     def table_deadlines():
+#         raise NotImplementedError
 
-    def table_document_types():
-        raise NotImplementedError
+#     def table_document_types():
+#         raise NotImplementedError
 
-    def table_document_types__blocks():
-        raise NotImplementedError
+#     def table_document_types__blocks():
+#         raise NotImplementedError
 
-    def table_documents():
-        raise NotImplementedError
+#     def table_documents():
+#         raise NotImplementedError
 
-    def table_roles():
-        raise NotImplementedError
+#     def table_roles():
+#         raise NotImplementedError
 
-    def table_users():
-        raise NotImplementedError
+#     def table_users():
+#         raise NotImplementedError
 
-    def index_all():
-        raise NotImplementedError
+#     def index_all():
+#         raise NotImplementedError
 
 
-class InitiateCreate(InitiateCreateInterface):
+class InitiateCreate:
 
     connection = None
 

@@ -127,13 +127,22 @@ CREATE_INDEX_ALL = """CREATE INDEX IF NOT EXISTS document_id_idx ON documents (i
 
 INSERT_INTO_TABLE_DISTRICTS = """INSERT INTO DISTRICTS (id, name, short_name) VALUES """
 
+INSERT_INTO_TABLE_REGIONS = """INSERT INTO REGIONS (name, short_name, external_id, code, parent_id, id_dist) VALUES """
 
-INSERT_INTO_TABLE_TYPES = (
+
+INSERT_INTO_TABLE_DEADLINES = """INSERT INTO DEADLINES (id, day) VALUES """
+
+INSERT_INTO_TABLE_RECEIVING_AUTHORITIES = (
+    """INSERT INTO RECEIVING_AUTHORITIES (name, short_name, code) VALUES """
+)
+
+
+INSERT_INTO_TABLE_DOCUMENT_TYPES = (
     """INSERT INTO DOCUMENT_TYPES (name, external_id, id_dl) VALUES """
 )
 
-INSERT_INTO_TABLE_REGIONS = (
-    """INSERT INTO REGIONS (name, short_name, external_id, code, parent_id) VALUES """
+INSERT_INTO_TABLE_DOCUMENT_TYPES__BLOCKS = (
+    """INSERT INTO DOCUMENT_TYPES__BLOCKS (id_doc_type, id_block) VALUES """
 )
 
 INSERT_INTO_TABLE_DOCUMENTS = (

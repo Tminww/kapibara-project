@@ -1,12 +1,6 @@
-from parser.database.query.insert import QueryInsertInterface
-from parser.database.query.update import QueryUpdateInterface
-from parser.database.query.select import QuerySelectInterface
-
-
-class QueryInterface(QueryInsertInterface, QueryUpdateInterface, QuerySelectInterface):
-    insert: QueryInsertInterface
-    update: QueryUpdateInterface
-    select: QuerySelectInterface
+from parser.database.query.insert import QueryInsert
+from parser.database.query.update import QueryUpdate
+from parser.database.query.select import QuerySelect
 
 
 class Query:
@@ -17,9 +11,9 @@ class Query:
 
     def __init__(
         self,
-        insert_interface: QueryInsertInterface,
-        update_interface: QueryUpdateInterface,
-        select_interface: QuerySelectInterface,
+        insert_interface: QueryInsert,
+        update_interface: QueryUpdate,
+        select_interface: QuerySelect,
     ) -> None:
 
         self.insert = insert_interface

@@ -1,19 +1,19 @@
 import json
 import parser.utils.utils as utils
 from parser.database import raw
-from parser.data.subjects import get_subjects_data
+from parser.data.regions import get_regions_data
 
 
 logger = utils.get_logger("database.query.update")
 
 
-class QueryUpdateInterface:
+# class QueryUpdateInterface:
 
-    def table_regions():
-        return NotImplementedError
+#     def table_regions():
+#         return NotImplementedError
 
 
-class QueryUpdate(QueryUpdateInterface):
+class QueryUpdate:
 
     connection = None
 
@@ -38,7 +38,7 @@ class QueryUpdate(QueryUpdateInterface):
 
     @query_update
     def table_regions(self, cursor):
-        values = [(region["id_dist"], region["name"]) for region in get_subjects_data()]
+        values = [(region["id_dist"], region["name"]) for region in get_regions_data()]
         logger.debug(json.dumps(values, indent=4, ensure_ascii=False))
 
         args = ",".join(

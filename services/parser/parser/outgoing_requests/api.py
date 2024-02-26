@@ -4,10 +4,6 @@ from parser.outgoing_requests.http import http
 class Api:
     URL = "/api"
 
-    def all_blocks(self):
-        path = f"{self.URL}/PublicBlocks"
-        return http.get(path=path)
-
     def documents_for_the_block(
         self, block: str, index: int, page_size: int = 200, document_type: str = None
     ):
@@ -34,7 +30,7 @@ class Api:
 
         return http.get(path=path, payload=payload)
 
-    def subblocks(self, parent: str = "subjects"):
+    def public_blocks(self, parent: str = None):
 
         path = f"{self.URL}/PublicBlocks"
         payload = {

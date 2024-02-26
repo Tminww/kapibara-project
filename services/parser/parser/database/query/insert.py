@@ -12,22 +12,13 @@ ID_DEADLINE = 0
 HASH = "x7585xx8969"
 
 
-class QueryInsertInterface:
+# class QueryInsertInterface:
 
-    def table_regions(blocks: List[dict]):
-        raise NotImplementedError
-
-    def table_document_types(types: List[dict]):
-        raise NotImplementedError
-
-    def table_documents(documents: List[dict]):
-        raise NotImplementedError
-
-    def table_receiving_authorities(types: List[dict]):
-        raise NotImplementedError
+#     def table_documents(documents: List[dict]):
+#         raise NotImplementedError
 
 
-class QueryInsert(QueryInsertInterface):
+class QueryInsert:
     connection = None
 
     def __init__(self, get_connection) -> None:
@@ -50,32 +41,6 @@ class QueryInsert(QueryInsertInterface):
         return wrapper
 
     @query_insert
-    def table_regions(self, cursor, blocks: List[dict]):
-        values = [
-            (
-                block["name"],
-                block["short_name"],
-                block["external_id"],
-                block["code"],
-                block["parent_id"],
-            )
-            for block in blocks
-        ]
-        args = ",".join(
-            cursor.mogrify("(%s, %s, %s, %s, %s)", i).decode("utf-8") for i in values
-        )
-        return raw.INSERT_INTO_TABLE_REGIONS + args + " ON CONFLICT DO NOTHING;"
-
-    @query_insert
-    def table_document_types(self, cursor, types: List[dict]):
-
-        values = [(type["name"], type["external_id"], ID_DEADLINE) for type in types]
-        args = ",".join(
-            cursor.mogrify("(%s, %s, %s)", i).decode("utf-8") for i in values
-        )
-        return raw.INSERT_INTO_TABLE_TYPES + args + " ON CONFLICT DO NOTHING;"
-
-    @query_insert
     def table_documents(self, cursor, documents: List[dict]):
         values = [
             (
@@ -94,6 +59,3 @@ class QueryInsert(QueryInsertInterface):
             for document in values
         )
         return raw.INSERT_INTO_TABLE_DOCUMENTS + args + " ON CONFLICT DO NOTHING;"
-
-    def table_receiving_authorities(types: List[dict]):
-        pass
