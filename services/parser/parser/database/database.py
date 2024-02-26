@@ -3,6 +3,7 @@ from parser.database.setup import get_sync_connection
 from parser.database.initiate.initiate import Initiate
 from parser.database.initiate.create import InitiateCreate
 from parser.database.initiate.insert import InitiateInsert
+from parser.database.initiate.update import InitiateUpdate
 
 from parser.database.query.query import Query
 from parser.database.query.insert import QueryInsert
@@ -24,6 +25,10 @@ class Database:
 
 
 db = Database(
-    Initiate(InitiateCreate(connection), InitiateInsert(connection)),
+    Initiate(
+        InitiateCreate(connection),
+        InitiateInsert(connection),
+        InitiateUpdate(connection),
+    ),
     Query(QueryInsert(connection), QueryUpdate(connection), QuerySelect(connection)),
 )

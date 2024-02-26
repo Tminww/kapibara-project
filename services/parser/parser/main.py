@@ -115,7 +115,7 @@ def get_subblocks_public_blocks(parent) -> list:
         )
 
     print(json.dumps(subblocks[0], ensure_ascii=False, indent=4))
-    logger.debug(json.dumps(subblocks, indent=4, ensure_ascii=False))
+    logger.debug(json.dumps(subblocks[0], indent=4, ensure_ascii=False))
     return subblocks
 
 
@@ -137,7 +137,7 @@ def get_public_blocks() -> list:
         )
 
     print(json.dumps(blocks[0], ensure_ascii=False, indent=4))
-    logger.debug(json.dumps(blocks, indent=4, ensure_ascii=False))
+    logger.debug(json.dumps(blocks[0], indent=4, ensure_ascii=False))
     return blocks
 
 
@@ -182,7 +182,19 @@ def main():
 
     # block 4
 
-    regions = get_subblocks_public_blocks(parent="subjects")
+    api_regions = get_subblocks_public_blocks(parent="subjects")
+    mock_regions = get_regions_data()
+
+    status, error = utils.compare_regions(
+        api_regions=api_regions, mock_regions=mock_regions
+    )
+    if not status:
+        logger.critical(f"Критическая ошибка! Обновите базу регионов. {error}")
+        return
+
+    db.initiate.insert.table_regions(blocks=api_regions)
+    db.initiate.update.table_regions(mock_data=mock_regions)
+
     logger.info("Заполнение завершено!")
 
 

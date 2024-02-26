@@ -90,3 +90,13 @@ def retry_request(logger, num_retries=5, sleep_time=1):
         return wrapper
 
     return decorate
+
+
+def compare_regions(mock_regions, api_regions) -> tuple:
+    mock_regions_name = [region["name"] for region in mock_regions]
+
+    for region in api_regions:
+        if region["name"] not in mock_regions_name:
+            error = region["name"]
+            return (False, error)
+    return (True, None)

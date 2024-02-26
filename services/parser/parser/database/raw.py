@@ -127,7 +127,9 @@ CREATE_INDEX_ALL = """CREATE INDEX IF NOT EXISTS document_id_idx ON documents (i
 
 INSERT_INTO_TABLE_DISTRICTS = """INSERT INTO DISTRICTS (id, name, short_name) VALUES """
 
-INSERT_INTO_TABLE_REGIONS = """INSERT INTO REGIONS (name, short_name, external_id, code, parent_id, id_dist) VALUES """
+INSERT_INTO_TABLE_REGIONS = (
+    """INSERT INTO REGIONS (name, short_name, external_id, code, parent_id) VALUES """
+)
 
 
 INSERT_INTO_TABLE_DEADLINES = """INSERT INTO DEADLINES (id, day) VALUES """
