@@ -8,7 +8,7 @@ logger = get_logger("pytest")
 
 
 def test_all_blocks():
-    response = request.api.all_blocks()
+    response = request.api.public_blocks()
     assert response["response"].status_code == 200
     assert response["response"].json() != None
 

@@ -57,11 +57,11 @@ class InitiateInsert:
         return wrapper
 
     @query_insert
-    def table_districts(self, cursor, json_data: List[dict]):
+    def table_districts(self, cursor, districts: List[dict]):
 
         values = [
             (district["id"], district["name"], district["short_name"])
-            for district in json_data
+            for district in districts
         ]
         logger.debug(json.dumps(values, indent=4, ensure_ascii=False))
         args = ",".join(
@@ -94,11 +94,11 @@ class InitiateInsert:
     @query_insert
     def table_document_types(self, cursor, types: List[dict]):
 
-        values = [(type["name"], type["external_id"], ID_DEADLINE) for type in types]
+        values = [(type["name"], type["external_id"], type["id_dl"]) for type in types]
         args = ",".join(
             cursor.mogrify("(%s, %s, %s)", i).decode("utf-8") for i in values
         )
-        return raw.INSERT_INTO_TABLE_TYPES + args + " ON CONFLICT DO NOTHING;"
+        return raw.INSERT_INTO_TABLE_DOCUMENT_TYPES + args + " ON CONFLICT DO NOTHING;"
 
     @query_insert
     def table_deadlines(self, cursor, deadlines: List[dict]):

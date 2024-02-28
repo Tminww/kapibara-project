@@ -1,4 +1,5 @@
 from parser.database.database import db
+from parser.data.districts import get_districts_data
 
 
 def test_create_table_districts():
@@ -57,5 +58,5 @@ def test_create_all_index():
 
 
 def test_insert_table_districts():
-    status = db.initiate.insert.into_table_districts()
+    status = db.initiate.insert.table_districts(json_data=get_districts_data())
     assert status == True

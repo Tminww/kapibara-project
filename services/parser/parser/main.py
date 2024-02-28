@@ -90,11 +90,38 @@ def get_all_types() -> list:
     all_types: list = []
 
     for type in response["response"].json():
-        all_types.append({"name": type["name"], "external_id": type["id"]})
+        all_types.append(
+            dict(
+                name=type["name"],
+                external_id=type["id"],
+                # TODO: ЭТО КОСТЫЛЬ
+                # id_dl=1,
+            )
+        )
 
     print(json.dumps(all_types[0], ensure_ascii=False, indent=4))
     logger.debug(json.dumps(all_types[0], indent=4, ensure_ascii=False))
     return all_types
+
+
+def get_block_types(block: str) -> list:
+
+    response = request.api.types_in_block(block=block)
+    block_types: list = []
+
+    for type in response["response"].json():
+        block_types.append(
+            dict(
+                name=type["name"],
+                external_id=type["id"],
+                # TODO: ЭТО КОСТЫЛЬ
+                # id_dl=1,
+            )
+        )
+
+    print(json.dumps(block_types[0], ensure_ascii=False, indent=4))
+    logger.debug(json.dumps(block_types[0], indent=4, ensure_ascii=False))
+    return block_types
 
 
 def get_subblocks_public_blocks(parent) -> list:
@@ -103,15 +130,15 @@ def get_subblocks_public_blocks(parent) -> list:
 
     for subblock in response["response"].json():
         subblocks.append(
-            {
-                "name": subblock["name"],
-                "short_name": subblock["shortName"],
-                "external_id": subblock["id"],
-                "code": subblock["code"],
-                "has_children": subblock["hasChildren"],
-                "parent_id": subblock["parentId"],
-                "categories": subblock["categories"],
-            }
+            dict(
+                name=subblock["name"],
+                short_name=subblock["shortName"],
+                external_id=subblock["id"],
+                code=subblock["code"],
+                has_children=subblock["hasChildren"],
+                parent_id=subblock["parentId"],
+                categories=subblock["categories"],
+            )
         )
 
     print(json.dumps(subblocks[0], ensure_ascii=False, indent=4))
@@ -125,15 +152,15 @@ def get_public_blocks() -> list:
 
     for block in response["response"].json():
         blocks.append(
-            {
-                "name": block["name"],
-                "short_name": block["shortName"],
-                "external_id": block["id"],
-                "code": block["code"],
-                "has_children": block["hasChildren"],
-                "parent_id": block["parentId"],
-                "categories": block["categories"],
-            }
+            dict(
+                name=block["name"],
+                short_name=block["shortName"],
+                external_id=block["id"],
+                code=block["code"],
+                has_children=block["hasChildren"],
+                parent_id=block["parentId"],
+                categories=block["categories"],
+            )
         )
 
     print(json.dumps(blocks[0], ensure_ascii=False, indent=4))
@@ -144,7 +171,8 @@ def get_public_blocks() -> list:
 def main():
     logger.info("Начало работы скрипта")
 
-    # block 1
+    # block 1 create table index
+
     db.initiate.create.table_districts()
     db.initiate.create.table_regions()
     db.initiate.create.table_deadlines()
@@ -159,11 +187,12 @@ def main():
 
     db.initiate.create.index_all()
 
-    # block 2
-    db.initiate.insert.table_districts(json_data=get_districts_data())
+    # block 2 districts deadlines
+
+    db.initiate.insert.table_districts(districts=get_districts_data())
     db.initiate.insert.table_deadlines(deadlines=get_deadlines_data())
 
-    # block 3
+    # block 3 receiving_authorities
 
     public_blocks = get_public_blocks()
 
@@ -180,7 +209,7 @@ def main():
 
     db.initiate.insert.table_receiving_authorities(all_public_blocks)
 
-    # block 4
+    # block 4 regions
 
     api_regions = get_subblocks_public_blocks(parent="subjects")
     mock_regions = get_regions_data()
@@ -194,6 +223,16 @@ def main():
 
     db.initiate.insert.table_regions(blocks=api_regions)
     db.initiate.update.table_regions(mock_data=mock_regions)
+
+    # block 5 documents_types КОСТЫЛЬНО
+
+    all_types = get_all_types()
+    db.initiate.insert.table_document_types(types=all_types)
+
+    # block 6 blocks
+
+    for block in all_public_blocks:
+        block_types = get_block_types(block=block["code"])
 
     logger.info("Заполнение завершено!")
 
