@@ -16,26 +16,7 @@ ID_DEADLINE = 0
 HASH = "x7585xx8969"
 
 
-# class InitiateInsertInterface:
-
-#     def table_districts(json_data: List[dict]):
-#         raise NotImplementedError
-
-#     def table_deadlines(json_data: List[dict]):
-#         raise NotImplementedError
-
-#     def table_regions(blocks: List[dict]):
-#         raise NotImplementedError
-
-#     def table_document_types(types: List[dict]):
-#         raise NotImplementedError
-
-#     def table_receiving_authorities(types: List[dict]):
-#         raise NotImplementedError
-
-
 class InitiateInsert:
-    connection = None
 
     def __init__(self, get_connection) -> None:
         self.connection = get_connection
@@ -94,10 +75,8 @@ class InitiateInsert:
     @query_insert
     def table_document_types(self, cursor, types: List[dict]):
 
-        values = [(type["name"], type["external_id"], type["id_dl"]) for type in types]
-        args = ",".join(
-            cursor.mogrify("(%s, %s, %s)", i).decode("utf-8") for i in values
-        )
+        values = [(type["name"], type["external_id"]) for type in types]
+        args = ",".join(cursor.mogrify("(%s, %s)", i).decode("utf-8") for i in values)
         return raw.INSERT_INTO_TABLE_DOCUMENT_TYPES + args + " ON CONFLICT DO NOTHING;"
 
     @query_insert
@@ -112,14 +91,14 @@ class InitiateInsert:
         )
 
     @query_insert
-    def table_receiving_authorities(self, cursor, types: List[dict]):
+    def table_organ(self, cursor, types: List[dict]):
 
         values = [(type["name"], type["short_name"], type["code"]) for type in types]
         args = ",".join(
             cursor.mogrify("(%s, %s, %s)", i).decode("utf-8") for i in values
         )
         return (
-            raw.INSERT_INTO_TABLE_RECEIVING_AUTHORITIES
+            raw.INSERT_INTO_TABLE_ORGAN
             + args
             + " ON CONFLICT (name, short_name, code) DO UPDATE SET name = EXCLUDED.name, short_name = EXCLUDED.short_name, code = EXCLUDED.code;"
         )

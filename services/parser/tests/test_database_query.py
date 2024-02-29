@@ -1,4 +1,5 @@
 from parser.database.database import db
+from parser.utils.utils import get_row
 
 
 def test_insert_into_table_regions():
@@ -39,3 +40,15 @@ def test_create_table_regions():
     ]
     status = db.query.insert.into_table_documents(documents)
     assert status == True
+
+
+def test_get_row():
+    answer = get_row(
+        table="regions",
+        column=["id", "name", "short_name"],
+        where=dict(code="region01", tmp="tmppp"),
+    )
+    assert (
+        answer
+        == "SELECT id, name, short_name from regions WHERE code = 'region01' and tmp = 'tmppp'"
+    )

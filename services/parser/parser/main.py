@@ -1,11 +1,6 @@
-import json
-import random
-import requests
-
-from datetime import datetime
 from parser.database.database import db
+from parser.service.api_service import ApiService as api_service
 
-from parser.outgoing_requests.request import request
 import parser.utils.utils as utils
 from parser.data.deadlines import get_deadlines_data
 from parser.data.districts import get_districts_data
@@ -84,90 +79,6 @@ logger = utils.get_logger("main")
 #     logger.info(f"Блок {code} закончен")
 
 
-def get_all_types() -> list:
-
-    response = request.api.types_in_block()
-    all_types: list = []
-
-    for type in response["response"].json():
-        all_types.append(
-            dict(
-                name=type["name"],
-                external_id=type["id"],
-                # TODO: ЭТО КОСТЫЛЬ
-                # id_dl=1,
-            )
-        )
-
-    print(json.dumps(all_types[0], ensure_ascii=False, indent=4))
-    logger.debug(json.dumps(all_types[0], indent=4, ensure_ascii=False))
-    return all_types
-
-
-def get_block_types(block: str) -> list:
-
-    response = request.api.types_in_block(block=block)
-    block_types: list = []
-
-    for type in response["response"].json():
-        block_types.append(
-            dict(
-                name=type["name"],
-                external_id=type["id"],
-                # TODO: ЭТО КОСТЫЛЬ
-                # id_dl=1,
-            )
-        )
-
-    print(json.dumps(block_types[0], ensure_ascii=False, indent=4))
-    logger.debug(json.dumps(block_types[0], indent=4, ensure_ascii=False))
-    return block_types
-
-
-def get_subblocks_public_blocks(parent) -> list:
-    response = request.api.public_blocks(parent=parent)
-    subblocks: list = []
-
-    for subblock in response["response"].json():
-        subblocks.append(
-            dict(
-                name=subblock["name"],
-                short_name=subblock["shortName"],
-                external_id=subblock["id"],
-                code=subblock["code"],
-                has_children=subblock["hasChildren"],
-                parent_id=subblock["parentId"],
-                categories=subblock["categories"],
-            )
-        )
-
-    print(json.dumps(subblocks[0], ensure_ascii=False, indent=4))
-    logger.debug(json.dumps(subblocks[0], indent=4, ensure_ascii=False))
-    return subblocks
-
-
-def get_public_blocks() -> list:
-    response = request.api.public_blocks()
-    blocks: list = []
-
-    for block in response["response"].json():
-        blocks.append(
-            dict(
-                name=block["name"],
-                short_name=block["shortName"],
-                external_id=block["id"],
-                code=block["code"],
-                has_children=block["hasChildren"],
-                parent_id=block["parentId"],
-                categories=block["categories"],
-            )
-        )
-
-    print(json.dumps(blocks[0], ensure_ascii=False, indent=4))
-    logger.debug(json.dumps(blocks[0], indent=4, ensure_ascii=False))
-    return blocks
-
-
 def main():
     logger.info("Начало работы скрипта")
 
@@ -176,7 +87,7 @@ def main():
     db.initiate.create.table_districts()
     db.initiate.create.table_regions()
     db.initiate.create.table_deadlines()
-    db.initiate.create.table_receiving_authorities()
+    db.initiate.create.table_organ()
     db.initiate.create.table_blocks()
     db.initiate.create.table_document_types()
     db.initiate.create.table_document_types__blocks()
@@ -192,26 +103,28 @@ def main():
     db.initiate.insert.table_districts(districts=get_districts_data())
     db.initiate.insert.table_deadlines(deadlines=get_deadlines_data())
 
-    # block 3 receiving_authorities
+    # block 3 organ
 
-    public_blocks = get_public_blocks()
+    public_blocks = api_service.get_public_blocks()
 
     all_public_blocks = []
     for public_block in public_blocks:
 
         if public_block["has_children"] == True:
-            subblocks = get_subblocks_public_blocks(parent=public_block["code"])
+            subblocks = api_service.get_subblocks_public_blocks(
+                parent=public_block["code"]
+            )
 
             for subblock in subblocks:
                 all_public_blocks.append(subblock)
         else:
             all_public_blocks.append(public_block)
 
-    db.initiate.insert.table_receiving_authorities(all_public_blocks)
+    db.initiate.insert.table_organ(all_public_blocks)
 
     # block 4 regions
 
-    api_regions = get_subblocks_public_blocks(parent="subjects")
+    api_regions = api_service.get_subblocks_public_blocks(parent="subjects")
     mock_regions = get_regions_data()
 
     status, error = utils.compare_regions(
@@ -226,13 +139,14 @@ def main():
 
     # block 5 documents_types КОСТЫЛЬНО
 
-    all_types = get_all_types()
+    all_types = api_service.get_all_types()
     db.initiate.insert.table_document_types(types=all_types)
 
-    # block 6 blocks
+    # block 6 blocks (reciving_  regions)
+    print(all_public_blocks)
 
     for block in all_public_blocks:
-        block_types = get_block_types(block=block["code"])
+        block_types = api_service.get_block_types(block=block["code"])
 
     logger.info("Заполнение завершено!")
 

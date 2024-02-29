@@ -14,7 +14,6 @@ logger = utils.get_logger("database.initiate.insert")
 
 
 class InitiateUpdate:
-    connection = None
 
     def __init__(self, get_connection) -> None:
         self.connection = get_connection

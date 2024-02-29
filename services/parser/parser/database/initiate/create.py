@@ -1,7 +1,4 @@
-from psycopg2.errorcodes import UNIQUE_VIOLATION
-
 import parser.database.raw as raw
-from psycopg2 import errors
 
 import parser.utils.utils as utils
 
@@ -9,45 +6,7 @@ import parser.utils.utils as utils
 logger = utils.get_logger("database.initiate.create")
 
 
-# class InitiateCreateInterface:
-
-#     def table_districts():
-#         raise NotImplementedError
-
-#     def table_regions():
-#         raise NotImplementedError
-
-#     def table_receiving_authorities():
-#         raise NotImplementedError
-
-#     def table_blocks():
-#         raise NotImplementedError
-
-#     def table_deadlines():
-#         raise NotImplementedError
-
-#     def table_document_types():
-#         raise NotImplementedError
-
-#     def table_document_types__blocks():
-#         raise NotImplementedError
-
-#     def table_documents():
-#         raise NotImplementedError
-
-#     def table_roles():
-#         raise NotImplementedError
-
-#     def table_users():
-#         raise NotImplementedError
-
-#     def index_all():
-#         raise NotImplementedError
-
-
 class InitiateCreate:
-
-    connection = None
 
     def __init__(self, get_connection) -> None:
         self.connection = get_connection
@@ -77,8 +36,8 @@ class InitiateCreate:
         return raw.CREATE_TABLE_REGIONS
 
     @query_create
-    def table_receiving_authorities(self):
-        return raw.CREATE_TABLE_RECEIVING_AUTHORITIES
+    def table_organ(self):
+        return raw.CREATE_TABLE_ORGAN
 
     @query_create
     def table_blocks(self):

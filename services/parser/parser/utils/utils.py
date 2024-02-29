@@ -100,3 +100,17 @@ def compare_regions(mock_regions, api_regions) -> tuple:
             error = region["name"]
             return (False, error)
     return (True, None)
+
+
+def get_row(table: str, column: list, where: dict):
+
+    columns = ",".join(column)
+
+    where_params = [f"{pair} = '{where[pair]}'" for pair in where.keys]
+
+    # cursor.execute(f"SELECT {columns} from {table} WHERE {where_params};")
+    # answer = cursor
+    # return answer
+    # logger.debug(f"SELECT {columns} from {table} WHERE {where_params};")
+    print(f"SELECT {columns} from {table} WHERE {where_params};")
+    return f"SELECT {columns} from {table} WHERE {where_params};"

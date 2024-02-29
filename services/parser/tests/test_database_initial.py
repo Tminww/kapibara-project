@@ -12,8 +12,8 @@ def test_create_table_regions():
     assert status == True
 
 
-def test_create_table_receiving_authorities():
-    status = db.initiate.create.table_receiving_authorities()
+def test_create_table_organ():
+    status = db.initiate.create.table_organ()
     assert status == True
 
 
@@ -58,5 +58,5 @@ def test_create_all_index():
 
 
 def test_insert_table_districts():
-    status = db.initiate.insert.table_districts(json_data=get_districts_data())
+    status = db.initiate.insert.table_districts(districts=get_districts_data())
     assert status == True

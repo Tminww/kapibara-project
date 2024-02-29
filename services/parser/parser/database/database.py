@@ -30,5 +30,9 @@ db = Database(
         InitiateInsert(connection),
         InitiateUpdate(connection),
     ),
-    Query(QueryInsert(connection), QueryUpdate(connection), QuerySelect(connection)),
+    Query(
+        QueryInsert(connection),
+        QueryUpdate(connection),
+        QuerySelect(connection),
+    ),
 )

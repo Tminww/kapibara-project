@@ -22,8 +22,8 @@ CREATE_TABLE_REGIONS = """
             FOREIGN KEY(id_dist) REFERENCES districts (id)
         )
         """
-CREATE_TABLE_RECEIVING_AUTHORITIES = """
-        CREATE TABLE IF NOT EXISTS receiving_authorities (
+CREATE_TABLE_ORGAN = """
+        CREATE TABLE IF NOT EXISTS ORGAN (
             id SERIAL PRIMARY KEY, 
             name VARCHAR(128), 
             short_name VARCHAR(50),
@@ -41,7 +41,7 @@ CREATE_TABLE_BLOCKS = """
             id_organ INT,
             id_reg INT NULL,
 
-            FOREIGN KEY(id_organ) REFERENCES receiving_authorities (id), 
+            FOREIGN KEY(id_organ) REFERENCES organ (id), 
             FOREIGN KEY(id_reg) REFERENCES regions (id), 
             UNIQUE (name, short_name, id_organ, id_reg)
         )
@@ -134,13 +134,11 @@ INSERT_INTO_TABLE_REGIONS = (
 
 INSERT_INTO_TABLE_DEADLINES = """INSERT INTO DEADLINES (id, day) VALUES """
 
-INSERT_INTO_TABLE_RECEIVING_AUTHORITIES = (
-    """INSERT INTO RECEIVING_AUTHORITIES (name, short_name, code) VALUES """
-)
+INSERT_INTO_TABLE_ORGAN = """INSERT INTO ORGAN (name, short_name, code) VALUES """
 
 
 INSERT_INTO_TABLE_DOCUMENT_TYPES = (
-    """INSERT INTO DOCUMENT_TYPES (name, external_id, id_dl) VALUES """
+    """INSERT INTO DOCUMENT_TYPES (name, external_id) VALUES """
 )
 
 INSERT_INTO_TABLE_DOCUMENT_TYPES__BLOCKS = (
