@@ -106,7 +106,7 @@ def get_row(table: str, column: list, where: dict):
 
     columns = ",".join(column)
 
-    where_params = [f"{pair} = '{where[pair]}'" for pair in where.keys]
+    where_params = [f"{pair} = '{where.get(pair)}'" for pair in where.keys]
 
     # cursor.execute(f"SELECT {columns} from {table} WHERE {where_params};")
     # answer = cursor
