@@ -40,9 +40,9 @@ uvicorn = "0.23.2"
 pytest = "^8.0.0"
 
 [tool.poetry.scripts]
-server = "src.main:app"
-main = "parser.main:main"
-scenarios = "parser.scenarios.full_bypass:main"
+server = "src.main:server"
+parser = "src.parser.main:main"
+
 
 [build-system]
 requires = ["poetry-core"]

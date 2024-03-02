@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     DB_NAME: str
 
     class Config:
-        env_file = ".env"
+        env_file = "./src/.env"
 
     @property
     def DATABASE_URL(self):

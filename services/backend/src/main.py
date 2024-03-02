@@ -5,10 +5,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from api.routers import all_routers
 from errors import DateValidationError, ResultIsEmptyError
 
+import uvicorn
 
 app = FastAPI(title="Вывод статистики по документам")
 
-origins= [
+origins = [
     "*",
 ]
 app.add_middleware(
@@ -16,23 +17,27 @@ app.add_middleware(
     allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"],    
+    allow_headers=["*"],
 )
 
 
 for router in all_routers:
     app.include_router(router)
 
+# FIXME dev server for poetry
+server = uvicorn.run(app=app, host="127.0.0.1", port="8000", log_level="info")
 
 
 @app.exception_handler(DateValidationError)
 async def date_validation_exception_handler(request: Request, e: DateValidationError):
-    return JSONResponse(status_code=400, content={
-        "detail": f"Invalid date format ({str(e).splitlines()[2].strip().split(' ')[2]}). Use YYYY-MM-DD."})
+    return JSONResponse(
+        status_code=400,
+        content={
+            "detail": f"Invalid date format ({str(e).splitlines()[2].strip().split(' ')[2]}). Use YYYY-MM-DD."
+        },
+    )
+
 
 @app.exception_handler(ResultIsEmptyError)
 async def result_is_empty_exception_handler(request: Request, e: ResultIsEmptyError):
-    return JSONResponse(status_code=400, content={
-        "detail": str(e)
-    })
-
+    return JSONResponse(status_code=400, content={"detail": str(e)})
