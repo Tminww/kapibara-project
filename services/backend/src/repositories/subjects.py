@@ -1,9 +1,8 @@
-from models.district import DistrictEntity
+from models.models import DistrictEntity
 from models.region import RegionEntity
 from utils.repository import SQLAlchemyRepository
 
 
 class SubjectsRepository(SQLAlchemyRepository):
-    district = DistrictEntity 
+    district = DistrictEntity
     region = RegionEntity
-    

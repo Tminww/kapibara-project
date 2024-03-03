@@ -3,11 +3,15 @@ from fastapi.responses import JSONResponse, PlainTextResponse
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from api.routers import all_routers
+
+from database.setup import init_db
+from models import models
 from errors import DateValidationError, ResultIsEmptyError
 
 import uvicorn
 
 app = FastAPI(title="Вывод статистики по документам")
+
 
 origins = [
     "*",
@@ -25,7 +29,14 @@ for router in all_routers:
     app.include_router(router)
 
 # FIXME dev server for poetry
-server = uvicorn.run(app=app, host="127.0.0.1", port="8000", log_level="info")
+server = uvicorn.run(app=app, host="127.0.0.1", port=8000, log_level="info")
+
+
+# metadata.create_all не выполняется асинхронно,
+# поэтому мы использовали run_sync для его синхронного выполнения в асинхронной функции.
+@app.on_event("startup")
+async def on_startup():
+    await init_db()
 
 
 @app.exception_handler(DateValidationError)

@@ -13,33 +13,25 @@ from database.setup import async_session_maker
 from errors import ResultIsEmptyError
 
 
-class AbstractRepository(ABC):
+class AbstractInitializationRepository(ABC):
     @abstractmethod
-    async def get_stat_in_region(parameters, id_reg):
+    async def create_index(parameters, id_reg):
         raise NotImplementedError
 
-    @abstractmethod
-    async def get_districts():
-        raise NotImplementedError
+
+class SqlAlchemyInitializationRepository(AbstractInitializationRepository):
+    districts = None
+    regions = None
+    organs = None
+    deadlines = None
+    blocks = None
+    document_types = None
+    document_types__blocks = None
+    users = None
+    roles = None
 
     @abstractmethod
-    async def get_regions_in_district(id_dist):
-        raise NotImplementedError
-
-    @abstractmethod
-    async def get_definite_regions_in_district(parameters, id_dist):
-        raise NotImplementedError
-
-    @abstractmethod
-    async def get_districts_by_regions(regions):
-        raise NotImplementedError
-
-    @abstractmethod
-    async def get_stat_in_district(parameters, id_dist):
-        raise NotImplementedError
-
-    @abstractmethod
-    async def get_stat_all(parameters):
+    async def create_index(parameters, id_reg):
         raise NotImplementedError
 
 

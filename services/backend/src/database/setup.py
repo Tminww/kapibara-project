@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
 from sqlalchemy import create_engine
-from sqlalchemy.orm import DeclarativeBase, sessionmaker
+from sqlalchemy.orm import sessionmaker, DeclarativeBase
 from dbconfig import get_settings
 
 settings = get_settings()
@@ -25,6 +25,12 @@ sync_session_maker = sessionmaker(sync_engine)
 
 class Base(DeclarativeBase):
     pass
+
+
+async def init_db():
+    async with async_engine.begin() as conn:
+        # await conn.run_sync(SQLModel.metadata.drop_all)
+        await conn.run_sync(Base.metadata.create_all())
 
 
 async def get_async_session():

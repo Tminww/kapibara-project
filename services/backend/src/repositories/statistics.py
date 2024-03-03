@@ -1,13 +1,12 @@
 from models.document import DocumentEntity
 from models.act import ActEntity
 from models.region import RegionEntity
-from models.district import DistrictEntity
+from models.models import DistrictEntity
 from utils.repository import SQLAlchemyRepository
 
 
 class StatisticsRepository(SQLAlchemyRepository):
-    district = DistrictEntity 
+    district = DistrictEntity
     document = DocumentEntity
     region = RegionEntity
     act = ActEntity
-
