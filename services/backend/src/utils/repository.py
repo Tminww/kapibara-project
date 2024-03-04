@@ -1,10 +1,8 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
 
-from models.act import ActEntity
-from models.models import DistrictEntity
-from models.document import DocumentEntity
-from models.region import RegionEntity
+
+from models.models import *
 
 from schemas.subjects import RegionInfoDTO, RegionsInDistrictDTO
 from schemas.statistics import StatRowSchema, StatBaseDTO, RequestBodySchema
@@ -46,7 +44,7 @@ class AbstractRepository(ABC):
 class SQLAlchemyRepository(AbstractRepository):
     document: DocumentEntity = None
     region: RegionEntity = None
-    act: ActEntity = None
+    # act: ActEntity = None
     district: DistrictEntity = None
 
     async def get_definite_regions_in_district(

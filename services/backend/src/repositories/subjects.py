@@ -1,5 +1,4 @@
-from models.models import DistrictEntity
-from models.region import RegionEntity
+from models.models import *
 from utils.repository import SQLAlchemyRepository
 
 

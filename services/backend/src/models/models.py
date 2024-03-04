@@ -1,5 +1,14 @@
+from datetime import datetime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import Index, String, UniqueConstraint, BigInteger
+from sqlalchemy import (
+    Date,
+    Index,
+    String,
+    Text,
+    UniqueConstraint,
+    BigInteger,
+    ForeignKey,
+)
 from database.setup import Base
 
 
@@ -136,22 +145,34 @@ class DocumentEntity(Base):
     __tablename__ = "documents"
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
-    # name TEXT NOT NULL,
-    # eo_number VARCHAR(16),
-    # view_date DATE,
-    # hash VARCHAR(128),
-    # pages_count INT,
-    # id_doc_type_block INT,
-
-    # UNIQUE (name, eo_number, hash, id_doc_type_block),
-    # FOREIGN KEY(id_doc_type_block) REFERENCES document_types__blocks (id)
+    name: Mapped[str] = mapped_column(Text)
+    eo_number: Mapped[str] = mapped_column(String(16))
+    hash: Mapped[str] = mapped_column(String(256), nullable=True)
+    pages_count: Mapped[int]
+    date_of_publication: Mapped[datetime] = mapped_column(Date)
+    date_of_signing: Mapped[datetime] = mapped_column(Date)
+    id_doc_type_block: Mapped[int] = mapped_column(
+        ForeignKey("document_types__blocks.id")
+    )
+    # id_reg: Mapped[int] = mapped_column(ForeignKey("region.id"), nullable=False)
+    # act = relationship("ActEntity", overlaps="act", innerjoin=True)
+    # region = relationship("RegionEntity", overlaps="region", innerjoin=True)
 
     __table_args__ = (
-        UniqueConstraint("id", "id_doc_type", "id_block"),
+        UniqueConstraint("id", "name", "eo_number"),
         {"extend_existing": True},
-        # Index("ix_users_role_id", role_id),
-        # Comment("Комментарий к таблице пользователей"),
     )
+
+    # def to_read_model(self) -> DocumentSchema:
+    #     return DocumentSchema(
+    #         id_doc=self.id,
+    #         complexName=self.complex_name,
+    #         id_act=self.id_act,
+    #         eoNumber=self.eo_number,
+    #         viewDate=self.view_date,
+    #         pagesCount=self.pages_count,
+    #         id_reg=self.id_reg,
+    #     )
 
 
 class RoleEntity(Base):
@@ -159,7 +180,8 @@ class RoleEntity(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(32))
-    # in_deadline = relationship("DeadlineEntity", back_populates="document_types")
+
+    users = relationship("UserEntity", back_populates="in_role")
 
     __table_args__ = (
         UniqueConstraint("id", "name"),
@@ -174,11 +196,13 @@ class UserEntity(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     username: Mapped[str] = mapped_column(String(32))
-    # id_role INT,
-    # hash_password VARCHAR(16),
-    # date_registered TIMESTAMP,
-    # last_login TIMESTAMP,
-    # is_active bool,
+    id_role: Mapped[int] = mapped_column(ForeignKey("roles.id"))
+    hash_password: Mapped[str] = mapped_column(String(256))
+    date_registered: Mapped[datetime] = mapped_column(Date)
+    last_login: Mapped[datetime] = mapped_column(Date)
+    is_active: Mapped[bool]
+
+    in_role = relationship("RoleEntity", back_populates="users")
 
     __table_args__ = (
         UniqueConstraint("id", "username"),

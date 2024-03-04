@@ -4,14 +4,19 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from api.routers import all_routers
 
-from database.setup import init_db
+from database.setup import Base, sync_engine
+from utils import utils
 from models import models
 from errors import DateValidationError, ResultIsEmptyError
 
 import uvicorn
 
+logger = utils.get_logger("fastapi.main")
+
+
 app = FastAPI(title="Вывод статистики по документам")
 
+Base.metadata.create_all(bind=sync_engine)
 
 origins = [
     "*",
@@ -34,9 +39,11 @@ server = uvicorn.run(app=app, host="127.0.0.1", port=8000, log_level="info")
 
 # metadata.create_all не выполняется асинхронно,
 # поэтому мы использовали run_sync для его синхронного выполнения в асинхронной функции.
-@app.on_event("startup")
-async def on_startup():
-    await init_db()
+# @app.on_event("startup")
+# async def startup_event():
+#     logger.info("startup")
+#     await init_db()
+#     logger.info("after_init")
 
 
 @app.exception_handler(DateValidationError)
