@@ -8,7 +8,7 @@ def get_logger(logger_name: str) -> logging:
     logger.setLevel(logging.DEBUG)
     # создаем обработчик для файла и
     # установим уровень отладки
-    ch = logging.FileHandler("./src/logging/backend.log", "a")
+    ch = logging.FileHandler("./src/log/backend.log", "a")
     # ch.setLevel(logging.DEBUG)
 
     # строка формата сообщения
