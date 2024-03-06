@@ -16,7 +16,7 @@ logger = utils.get_logger("fastapi.main")
 
 app = FastAPI(title="Вывод статистики по документам")
 
-Base.metadata.create_all(bind=sync_engine)
+# Base.metadata.create_all(bind=sync_engine)
 
 origins = [
     "*",
