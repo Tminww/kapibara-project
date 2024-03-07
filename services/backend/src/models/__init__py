@@ -1,0 +1,22 @@
+__all__ = (
+    "Base",
+    "BlockEntity",
+    "DeadlineEntity",
+    "DistrictEntity",
+    "DocumentTypeEntity",
+    "DocumentTypeBlockEntity",
+    "OrganEntity",
+    "RegionEntity",
+    "RoleEntity",
+    "UserEntity",
+)
+from models.base import Base
+from models.blocks import BlockEntity
+from models.deadlines import DeadlineEntity
+from models.districts import DistrictEntity
+from models.document_types import DocumentTypeEntity
+from models.document_types__blocks import DocumentTypeBlockEntity
+from models.organs import OrganEntity
+from models.regions import RegionEntity
+from models.roles import RoleEntity
+from models.users import UserEntity

@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from datetime import datetime
 
 from models.act import ActEntity
-from models.models import DistrictEntity
+from models.documents import DistrictEntity
 from models.document import DocumentEntity
 from models.region import RegionEntity
 

@@ -1,4 +1,4 @@
-from models.models import *
+from models.documents import *
 from utils.repository import SQLAlchemyRepository
 
 

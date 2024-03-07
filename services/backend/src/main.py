@@ -6,7 +6,7 @@ from api.routers import all_routers
 
 from database.setup import Base, sync_engine
 from utils import utils
-from models import models
+from models import documents
 from errors import DateValidationError, ResultIsEmptyError
 
 import uvicorn
