@@ -2,7 +2,9 @@ from abc import ABC, abstractmethod
 from datetime import datetime
 
 
-from models.documents import *
+from models.documents import DocumentEntity
+from models.regions import RegionEntity
+from models.districts import DistrictEntity
 
 from schemas.subjects import RegionInfoDTO, RegionsInDistrictDTO
 from schemas.statistics import StatRowSchema, StatBaseDTO, RequestBodySchema
