@@ -10,7 +10,7 @@ from models.base import Base
 class RegionEntity(Base):
     __tablename__ = "regions"
 
-    # id: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(128))
     short_name: Mapped[str] = mapped_column(String(16))
     external_id: Mapped[str] = mapped_column(String(64))

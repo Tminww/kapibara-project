@@ -14,7 +14,7 @@ from models.base import Base
 class DocumentEntity(Base):
     __tablename__ = "documents"
 
-    # id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
     name: Mapped[str] = mapped_column(Text)
     eo_number: Mapped[str] = mapped_column(String(16))
     hash: Mapped[str] = mapped_column(String(256), nullable=True)

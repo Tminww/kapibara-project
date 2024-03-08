@@ -8,7 +8,7 @@ from models.base import Base
 class DeadlineEntity(Base):
     __tablename__ = "deadlines"
 
-    # id: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[int] = mapped_column(primary_key=True)
     day: Mapped[int]
 
     document_types = relationship("DocumentTypeEntity", back_populates="in_deadline")

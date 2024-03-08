@@ -4,6 +4,8 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from api.routers import all_routers
 
+# from models.base import Base
+# from database.setup import sync_engine
 from utils import utils
 from errors import DateValidationError, ResultIsEmptyError
 

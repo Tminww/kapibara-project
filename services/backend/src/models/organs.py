@@ -9,7 +9,7 @@ from models.base import Base
 class OrganEntity(Base):
     __tablename__ = "organs"
 
-    # id: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(128))
     short_name: Mapped[str] = mapped_column(String(64))
     code: Mapped[str] = mapped_column(String(64))

@@ -9,7 +9,7 @@ from models.base import Base
 class DocumentTypeBlockEntity(Base):
     __tablename__ = "document_types__blocks"
 
-    # id: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[int] = mapped_column(primary_key=True)
     id_doc_type: Mapped[int] = mapped_column(
         ForeignKey("document_types.id"), nullable=True
     )

@@ -10,7 +10,7 @@ from models.base import Base
 class BlockEntity(Base):
     __tablename__ = "blocks"
 
-    # id: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(128))
     short_name: Mapped[str] = mapped_column(String(64))
     id_organ: Mapped[int] = mapped_column(ForeignKey("organs.id"), nullable=True)

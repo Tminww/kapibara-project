@@ -1,11 +1,9 @@
 import psycopg2 as db
-from dbconfig import get_settings
+from config import settings
 import parser.utils.utils as utils
 
 logger = utils.get_logger("database.setup")
 
-
-settings = get_settings()
 
 try:
     sync_connection = db.connect(

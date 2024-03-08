@@ -10,7 +10,7 @@ from models.base import Base
 class DocumentTypeEntity(Base):
     __tablename__ = "document_types"
 
-    # id: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(128))
     external_id: Mapped[str] = mapped_column(String(64))
     id_dl: Mapped[int] = mapped_column(ForeignKey("deadlines.id"), nullable=True)

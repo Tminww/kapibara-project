@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from dbconfig import get_settings
+from config import settings
 
 import logging
 
@@ -17,7 +17,6 @@ logging.getLogger("sqlalchemy.engine").setLevel(logging.INFO)
 logging.getLogger("sqlalchemy.pool").setLevel(logging.DEBUG)
 # logging.getLogger("sqlalchemy.orm").setLevel(logging.INFO)
 
-settings = get_settings()
 
 sync_engine = create_engine(
     url=settings.DATABASE_URL_psycopg,

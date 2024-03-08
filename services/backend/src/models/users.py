@@ -12,7 +12,7 @@ from models.base import Base
 class UserEntity(Base):
     __tablename__ = "users"
 
-    # id: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[int] = mapped_column(primary_key=True)
     username: Mapped[str] = mapped_column(String(32))
     id_role: Mapped[int] = mapped_column(ForeignKey("roles.id"))
     hash_password: Mapped[str] = mapped_column(String(256))
