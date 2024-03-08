@@ -21,8 +21,19 @@ if config.config_file_name is not None:
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 
-from src.models.base import Base
-from src.models import *
+# from src.models.base import Base
+
+from models.base import Base
+from models.blocks import BlockEntity
+from models.deadlines import DeadlineEntity
+from models.districts import DistrictEntity
+from models.document_types import DocumentTypeEntity
+from models.document_types__blocks import DocumentTypeBlockEntity
+from models.organs import OrganEntity
+from models.regions import RegionEntity
+from models.roles import RoleEntity
+from models.users import UserEntity
+
 from src.dbconfig import get_settings
 
 settings = get_settings()
