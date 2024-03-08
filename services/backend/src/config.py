@@ -24,6 +24,4 @@ class Settings(BaseSettings):
         return f"postgresql+psycopg://{self.DB_USER}:{self.DB_PASS}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
 
 
-@lru_cache
-def get_settings():
-    return Settings()
+settings = Settings()
