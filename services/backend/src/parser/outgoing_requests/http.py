@@ -1,5 +1,5 @@
 import requests
-import parser.utils.utils as utils
+from utils import utils
 import fake_useragent
 
 logger = utils.get_logger("api.http")

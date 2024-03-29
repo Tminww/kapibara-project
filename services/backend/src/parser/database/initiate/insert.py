@@ -6,8 +6,8 @@ from psycopg2.errorcodes import UNIQUE_VIOLATION
 import parser.database.raw as raw
 from psycopg2 import errors
 
-import parser.utils.utils as utils
-from parser.data.districts import get_districts_data
+from utils import utils
+from  parser.assets.districts.data import get_districts_data
 
 
 logger = utils.get_logger("database.initiate.insert")

@@ -2,7 +2,7 @@ import random
 from typing import List
 
 
-import parser.utils.utils as utils
+from utils import utils
 from parser.database import raw
 
 

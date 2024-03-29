@@ -1,5 +1,5 @@
 from parser.outgoing_requests.request import request
-import parser.utils.utils as utils
+from utils import utils
 import json
 
 

@@ -1,14 +1,14 @@
-from parser.database.database import db
+
 from parser.service.api_service import ApiService as api_service
 
-import parser.utils.utils as utils
-from parser.data.deadlines import get_deadlines_data
-from parser.data.districts import get_districts_data
-from parser.data.regions import get_regions_data
+from parser.database.database import db
+from parser.assets.deadlines.data import get_deadlines_data
+from parser.assets.districts.data import get_districts_data
+from parser.assets.regions.data import get_regions_data
 import time
+from utils import utils
 
-
-logger = utils.get_logger("main")
+logger = utils.get_logger("parser")
 
 
 # @utils.check_time(logger=logger)
@@ -81,22 +81,21 @@ logger = utils.get_logger("main")
 
 def main():
     logger.info("Начало работы скрипта")
-
     # block 1 create table index
 
-    db.initiate.create.table_districts()
-    db.initiate.create.table_regions()
-    db.initiate.create.table_deadlines()
-    db.initiate.create.table_organ()
-    db.initiate.create.table_blocks()
-    db.initiate.create.table_document_types()
-    db.initiate.create.table_document_types__blocks()
-    db.initiate.create.table_documents()
+    # db.initiate.create.table_districts()
+    # db.initiate.create.table_regions()
+    # db.initiate.create.table_deadlines()
+    # db.initiate.create.table_organ()
+    # db.initiate.create.table_blocks()
+    # db.initiate.create.table_document_types()
+    # db.initiate.create.table_document_types__blocks()
+    # db.initiate.create.table_documents()
 
-    db.initiate.create.table_roles()
-    db.initiate.create.table_users()
+    # db.initiate.create.table_roles()
+    # db.initiate.create.table_users()
 
-    db.initiate.create.index_all()
+    # db.initiate.create.index_all()
 
     # block 2 districts deadlines
 

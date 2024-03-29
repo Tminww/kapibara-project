@@ -1,7 +1,7 @@
 import json
-import parser.utils.utils as utils
+from utils import utils
 from parser.database import raw
-from parser.data.regions import get_regions_data
+from parser.assets.regions.data import get_regions_data
 
 
 logger = utils.get_logger("database.query.update")

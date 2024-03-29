@@ -9,7 +9,6 @@ from api.routers import all_routers
 from utils import utils
 from errors import DateValidationError, ResultIsEmptyError
 
-import uvicorn
 
 logger = utils.get_logger("fastapi.main")
 
@@ -32,18 +31,6 @@ app.add_middleware(
 
 for router in all_routers:
     app.include_router(router)
-
-# FIXME dev server for poetry
-server = uvicorn.run(app=app, host="127.0.0.1", port=8000, log_level="info")
-
-
-# metadata.create_all не выполняется асинхронно,
-# поэтому мы использовали run_sync для его синхронного выполнения в асинхронной функции.
-# @app.on_event("startup")
-# async def startup_event():
-#     logger.info("startup")
-#     await init_db()
-#     logger.info("after_init")
 
 
 @app.exception_handler(DateValidationError)

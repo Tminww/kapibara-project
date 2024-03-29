@@ -1,6 +1,6 @@
 import parser.database.raw as raw
 
-import parser.utils.utils as utils
+from utils import utils
 
 
 logger = utils.get_logger("database.initiate.create")

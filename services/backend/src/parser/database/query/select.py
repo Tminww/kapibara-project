@@ -1,4 +1,4 @@
-import parser.utils.utils as utils
+from utils import utils
 from parser.database import raw
 
 logger = utils.get_logger("database.query.select")

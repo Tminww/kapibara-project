@@ -42,8 +42,8 @@ pytest = "^8.0.0"
 black = "^24.2.0"
 
 [tool.poetry.scripts]
-server = "src.main:server"
-parser = "src.parser.main:main"
+server = "run_uvicorn_server:server"
+parser = "run_parser:parser"
 
 
 [build-system]

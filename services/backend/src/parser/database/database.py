@@ -1,4 +1,4 @@
-from parser.database.setup import get_sync_connection
+from database.setup import get_async_session
 
 from parser.database.initiate.initiate import Initiate
 from parser.database.initiate.create import InitiateCreate
@@ -10,7 +10,7 @@ from parser.database.query.insert import QueryInsert
 from parser.database.query.update import QueryUpdate
 from parser.database.query.select import QuerySelect
 
-connection = get_sync_connection
+connection = get_async_session
 
 
 class Database:

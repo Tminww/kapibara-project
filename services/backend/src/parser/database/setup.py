@@ -1,6 +1,6 @@
 import psycopg2 as db
 from config import settings
-import parser.utils.utils as utils
+from utils import utils
 
 logger = utils.get_logger("database.setup")
 
