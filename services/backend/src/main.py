@@ -8,7 +8,8 @@ from api.routers import all_routers
 # from database.setup import sync_engine
 from utils import utils
 from errors import DateValidationError, ResultIsEmptyError
-
+from utils.tasks import repeat_every
+import uvicorn
 
 logger = utils.get_logger("fastapi.main")
 
@@ -32,6 +33,14 @@ app.add_middleware(
 for router in all_routers:
     app.include_router(router)
 
+# Настройка логгера
+    
+logger = utils.get_logger("task")
+
+@app.on_event("startup")
+@repeat_every(seconds=5, logger=logger)
+async def test_task():
+    logger.info("Выполняется задача по расписанию")
 
 @app.exception_handler(DateValidationError)
 async def date_validation_exception_handler(request: Request, e: DateValidationError):
@@ -46,3 +55,7 @@ async def date_validation_exception_handler(request: Request, e: DateValidationE
 @app.exception_handler(ResultIsEmptyError)
 async def result_is_empty_exception_handler(request: Request, e: ResultIsEmptyError):
     return JSONResponse(status_code=400, content={"detail": str(e)})
+
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="127.0.0.1", port=8000)
