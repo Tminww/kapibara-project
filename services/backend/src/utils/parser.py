@@ -100,49 +100,49 @@ async def parser(logger: logging.Logger = None):
     db.initiate.insert.table_districts(districts=get_districts_data())
     db.initiate.insert.table_deadlines(deadlines=get_deadlines_data())
 
-    # block 3 organ
+    # # block 3 organ
 
-    public_blocks = api_service.get_public_blocks()
+    # public_blocks = api_service.get_public_blocks()
 
-    all_public_blocks = []
-    for public_block in public_blocks:
+    # all_public_blocks = []
+    # for public_block in public_blocks:
 
-        if public_block["has_children"] == True:
-            subblocks = api_service.get_subblocks_public_blocks(
-                parent=public_block["code"]
-            )
+    #     if public_block["has_children"] == True:
+    #         subblocks = api_service.get_subblocks_public_blocks(
+    #             parent=public_block["code"]
+    #         )
 
-            for subblock in subblocks:
-                all_public_blocks.append(subblock)
-        else:
-            all_public_blocks.append(public_block)
+    #         for subblock in subblocks:
+    #             all_public_blocks.append(subblock)
+    #     else:
+    #         all_public_blocks.append(public_block)
 
-    db.initiate.insert.table_organ(all_public_blocks)
+    # db.initiate.insert.table_organ(all_public_blocks)
 
-    # block 4 regions
+    # # block 4 regions
 
-    api_regions = api_service.get_subblocks_public_blocks(parent="subjects")
-    mock_regions = get_regions_data()
+    # api_regions = api_service.get_subblocks_public_blocks(parent="subjects")
+    # mock_regions = get_regions_data()
 
-    status, error = utils.compare_regions(
-        api_regions=api_regions, mock_regions=mock_regions
-    )
-    if not status:
-        logger.critical(f"Критическая ошибка! Обновите базу регионов. {error}")
-        return
+    # status, error = utils.compare_regions(
+    #     api_regions=api_regions, mock_regions=mock_regions
+    # )
+    # if not status:
+    #     logger.critical(f"Критическая ошибка! Обновите базу регионов. {error}")
+    #     return
 
-    db.initiate.insert.table_regions(blocks=api_regions)
-    db.initiate.update.table_regions(mock_data=mock_regions)
+    # db.initiate.insert.table_regions(blocks=api_regions)
+    # db.initiate.update.table_regions(mock_data=mock_regions)
 
-    # block 5 documents_types КОСТЫЛЬНО
+    # # block 5 documents_types КОСТЫЛЬНО
 
-    all_types = api_service.get_all_types()
-    db.initiate.insert.table_document_types(types=all_types)
+    # all_types = api_service.get_all_types()
+    # db.initiate.insert.table_document_types(types=all_types)
 
-    # block 6 blocks (reciving_  regions)
-    print(all_public_blocks)
+    # # block 6 blocks (reciving_  regions)
+    # print(all_public_blocks)
 
-    for block in all_public_blocks:
-        block_types = api_service.get_block_types(block=block["code"])
+    # for block in all_public_blocks:
+    #     block_types = api_service.get_block_types(block=block["code"])
 
     logger.info("Заполнение завершено!")

@@ -6,9 +6,11 @@ from models.documents import DocumentEntity
 from models.regions import RegionEntity
 from models.districts import DistrictEntity
 
-from schemas.subjects import RegionInfoDTO, RegionsInDistrictDTO
+from schemas.subjects import SubjectInfoDTO
 from schemas.statistics import StatRowSchema, StatBaseDTO, RequestBodySchema
+
 from sqlalchemy import insert, select, func
+
 from database.setup import async_session_maker
 from errors import ResultIsEmptyError
 
@@ -209,7 +211,7 @@ class SQLAlchemyRepository(AbstractRepository):
             stmt = select(self.region).filter(self.region.id_dist == id_dist)
             res = await session.execute(stmt)
 
-            res = [RegionInfoDTO(name=row[0].name, id=row[0].id) for row in res.all()]
+            res = [SubjectInfoDTO(name=row[0].name, id=row[0].id) for row in res.all()]
 
             if res:
                 return res

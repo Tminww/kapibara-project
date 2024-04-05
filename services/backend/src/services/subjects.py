@@ -1,4 +1,4 @@
-from schemas.subjects import RegionInfoDTO, RegionsInDistrictDTO
+from schemas.subjects import SubjectsInDistrictDTO
 from utils.repository import AbstractRepository
 
 
@@ -12,7 +12,7 @@ class SubjectsService:
         for district in districts:
             regions = await self.subjects_repo.get_regions_in_district(district.id)
             response.append(
-                RegionsInDistrictDTO(
+                SubjectsInDistrictDTO(
                     name=district.name, id=district.id, regions=regions
                 )
             )
