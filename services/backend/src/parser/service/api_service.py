@@ -1,4 +1,4 @@
-from parser.outgoing_requests.request import request
+from parser.external_api.request import request
 from utils import utils
 import json
 

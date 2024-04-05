@@ -6,12 +6,14 @@ from api.routers import all_routers
 
 # from models.base import Base
 # from database.setup import sync_engine
-from utils import utils
+from utils.utils import get_logger
 from errors import DateValidationError, ResultIsEmptyError
 from utils.tasks import repeat_every
+from utils.parser import parser
 import uvicorn
 
-logger = utils.get_logger("fastapi.main")
+backend_logger = get_logger(logger_name="fastapi.main", file_name="backend")
+parser_logger = get_logger(logger_name="repeat_task", file_name="parser")
 
 
 app = FastAPI(title="Вывод статистики по документам")
@@ -34,13 +36,14 @@ for router in all_routers:
     app.include_router(router)
 
 # Настройка логгера
-    
-logger = utils.get_logger("task")
 
 @app.on_event("startup")
-@repeat_every(seconds=5, logger=logger)
-async def test_task():
-    logger.info("Выполняется задача по расписанию")
+@repeat_every(seconds=60*60, logger=parser_logger)
+async def run_parser():
+    parser_logger.info("Выполняется задача по расписанию")
+    await parser(logger=parser_logger)
+    
+
 
 @app.exception_handler(DateValidationError)
 async def date_validation_exception_handler(request: Request, e: DateValidationError):

@@ -1,8 +1,8 @@
 import json
 
 import requests
-from parser.outgoing_requests.request import request
-from parser.utils.utils import get_logger
+from parser.external_api.request import request
+from utils.utils import get_logger
 
 logger = get_logger("pytest")
 

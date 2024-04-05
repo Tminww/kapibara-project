@@ -7,12 +7,12 @@ import logging
 from requests import Response
 
 
-def get_logger(logger_name: str) -> logging:
+def get_logger(logger_name: str, file_name: str = "logger") -> logging:
     logger = logging.getLogger(logger_name)
     logger.setLevel(logging.DEBUG)
     # создаем обработчик для файла и
     # установим уровень отладки
-    ch = logging.FileHandler("./src/log/parser.log", "a")
+    ch = logging.FileHandler(f"./src/log/{file_name}.log", "a")
     # ch.setLevel(logging.DEBUG)
 
     # строка формата сообщения

@@ -6,11 +6,11 @@ from psycopg2.errorcodes import UNIQUE_VIOLATION
 import parser.database.raw as raw
 from psycopg2 import errors
 
-from utils import utils
+from utils.utils import get_logger
 from  parser.assets.districts.data import get_districts_data
 
 
-logger = utils.get_logger("database.initiate.insert")
+logger = get_logger(logger_name="database.initiate.insert", file_name="parser")
 
 ID_DEADLINE = 0
 HASH = "x7585xx8969"
@@ -24,6 +24,7 @@ class InitiateInsert:
     def query_insert(func):
         def wrapper(self, *args, **kwargs):
             status = False
+            logger.info(self.connection)
             with self.connection() as connection:
                 with connection.cursor() as cursor:
                     try:

@@ -1,4 +1,4 @@
-from parser.outgoing_requests.http import http
+from parser.external_api.http import http
 
 
 class File:
