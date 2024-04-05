@@ -1,8 +1,9 @@
+from typing import Annotated
 from pydantic_settings import BaseSettings
 from functools import lru_cache
 
 
-class Settings(BaseSettings):
+class DBConfig(BaseSettings):
     DB_HOST: str
     DB_PORT: int
     DB_USER: str
@@ -22,6 +23,10 @@ class Settings(BaseSettings):
         # DSN
         # postgresql+psycopg://postgres:postgres@localhost:5432/sa
         return f"postgresql+psycopg://{self.DB_USER}:{self.DB_PASS}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
+
+
+class Settings(DBConfig):
+    pass
 
 
 settings = Settings()
