@@ -20,6 +20,7 @@ class RegionEntity(Base):
 
     in_district = relationship("DistrictEntity", back_populates="regions")
     blocks = relationship("DistrictEntity", back_populates="in_region")
+
     __table_args__ = (
         UniqueConstraint("id", "name", "short_name", "external_id", "code"),
         {"extend_existing": True},

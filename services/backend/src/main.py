@@ -41,7 +41,7 @@ for router in all_routers:
 @repeat_every(seconds=60*60, logger=parser_logger)
 async def run_parser():
     parser_logger.info("Выполняется задача по расписанию")
-    await parser(logger=parser_logger)
+    await parser()
     
 
 

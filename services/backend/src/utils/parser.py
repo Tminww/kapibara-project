@@ -1,4 +1,3 @@
-
 import logging
 from parser.service.api_service import ApiService as api_service
 
@@ -7,7 +6,9 @@ from parser.assets.deadlines.data import get_deadlines_data
 from parser.assets.districts.data import get_districts_data
 from parser.assets.regions.data import get_regions_data
 import time
+from utils.utils import get_logger
 
+logger = get_logger(logger_name="parser", file_name="parser")
 
 # @utils.check_time(logger=logger)
 # def get_document_api(code):
@@ -77,7 +78,7 @@ import time
 #     logger.info(f"Блок {code} закончен")
 
 
-async def parser(logger: logging.Logger = None):
+async def parser():
     logger.info("Начало работы скрипта")
     # block 1 create table index
 
@@ -96,9 +97,13 @@ async def parser(logger: logging.Logger = None):
     # db.initiate.create.index_all()
 
     # block 2 districts deadlines
+    logger.info(get_districts_data())
 
-    db.initiate.insert.table_districts(districts=get_districts_data())
-    db.initiate.insert.table_deadlines(deadlines=get_deadlines_data())
+    districts_data: str = get_districts_data()
+    deadlines_data: str = get_deadlines_data()
+
+    await db.initiate.insert.table_districts(districts=districts_data)
+    db.initiate.insert.table_deadlines(deadlines=deadlines_data)
 
     # # block 3 organ
 

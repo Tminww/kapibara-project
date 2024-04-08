@@ -7,7 +7,7 @@ import parser.database.raw as raw
 from psycopg2 import errors
 
 from utils.utils import get_logger
-from  parser.assets.districts.data import get_districts_data
+from parser.assets.districts.data import get_districts_data
 
 
 logger = get_logger(logger_name="database.initiate.insert", file_name="parser")
@@ -19,13 +19,21 @@ HASH = "x7585xx8969"
 class InitiateInsert:
 
     def __init__(self, get_connection) -> None:
-        self.connection = get_connection
+        self.get_connection = get_connection
 
-    def query_insert(func):
-        def wrapper(self, *args, **kwargs):
+    def __enter__(self):
+        self.conn = self.get_connection()
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        if self.conn:
+            self.conn.close()
+
+    async def query_insert(func):
+        async def wrapper(self, *args, **kwargs):
             status = False
             logger.info(self.connection)
-            with self.connection() as connection:
+            async with self.connection() as connection:
                 with connection.cursor() as cursor:
                     try:
                         stmt = func(self, cursor, *args, **kwargs)
