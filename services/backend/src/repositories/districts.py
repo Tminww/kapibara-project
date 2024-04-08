@@ -14,7 +14,7 @@ class IDistrictsRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def insert_or_update_all_districts(districts: List[dict]):
+    async def insert_or_update_districts(districts: List[dict]):
         raise NotImplementedError
 
 
@@ -31,7 +31,7 @@ class DistrictsRepository(IDistrictsRepository):
 
             return res
 
-    async def insert_or_update_all_districts(self, districts: List[dict]):
+    async def insert_or_update_districts(self, districts: List[dict]):
         values = [
             (district["id"], district["name"], district["short_name"])
             for district in districts

@@ -1,4 +1,5 @@
-from fastapi import FastAPI, Request
+from typing import Annotated
+from fastapi import Depends, FastAPI, Request
 from fastapi.responses import JSONResponse, PlainTextResponse
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
@@ -6,11 +7,17 @@ from api.routers import all_routers
 
 # from models.base import Base
 # from database.setup import sync_engine
+from services.service import Service
 from utils.utils import get_logger
 from errors import DateValidationError, ResultIsEmptyError
 from utils.tasks import repeat_every
 from utils.parser import parser
 import uvicorn
+
+from parser.assets.deadlines.data import get_deadlines_data
+from parser.assets.districts.data import get_districts_data
+from parser.assets.regions.data import get_regions_data
+
 
 backend_logger = get_logger(logger_name="fastapi.main", file_name="backend")
 parser_logger = get_logger(logger_name="repeat_task", file_name="parser")
@@ -38,10 +45,13 @@ for router in all_routers:
 # Настройка логгера
 
 @app.on_event("startup")
-@repeat_every(seconds=60*60, logger=parser_logger)
-async def run_parser():
+@repeat_every(seconds=60, logger=parser_logger)
+async def run_parser(service: Annotated[Service, Depends()]):
     parser_logger.info("Выполняется задача по расписанию")
-    await parser()
+
+
+    answer = await service.districts.insert_districts(districts=get_districts_data())
+    parser_logger.info(answer)
     
 
 

@@ -11,9 +11,9 @@ class DistrictsService:
 
         return districts
 
-    async def insert_all_districts(self, districts: List[dict]):
+    async def insert_districts(self, districts: List[dict]):
 
-        response = await self.districts_repo.insert_or_update_all_districts(districts)
+        response = await self.districts_repo.insert_or_update_districts(districts)
 
         print(response)
         return response
