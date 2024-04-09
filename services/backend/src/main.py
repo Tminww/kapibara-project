@@ -47,11 +47,16 @@ for router in all_routers:
 @app.on_event("startup")
 @repeat_every(seconds=60, logger=parser_logger)
 async def run_parser():
-    parser_logger.info("Выполняется задача по расписанию")
-    service: Service = Service()
 
-    answer = await service.districts.insert_districts(districts=get_districts_data())
-    parser_logger.info(answer)
+    parser_logger.info("Выполняется задача по расписанию")
+
+    service: Service = Service()
+    districts_data = get_districts_data()
+    deadlines_data = get_deadlines_data()
+    regions_data = get_regions_data()
+
+    answer = await service.districts.insert_districts(districts=districts_data)
+    parser_logger.info(answer.__dict__)
     
 
 

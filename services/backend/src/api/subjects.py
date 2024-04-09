@@ -18,8 +18,8 @@ router = APIRouter(
 
 @router.get("")
 async def get_subjects(
-    subjects_service: Annotated[Service.subjects, Depends(Service)],
+    service: Annotated[Service, Depends()],
 ):
     logger.info("get_subjects")
-    subjects = await subjects_service.get_subjects()
+    subjects = await service.subjects.get_subjects()
     return subjects

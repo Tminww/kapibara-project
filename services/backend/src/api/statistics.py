@@ -16,7 +16,7 @@ router = APIRouter(
 
 @router.get("")
 async def get_documents_in_districts(
-    statistics_service: Annotated[Service.statistics, Depends(Service)],
+    service: Annotated[Service, Depends()],
     regions: Union[str, None] = None,
     startDate: Union[str, None] = None,
     endDate: Union[str, None] = None,
@@ -37,5 +37,5 @@ async def get_documents_in_districts(
     except ValueError as e:
         raise DateValidationError(e)
     else:
-        documents = await statistics_service.get_stat_in_districts(parameters)
+        documents = await service.statistics.get_stat_in_districts(parameters)
         return documents
