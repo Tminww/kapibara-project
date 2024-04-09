@@ -12,6 +12,7 @@ class DBConfig(BaseSettings):
 
     class Config:
         env_file = "./src/.env"
+    model_fonfig = SettingsConfigDict(env_file="./src/.env")
 
     @property
     def DATABASE_URL(self):
