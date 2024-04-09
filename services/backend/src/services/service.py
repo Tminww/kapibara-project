@@ -18,7 +18,7 @@ from services.districts import DistrictsService
 
 
 class Service:
-    statistics = Annotated[StatisticsService, StatisticsService(StatisticsRepository)]
-    subjects = Annotated[SubjectsService, SubjectsService(SubjectsRepository)]
+    statistics: StatisticsService = StatisticsService(StatisticsRepository)
+    subjects: SubjectsService = SubjectsService(SubjectsRepository)
     regions: RegionsService = RegionsService(RegionsRepository)
     districts: DistrictsService = DistrictsService(DistrictsRepository)

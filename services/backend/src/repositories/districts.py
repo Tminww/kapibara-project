@@ -39,20 +39,27 @@ class DistrictsRepository(IDistrictsRepository):
         print(districts)
 
         async with async_session_maker() as session:
-            stmt = (
+            stmt_insert = (
                 insert(self.districts)
                 .values(districts)
-                .on_conflict_do_update(
+                
+            )
+
+            stmt_on_conflict = stmt_insert.on_conflict_do_update(
                     index_elements=["id"],
                     set_=dict(
-                        name=stmt.excluded.name,
-                        short_name=stmt.excluded.short_name,
+                        name=stmt_insert.excluded.name,
+                        short_name=stmt_insert.excluded.short_name,
                     ),
                 )
-            )
-            res = await session.execute(stmt)
 
-            updated = res.last_updated_params
-            print(updated)
+            try:
+                res = await session.execute(stmt_on_conflict)
+                await session.commit()
+                return res.last_updated_params
+            except Exception as ex:
+                pass
 
-            return updated
+
+
+            
