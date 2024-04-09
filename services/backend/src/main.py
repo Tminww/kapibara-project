@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, List
 from fastapi import Depends, FastAPI, Request
 from fastapi.responses import JSONResponse, PlainTextResponse
 from fastapi.exceptions import RequestValidationError
@@ -7,6 +7,7 @@ from api.routers import all_routers
 
 # from models.base import Base
 # from database.setup import sync_engine
+from schemas.districts import DistrictSchema
 from services.service import Service
 from utils.utils import get_logger
 from errors import DateValidationError, ResultIsEmptyError
@@ -44,6 +45,7 @@ for router in all_routers:
 
 # Настройка логгера
 
+
 @app.on_event("startup")
 @repeat_every(seconds=60, logger=parser_logger)
 async def run_parser():
@@ -51,13 +53,24 @@ async def run_parser():
     parser_logger.info("Выполняется задача по расписанию")
 
     service: Service = Service()
-    districts_data = get_districts_data()
+    districts_data: List[DistrictSchema] = []
     deadlines_data = get_deadlines_data()
     regions_data = get_regions_data()
 
-    answer = await service.districts.insert_districts(districts=districts_data)
-    parser_logger.info(answer.__dict__)
-    
+    for district in get_districts_data():
+        parser_logger.info(district)
+        districts_data.append(DistrictSchema(**district))
+
+    parser_logger.info(districts_data)
+    flag, status = await service.districts.insert_districts(districts=districts_data)
+    if flag:
+        parser_logger.info("Вставка округов прошла успешно")
+    else:
+        parser_logger.critical(f"При вставке округов произошла ошибка {status}")
+        parser_logger.critical("Выполнение задачи по расписанию оборвалось")
+        return
+
+    parser_logger.info("Выполнение задачи по расписанию завершено")
 
 
 @app.exception_handler(DateValidationError)
