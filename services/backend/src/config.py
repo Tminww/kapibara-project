@@ -1,5 +1,5 @@
 from typing import Annotated
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from functools import lru_cache
 
 
@@ -10,9 +10,8 @@ class DBConfig(BaseSettings):
     DB_PASS: str
     DB_NAME: str
 
-    class Config:
-        env_file = "./src/.env"
-    model_fonfig = SettingsConfigDict(env_file="./src/.env")
+
+    model_config = SettingsConfigDict(env_file="./src/.env")
 
     @property
     def DATABASE_URL(self):
