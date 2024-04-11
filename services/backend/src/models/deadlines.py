@@ -11,7 +11,7 @@ class DeadlineEntity(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     day: Mapped[int]
 
-    document_types = relationship("DocumentTypeEntity", back_populates="in_deadline")
+    # document_types = relationship("DocumentTypeEntity", back_populates="in_deadline")
 
     __table_args__ = (
         UniqueConstraint("id", "day"),
