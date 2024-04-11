@@ -1,6 +1,6 @@
 from typing import Annotated, List
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Path
 from fastapi.responses import Response
 from services.service import Service
 from schemas.districts import DistrictSchema
@@ -14,21 +14,30 @@ router = APIRouter(
 )
 
 
-@router.get("")
+@router.get("", description="Get all districts")
 async def get_districts(
     service: Annotated[Service, Depends()],
 ) -> List[DistrictSchema]:
-    logger.info("get_districts")
+
     districts = await service.districts.get_all_districts()
     return districts
 
 
-@router.post("")
+@router.get("/{item_id}", description="Get district by ID")
+async def get_district_by_id(
+    item_id: Annotated[int, Path(title="The ID of the item to get", gt=0, le=1000)],
+    service: Annotated[Service, Depends()],
+) -> List[DistrictSchema]:
+
+    districts = await service.districts.get_district_by_id(item_id)
+    return districts
+
+
+@router.post("", description="Insert or Update districts")
 async def insert_districts(
     service: Annotated[Service, Depends()],
     districts: List[DistrictSchema],
 ):
-    logger.info("insert_districts")
 
     flag, status = await service.districts.insert_districts(districts=districts)
 

@@ -15,7 +15,7 @@ class DocumentTypeEntity(Base):
     external_id: Mapped[str] = mapped_column(String(64))
     id_dl: Mapped[int] = mapped_column(ForeignKey("deadlines.id"), nullable=True)
 
-    in_deadline = relationship("DeadlineEntity", back_populates="document_types")
+    # in_deadline = relationship("DeadlineEntity", back_populates="document_types")
 
     __table_args__ = (
         UniqueConstraint("id", "name", "external_id"),

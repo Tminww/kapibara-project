@@ -1,7 +1,4 @@
-from datetime import date, datetime
-from pydantic import BaseModel, validator
-from typing import Optional
-from errors import DateValidationError
+from pydantic import BaseModel
 
 
 class DistrictSchema(BaseModel):

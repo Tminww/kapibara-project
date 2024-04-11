@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Annotated, List
 
+from errors import ResultIsEmptyError
 from models.districts import DistrictEntity
 from schemas.districts import DistrictSchema
 from sqlalchemy import select
@@ -12,6 +13,9 @@ from database.setup import async_session_maker
 class IDistrictsRepository(ABC):
     @abstractmethod
     async def get_all_districts() -> List[DistrictSchema]:
+        raise NotImplementedError
+
+    async def get_district(id_item: int) -> List[DistrictSchema]:
         raise NotImplementedError
 
     @abstractmethod
@@ -32,7 +36,23 @@ class DistrictsRepository(IDistrictsRepository):
 
             res = [row[0] for row in res.all()]
 
-            return res
+            if res:
+                return res
+            else:
+                raise ResultIsEmptyError("Result is empty")
+
+    async def get_district(self, item_id: int) -> List[DistrictSchema]:
+
+        async with async_session_maker() as session:
+            stmt = select(self.districts).where(self.districts.id == item_id)
+            res = await session.execute(stmt)
+
+            res = [row[0] for row in res.all()]
+
+            if res:
+                return res
+            else:
+                raise ResultIsEmptyError("Result is empty")
 
     async def insert_or_update_districts(
         self, districts: List[DistrictSchema]

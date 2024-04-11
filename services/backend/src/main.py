@@ -53,6 +53,7 @@ async def run_parser():
     parser_logger.info("Выполняется задача по расписанию")
 
     service: Service = Service()
+
     districts_data: List[DistrictSchema] = []
     deadlines_data = get_deadlines_data()
     regions_data = get_regions_data()
