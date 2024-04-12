@@ -7,6 +7,7 @@ from api.routers import all_routers
 
 # from models.base import Base
 # from database.setup import sync_engine
+from schemas.deadlines import DeadlinesSchema
 from schemas.districts import DistrictSchema
 from services.service import Service
 from utils.utils import get_logger
@@ -55,14 +56,21 @@ async def run_parser():
     service: Service = Service()
 
     districts_data: List[DistrictSchema] = []
-    deadlines_data = get_deadlines_data()
+    deadlines_data: List[DeadlinesSchema] = [] 
     regions_data = get_regions_data()
 
     for district in get_districts_data():
         parser_logger.info(district)
         districts_data.append(DistrictSchema(**district))
 
+    for deadline in get_deadlines_data():
+        parser_logger.info(deadline)
+        deadlines_data.append(DeadlinesSchema(**deadline))
+
     parser_logger.info(districts_data)
+    parser_logger.info(deadlines_data)
+
+    # Insert Districts 
     flag, status = await service.districts.insert_districts(districts=districts_data)
     if flag:
         parser_logger.info("Вставка округов прошла успешно")
@@ -71,6 +79,15 @@ async def run_parser():
         parser_logger.critical("Выполнение задачи по расписанию оборвалось")
         return
 
+    # Insert Deadlines
+    flag, status = await service.deadlines.insert_deadlines(deadlines=deadlines_data)
+    if flag:
+        parser_logger.info("Вставка дедлайнов прошла успешно")
+    else:
+        parser_logger.critical(f"При вставке дедлайнов произошла ошибка {status}")
+        parser_logger.critical("Выполнение задачи по расписанию оборвалось")
+        return
+    
     parser_logger.info("Выполнение задачи по расписанию завершено")
 
 
