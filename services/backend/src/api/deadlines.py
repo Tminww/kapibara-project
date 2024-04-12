@@ -1,10 +1,13 @@
 from typing import Annotated, List
 
-from fastapi import APIRouter, Depends, HTTPException, Path
-from fastapi.responses import Response
+
+from fastapi import APIRouter, Depends, Path
+from fastapi import status
+from fastapi.responses import JSONResponse, Response
 from services.service import Service
 from schemas.deadlines import DeadlinesSchema
 from utils.utils import get_logger
+from errors import DataDelitionError, DataInsertionError
 
 logger = get_logger(logger_name="api.deadlines", file_name="backend")
 
@@ -18,7 +21,9 @@ router = APIRouter(
 async def get_deadlines(
     service: Annotated[Service, Depends()],
 ) -> List[DeadlinesSchema]:
-
+    """
+    Retrieve all deadlines from the database.
+    """
     deadlines = await service.deadlines.get_all_deadlines()
     return deadlines
 
@@ -28,7 +33,9 @@ async def get_deadline_by_id(
     item_id: Annotated[int, Path(title="The ID of the item to get", gt=0, le=1000)],
     service: Annotated[Service, Depends()],
 ) -> List[DeadlinesSchema]:
-
+    """
+    Retrieve a specific deadline by its ID from the database.
+    """
     deadlines = await service.deadlines.get_deadline_by_id(item_id)
     return deadlines
 
@@ -38,13 +45,19 @@ async def insert_deadlines(
     service: Annotated[Service, Depends()],
     deadlines: List[DeadlinesSchema],
 ):
-
-    flag, status = await service.deadlines.insert_deadlines(deadlines=deadlines)
+    """
+    Insert a list of deadlines into the database.
+    """
+    flag, error = await service.deadlines.insert_deadlines(deadlines=deadlines)
 
     if flag:
-        return Response(status_code=200)
+        return JSONResponse(
+            status_code=status.HTTP_201_CREATED,
+            content={"detail": "Insert a list of deadlines is successful"},
+        )
     else:
-        raise HTTPException(status_code=400)
+
+        raise DataInsertionError(error)
 
 
 @router.delete("/{item_id}")
@@ -52,9 +65,16 @@ async def delete_deadline(
     item_id: Annotated[int, Path(title="The ID of the item to get", gt=0, le=1000)],
     service: Annotated[Service, Depends()],
 ):
-    flag, status = await service.deadlines.delete_deadline_by_id(item_id)
+    """
+    Delete a specific deadline by its ID from the database.
+    """
 
-    if flag:
-        return Response(status_code=200)
-    else:
-        raise HTTPException(status_code=400)
+    try:
+        flag, error = await service.deadlines.delete_deadline_by_id(item_id)
+        if flag:
+            return JSONResponse(
+                status_code=status.HTTP_205_RESET_CONTENT,
+                content={"detail": "Deadline successfully deleted"},
+            )
+    except Exception as e:
+        raise DataDelitionError(f"An error occurred while deleting: {e}")
