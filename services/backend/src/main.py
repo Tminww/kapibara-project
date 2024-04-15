@@ -2,7 +2,7 @@ from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from api.routers import all_routers
-
+from parser.external_api.request import request
 
 from schemas.deadlines import DeadlinesSchema
 from schemas.districts import DistrictSchema
@@ -107,6 +107,9 @@ async def run_parser():
         parser_logger.critical(str(e))
         parser_logger.critical("Выполнение задачи по расписанию оборвалось")
         return
+
+    print(request.api.public_blocks()["response"].json())
+    parser_logger.info("Выполнение задачи по расписанию завершено")
 
 
 @app.exception_handler(DateValidationError)

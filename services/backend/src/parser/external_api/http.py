@@ -1,3 +1,4 @@
+from abc import ABC, abstractmethod
 import requests
 from utils import utils
 import fake_useragent
@@ -5,16 +6,16 @@ import fake_useragent
 import aiohttp
 
 
-async def main():
-    async with aiohttp.ClientSession() as session:
-        async with session.get("https://example.com") as response:
-            print(await response.text())
-
-
 logger = utils.get_logger(logger_name="api.http", file_name="parser")
 
 
-class Http:
+class IHttp(ABC):
+    @abstractmethod
+    async def aioget():
+        raise NotImplementedError
+
+
+class Http(IHttp):
     BASE_URL = "http://publication.pravo.gov.ru"
 
     def __init__(self, base_url: str) -> None:
@@ -46,6 +47,3 @@ class Http:
 
         except Exception as e:
             logger.error(e)
-
-
-http = Http()

@@ -1,8 +1,11 @@
-from parser.external_api.http import http
+from parser.external_api.http import Http, IHttp
 
 
 class Api:
-    ENDPOINT = "api"
+
+    def __init__(self, endpoint_name: str, http: IHttp) -> None:
+        self.http: IHttp = http
+        self.endpoint = endpoint_name
 
     def documents_for_the_block(
         self, block: str, index: int, page_size: int = 200, document_type: str = None
@@ -20,24 +23,25 @@ class Api:
             json: ответ сервера
         """
 
-        path = f"{self.ENDPOINT}/Documents"
+        path = f"{self.endpoint}/Documents"
         payload = {
-            "DocumentTypes": document_type,
             "PageSize": page_size,
             "Index": index,
             "block": block,
         }
+        if document_type is not None:
+            payload["DocumentTypes"] = document_type
 
-        return http.get(path=path, payload=payload)
+        return self.http.get(path=path, payload=payload)
 
     def public_blocks(self, parent: str = None):
 
-        path = f"{self.ENDPOINT}/PublicBlocks"
-        payload = {
-            "parent": parent,
-        }
+        path = f"{self.endpoint}/PublicBlocks"
+        payload = {}
+        if parent is not None:
+            payload["parent"] = parent
 
-        return http.get(path=path, payload=payload)
+        return self.http.get(path=path, payload=payload)
 
     def types_in_block(self, block: str = None):
         """Получение номенклатуры для конкретного блока
@@ -50,9 +54,10 @@ class Api:
             json: ответ сервера
         """
 
-        path = f"{self.ENDPOINT}/DocumentTypes"
-        payload = {
-            "block": block,
-        }
+        path = f"{self.endpoint}/DocumentTypes"
 
-        return http.get(path=path, payload=payload)
+        payload = {}
+        if block is not None:
+            payload["block"] = block
+
+        return self.http.get(path=path, payload=payload)
