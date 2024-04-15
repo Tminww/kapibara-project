@@ -2,7 +2,7 @@ from parser.external_api.http import http
 
 
 class Api:
-    URL = "/api"
+    ENDPOINT = "api"
 
     def documents_for_the_block(
         self, block: str, index: int, page_size: int = 200, document_type: str = None
@@ -20,7 +20,7 @@ class Api:
             json: ответ сервера
         """
 
-        path = f"{self.URL}/Documents"
+        path = f"{self.ENDPOINT}/Documents"
         payload = {
             "DocumentTypes": document_type,
             "PageSize": page_size,
@@ -32,7 +32,7 @@ class Api:
 
     def public_blocks(self, parent: str = None):
 
-        path = f"{self.URL}/PublicBlocks"
+        path = f"{self.ENDPOINT}/PublicBlocks"
         payload = {
             "parent": parent,
         }
@@ -50,7 +50,7 @@ class Api:
             json: ответ сервера
         """
 
-        path = f"{self.URL}/DocumentTypes"
+        path = f"{self.ENDPOINT}/DocumentTypes"
         payload = {
             "block": block,
         }
