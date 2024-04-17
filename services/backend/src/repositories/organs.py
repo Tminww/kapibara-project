@@ -67,11 +67,10 @@ class OrgansRepository(IOrgansRepository):
             stmt_insert = insert(self.organs).values(values)
 
             stmt_on_conflict = stmt_insert.on_conflict_do_update(
-                index_elements=["id"],
+                index_elements=["external_id"],
                 set_=dict(
                     name=stmt_insert.excluded.name,
                     short_name=stmt_insert.excluded.short_name,
-                    external_id=stmt_insert.excluded.external_id,
                     code=stmt_insert.excluded.code,
                     parent_id=stmt_insert.excluded.parent_id,
                 ),
