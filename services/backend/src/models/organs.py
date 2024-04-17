@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import (
+    Index,
     String,
     UniqueConstraint,
 )
@@ -21,6 +22,9 @@ class OrganEntity(Base):
     __table_args__ = (
         UniqueConstraint("id", "name", "external_id", "code"),
         {"extend_existing": True},
-        # Index("ix_users_role_id", role_id),
+        # Index("indx_external_id", external_id),
         # Comment("Комментарий к таблице пользователей"),
     )
+
+
+Index("idx_external_id", OrganEntity.external_id, unique=True)
