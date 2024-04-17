@@ -128,6 +128,8 @@ async def run_parser():
 
     print(json.dumps(all_public_blocks[0], ensure_ascii=False, indent=4))
     parser_logger.debug(json.dumps(all_public_blocks, indent=4, ensure_ascii=False))
+    service..insert_organs(all_public_blocks)
+
     # db.initiate.insert.table_organ(all_public_blocks)
     parser_logger.info("Выполнение задачи по расписанию завершено")
 
