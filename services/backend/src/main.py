@@ -9,6 +9,7 @@ from parser.service import api_service
 from schemas.deadlines import DeadlinesSchema
 from schemas.districts import DistrictSchema
 from schemas.regions import RegionSchema
+from schemas.organs import OrganSchema
 from services.service import Service
 from utils.utils import get_logger
 from errors import (
@@ -95,14 +96,14 @@ async def run_parser():
         flag, error = await service.districts.insert_districts(districts=districts_data)
 
         if not flag:
-            raise DataInsertionError(f"При вставке округов произошла ошибка {status}")
+            raise DataInsertionError(f"При вставке округов произошла ошибка {error}")
         parser_logger.info("Вставка округов прошла успешно")
 
         # Insert Deadlines
         flag, error = await service.deadlines.insert_deadlines(deadlines=deadlines_data)
 
         if not flag:
-            raise DataInsertionError(f"При вставке дедлайнов произошла ошибка {status}")
+            raise DataInsertionError(f"При вставке дедлайнов произошла ошибка {error}")
         parser_logger.info("Вставка дедлайнов прошла успешно")
 
     except DataInsertionError as e:
@@ -111,7 +112,7 @@ async def run_parser():
         return
 
     # print(pravo_gov.api.public_blocks()["response"].json())
-
+    districts_data = [DistrictSchema(**district) for district in get_districts_data()]
     public_blocks = get_public_blocks()
 
     all_public_blocks = []
@@ -126,9 +127,23 @@ async def run_parser():
         else:
             all_public_blocks.append(public_block)
 
-    print(json.dumps(all_public_blocks[0], ensure_ascii=False, indent=4))
-    parser_logger.debug(json.dumps(all_public_blocks, indent=4, ensure_ascii=False))
-    service..insert_organs(all_public_blocks)
+    public_blocks_data = [OrganSchema(**organ) for organ in all_public_blocks]
+    parser_logger.debug(public_blocks_data[0].model_dump_json)
+
+    try:
+        # Insert Organs
+        flag, error = await service.organs.insert_organs(organs=public_blocks_data)
+
+        if not flag:
+            raise DataInsertionError(f"При вставке органов произошла ошибка {error}")
+        parser_logger.info(
+            "Вставка органов прошла успешно",
+        )
+
+    except DataInsertionError as e:
+        parser_logger.critical(str(e))
+        parser_logger.critical("Выполнение задачи по расписанию оборвалось")
+        return
 
     # db.initiate.insert.table_organ(all_public_blocks)
     parser_logger.info("Выполнение задачи по расписанию завершено")
@@ -152,7 +167,7 @@ def get_subblocks_public_blocks(parent) -> list:
         )
 
     print(json.dumps(subblocks[0], ensure_ascii=False, indent=4))
-    parser_logger.debug(json.dumps(subblocks, indent=4, ensure_ascii=False))
+    parser_logger.debug(json.dumps(subblocks[0], indent=4, ensure_ascii=False))
     return subblocks
 
 
@@ -174,7 +189,7 @@ def get_public_blocks() -> list:
         )
 
     print(json.dumps(blocks[0], ensure_ascii=False, indent=4))
-    parser_logger.debug(json.dumps(blocks, indent=4, ensure_ascii=False))
+    parser_logger.debug(json.dumps(blocks[0], indent=4, ensure_ascii=False))
     return blocks
 
 

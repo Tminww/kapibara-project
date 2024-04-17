@@ -12,12 +12,14 @@ class OrganEntity(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(128))
     short_name: Mapped[str] = mapped_column(String(64))
+    external_id: Mapped[str] = mapped_column(String(64))
     code: Mapped[str] = mapped_column(String(64))
+    parent_id: Mapped[str] = mapped_column(String(64), nullable=True)
 
     blocks = relationship("BlockEntity", back_populates="in_organ")
 
     __table_args__ = (
-        UniqueConstraint("id", "name", "short_name", "code"),
+        UniqueConstraint("id", "name", "external_id", "code"),
         {"extend_existing": True},
         # Index("ix_users_role_id", role_id),
         # Comment("Комментарий к таблице пользователей"),
