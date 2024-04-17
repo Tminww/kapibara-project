@@ -1,9 +1,11 @@
-from parser.external_api.request import request
+from parser.external_api.external import External
 from utils import utils
 import json
 
 
 logger = utils.get_logger("api_service")
+
+request = External()
 
 
 class ApiService:
@@ -91,3 +93,6 @@ class ApiService:
         print(json.dumps(blocks[0], ensure_ascii=False, indent=4))
         logger.debug(json.dumps(blocks[0], indent=4, ensure_ascii=False))
         return blocks
+
+
+api_service: ApiService = ApiService()
