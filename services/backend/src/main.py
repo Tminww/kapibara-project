@@ -169,7 +169,20 @@ async def run_parser():
         mock_regions=mock_regions_data, pravo_gov_regions=pravo_gov_regions_data
     )
 
-    service.regions.insert_regions(regions=regions_data)
+    try:
+        # Insert Organs
+        flag, error = await service.regions.insert_regions(regions=regions_data)
+
+        if not flag:
+            raise DataInsertionError(f"При вставке регионов произошла ошибка {error}")
+        parser_logger.info(
+            "Вставка регионов прошла успешно",
+        )
+
+    except DataInsertionError as e:
+        parser_logger.critical(str(e))
+        parser_logger.critical("Выполнение задачи по расписанию оборвалось")
+        return
     # db.initiate.insert.table_regions(blocks=api_regions)
     # db.initiate.update.table_regions(mock_data=mock_regions)
 
