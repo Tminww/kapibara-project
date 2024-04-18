@@ -25,4 +25,4 @@ class RegionEntity(Base):
     )
 
 
-Index("idx_external_id", RegionEntity.external_id, unique=True)
+Index("idx_regions_external_id", RegionEntity.external_id, unique=True)

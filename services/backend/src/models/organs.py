@@ -27,4 +27,4 @@ class OrganEntity(Base):
     )
 
 
-Index("idx_external_id", OrganEntity.external_id, unique=True)
+Index("idx_organs_external_id", OrganEntity.external_id, unique=True)
