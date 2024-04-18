@@ -1,4 +1,6 @@
+from typing import List
 from repositories.regions import IRegionsRepository
+from schemas.regions import RegionSchema
 
 
 class RegionsService:
@@ -11,3 +13,9 @@ class RegionsService:
 
         print(response)
         return regions
+
+    async def insert_regions(self, regions: List[RegionSchema]) -> tuple[bool, str]:
+
+        flag, status = await self.regions_repo.insert_or_update_regions(regions)
+
+        return (flag, status)

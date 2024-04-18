@@ -1,14 +1,14 @@
 import json
+from typing import List
 from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from api.routers import all_routers
 from parser.external_api.external import pravo_gov
 
-from parser.service import api_service
 from schemas.deadlines import DeadlinesSchema
 from schemas.districts import DistrictSchema
-from schemas.regions import RegionSchema
+from schemas.regions import MockRegionSchema, PravoGovRegionSchema, RegionSchema
 from schemas.organs import OrganSchema
 from services.service import Service
 from utils.utils import get_logger
@@ -80,27 +80,33 @@ async def run_parser():
     service: Service = Service()
 
     try:
-        districts_data = [
+        mock_districts_data: List[DistrictSchema] = [
             DistrictSchema(**district) for district in get_districts_data()
         ]
-        deadlines_data = [
+        mock_deadlines_data: List[DeadlinesSchema] = [
             DeadlinesSchema(**deadline) for deadline in get_deadlines_data()
         ]
-        regions_data = [RegionSchema(**region) for region in get_regions_data()]
+        mock_regions_data: List[MockRegionSchema] = [
+            MockRegionSchema(**region) for region in get_regions_data()
+        ]
     except Exception as e:
         parser_logger.error(f"Error fetching data: {str(e)}")
         return
 
     try:
         # Insert Districts
-        flag, error = await service.districts.insert_districts(districts=districts_data)
+        flag, error = await service.districts.insert_districts(
+            districts=mock_districts_data
+        )
 
         if not flag:
             raise DataInsertionError(f"При вставке округов произошла ошибка {error}")
         parser_logger.info("Вставка округов прошла успешно")
 
         # Insert Deadlines
-        flag, error = await service.deadlines.insert_deadlines(deadlines=deadlines_data)
+        flag, error = await service.deadlines.insert_deadlines(
+            deadlines=mock_deadlines_data
+        )
 
         if not flag:
             raise DataInsertionError(f"При вставке дедлайнов произошла ошибка {error}")
@@ -111,8 +117,9 @@ async def run_parser():
         parser_logger.critical("Выполнение задачи по расписанию оборвалось")
         return
 
-    # print(pravo_gov.api.public_blocks()["response"].json())
-    districts_data = [DistrictSchema(**district) for district in get_districts_data()]
+    mock_districts_data = [
+        DistrictSchema(**district) for district in get_districts_data()
+    ]
     public_blocks = get_public_blocks()
 
     all_public_blocks = []
@@ -144,6 +151,27 @@ async def run_parser():
         parser_logger.critical(str(e))
         parser_logger.critical("Выполнение задачи по расписанию оборвалось")
         return
+
+    pravo_gov_regions_data: List[PravoGovRegionSchema] = [
+        PravoGovRegionSchema(**region)
+        for region in get_subblocks_public_blocks(parent="subjects")
+    ]
+
+    status, error = compare_regions(
+        api_regions=pravo_gov_regions_data, mock_regions=mock_regions_data
+    )
+    if not status:
+        parser_logger.critical(f"Критическая ошибка! Обновите базу регионов. {error}")
+        parser_logger.critical("Выполнение задачи по расписанию оборвалось")
+        return
+
+    regions_data = combine_pydantic_list_models(
+        mock_regions=mock_regions_data, pravo_gov_regions=pravo_gov_regions_data
+    )
+
+    service.regions.insert_regions()
+    # db.initiate.insert.table_regions(blocks=api_regions)
+    # db.initiate.update.table_regions(mock_data=mock_regions)
 
     # db.initiate.insert.table_organ(all_public_blocks)
     parser_logger.info("Выполнение задачи по расписанию завершено")
@@ -191,6 +219,45 @@ def get_public_blocks() -> list:
     print(json.dumps(blocks[0], ensure_ascii=False, indent=4))
     parser_logger.debug(json.dumps(blocks[0], indent=4, ensure_ascii=False))
     return blocks
+
+
+def compare_regions(
+    mock_regions: List[MockRegionSchema], api_regions: List[PravoGovRegionSchema]
+) -> List[RegionSchema]:
+
+    mock_regions_name = [region.name for region in mock_regions]
+    for region in api_regions:
+        if region.name not in mock_regions_name:
+            error = region.name
+            return (False, error)
+
+    # regions_data = [
+    #     RegionSchema(**pravo_gov_region.model_dump(), id_dist=) for pravo_gov_region, mock_region in api_regions, mock_regions
+    # ]
+
+    return (True, None)
+
+
+# Функция для объединения списков моделей
+def combine_pydantic_list_models(
+    mock_regions: List[MockRegionSchema], pravo_gov_regions: List[PravoGovRegionSchema]
+) -> List[RegionSchema]:
+    combined_list = []
+    for mock_region in mock_regions:
+        for pravo_gov_region in pravo_gov_regions:
+            if mock_region.name == pravo_gov_region.name:
+                combined_list.append(
+                    RegionSchema(
+                        name=pravo_gov_region.name,
+                        short_name=pravo_gov_region.short_name,
+                        code=pravo_gov_region.code,
+                        external_id=pravo_gov_region.external_id,
+                        parent_id=pravo_gov_region.parent_id,
+                        id_dist=mock_region.id_dist,
+                    )
+                )
+                break
+    return combined_list
 
 
 @app.exception_handler(DateValidationError)
