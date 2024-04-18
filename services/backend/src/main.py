@@ -169,7 +169,7 @@ async def run_parser():
         mock_regions=mock_regions_data, pravo_gov_regions=pravo_gov_regions_data
     )
 
-    service.regions.insert_regions()
+    service.regions.insert_regions(regions=regions_data)
     # db.initiate.insert.table_regions(blocks=api_regions)
     # db.initiate.update.table_regions(mock_data=mock_regions)
 

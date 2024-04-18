@@ -1,9 +1,5 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import (
-    String,
-    UniqueConstraint,
-    ForeignKey,
-)
+from sqlalchemy import String, UniqueConstraint, ForeignKey, Index
 from models.base import Base
 
 
@@ -27,3 +23,6 @@ class RegionEntity(Base):
         # Index("ix_users_role_id", role_id),
         # Comment("Комментарий к таблице пользователей"),
     )
+
+
+Index("idx_external_id", RegionEntity.external_id, unique=True)
