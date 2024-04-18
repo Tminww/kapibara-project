@@ -27,6 +27,7 @@ from models.deadlines import DeadlineEntity
 from models.districts import DistrictEntity
 from models.document_types import DocumentTypeEntity
 from models.document_types__blocks import DocumentTypeBlockEntity
+from models.documents import DocumentEntity
 from models.organs import OrganEntity
 from models.regions import RegionEntity
 from models.roles import RoleEntity
