@@ -76,7 +76,10 @@ def retry_request(logger, num_retries=5, sleep_time=1):
                         f'status: {status}, url: {response.url} response: {response}, error: {error}"'
                     )
                     return RetryRequestSchema(
-                        status=status, response=response, error=error
+                        status=status,
+                        content=response.content,
+                        headers=response.headers,
+                        error=error,
                     )
                 except Exception as exception:
                     response = Response()
