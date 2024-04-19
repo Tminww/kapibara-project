@@ -8,7 +8,7 @@ class RegionEntity(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(128))
-    short_name: Mapped[str] = mapped_column(String(16))
+    short_name: Mapped[str] = mapped_column(String(64))
     external_id: Mapped[str] = mapped_column(String(64))
     code: Mapped[str] = mapped_column(String(10))
     parent_id: Mapped[str] = mapped_column(String(64))
