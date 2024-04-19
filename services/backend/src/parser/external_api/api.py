@@ -1,4 +1,5 @@
 from parser.external_api.http import Http, IHttp
+from schemas.retry_request import RetryRequestSchema
 
 
 class Api:
@@ -9,7 +10,7 @@ class Api:
 
     def documents_for_the_block(
         self, block: str, index: int, page_size: int = 200, document_type: str = None
-    ):
+    ) -> RetryRequestSchema:
         """Выводит документы для указанного блока с соответствующим типом.
            Если тип не указан - выводит для всего блока.
 
@@ -34,7 +35,7 @@ class Api:
 
         return self.http.get(path=path, payload=payload)
 
-    def public_blocks(self, parent: str = None):
+    def public_blocks(self, parent: str = None) -> RetryRequestSchema:
 
         path = f"{self.endpoint}/PublicBlocks"
         payload = {}
@@ -43,7 +44,7 @@ class Api:
 
         return self.http.get(path=path, payload=payload)
 
-    def types_in_block(self, block: str = None):
+    def types_in_block(self, block: str = None) -> RetryRequestSchema:
         """Получение номенклатуры для конкретного блока
 
         Args:

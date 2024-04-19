@@ -8,6 +8,7 @@ from parser.external_api.external import pravo_gov
 
 from schemas.deadlines import DeadlinesSchema
 from schemas.districts import DistrictSchema
+from schemas.document_types import PravoGovDocumentTypesSchema
 from schemas.regions import MockRegionSchema, PravoGovRegionSchema, RegionSchema
 from schemas.organs import OrganSchema
 from services.service import Service
@@ -135,7 +136,7 @@ async def run_parser():
             all_public_blocks.append(public_block)
 
     public_blocks_data = [OrganSchema(**organ) for organ in all_public_blocks]
-    parser_logger.debug(public_blocks_data[0].model_dump_json)
+    # parser_logger.debug(public_blocks_data[0].model_dump_json)
 
     try:
         # Insert Organs
@@ -170,7 +171,7 @@ async def run_parser():
     )
 
     try:
-        # Insert Organs
+        # Insert Regions
         flag, error = await service.regions.insert_regions(regions=regions_data)
 
         if not flag:
@@ -183,6 +184,10 @@ async def run_parser():
         parser_logger.critical(str(e))
         parser_logger.critical("Выполнение задачи по расписанию оборвалось")
         return
+
+    all_types = get_all_types()
+    db.initiate.insert.table_document_types(types=all_types)
+
     # db.initiate.insert.table_regions(blocks=api_regions)
     # db.initiate.update.table_regions(mock_data=mock_regions)
 
@@ -194,7 +199,7 @@ def get_subblocks_public_blocks(parent) -> list:
     response = pravo_gov.api.public_blocks(parent=parent)
     subblocks: list = []
 
-    for subblock in response["response"].json():
+    for subblock in response.content.json():
         subblocks.append(
             dict(
                 name=subblock["name"],
@@ -208,7 +213,7 @@ def get_subblocks_public_blocks(parent) -> list:
         )
 
     print(json.dumps(subblocks[0], ensure_ascii=False, indent=4))
-    parser_logger.debug(json.dumps(subblocks[0], indent=4, ensure_ascii=False))
+    # parser_logger.debug(json.dumps(subblocks[0], indent=4, ensure_ascii=False))
     return subblocks
 
 
@@ -216,7 +221,7 @@ def get_public_blocks() -> list:
     response = pravo_gov.api.public_blocks()
     blocks: list = []
 
-    for block in response["response"].json():
+    for block in response.content.json():
         blocks.append(
             dict(
                 name=block["name"],
@@ -230,7 +235,7 @@ def get_public_blocks() -> list:
         )
 
     print(json.dumps(blocks[0], ensure_ascii=False, indent=4))
-    parser_logger.debug(json.dumps(blocks[0], indent=4, ensure_ascii=False))
+    # parser_logger.debug(json.dumps(blocks[0], indent=4, ensure_ascii=False))
     return blocks
 
 
@@ -271,6 +276,27 @@ def combine_pydantic_list_models(
                 )
                 break
     return combined_list
+
+
+def get_all_types() -> list[PravoGovDocumentTypesSchema]:
+
+    response = pravo_gov.api.types_in_block()
+    # parser_logger.debug(
+    #     json.dumps(response["response"].json(), indent=4, ensure_ascii=False)
+    # )
+    all_types: list = []
+
+    for type in response.content.json():
+        all_types.append(
+            PravoGovDocumentTypesSchema(
+                name=type["name"],
+                external_id=type["id"],
+            )
+        )
+
+    print(json.dumps(all_types, ensure_ascii=False, indent=4))
+    parser_logger.debug(json.dumps(all_types[0], indent=4, ensure_ascii=False))
+    return all_types
 
 
 @app.exception_handler(DateValidationError)

@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 import requests
+from schemas.retry_request import RetryRequestSchema
 from utils import utils
 import fake_useragent
 
@@ -11,7 +12,7 @@ logger = utils.get_logger(logger_name="api.http", file_name="parser")
 
 class IHttp(ABC):
     @abstractmethod
-    async def get():
+    async def get(path: str, payload: dict = None) -> RetryRequestSchema:
         raise NotImplementedError
 
 
@@ -33,7 +34,7 @@ class Http(IHttp):
     #             print(await response.text())
 
     @utils.retry_request(logger=logger)
-    def get(self, path: str, payload: dict = None):
+    def get(self, path: str, payload: dict = None) -> RetryRequestSchema:
         try:
             session = requests.Session()
             user = fake_useragent.UserAgent().random

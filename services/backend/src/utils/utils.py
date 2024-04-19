@@ -5,6 +5,7 @@ import time
 import logging
 
 from requests import Response
+from schemas.retry_request import RetryRequestSchema
 
 
 def get_logger(logger_name: str, file_name: str = "logger") -> logging:
@@ -51,11 +52,19 @@ def check_time(logger):
 def retry_request(logger, num_retries=5, sleep_time=1):
     """
     Decorator that retries the execution of a function if it raises a specific exception.
+
+    Args:
+        logger: The logger object used for logging debug and error messages.
+        num_retries: The maximum number of retries to attempt. Defaults to 5.
+        sleep_time: The time to sleep between retries in seconds. Defaults to 1.
+
+    Returns:
+        A decorated function that retries the execution of the original function if it raises an exception.
     """
 
     def decorate(func):
         @wraps(func)
-        def wrapper(*args, **kwargs):
+        def wrapper(*args, **kwargs) -> RetryRequestSchema:
             status = False
             for retry in range(1, num_retries + 1):
                 try:
@@ -66,7 +75,9 @@ def retry_request(logger, num_retries=5, sleep_time=1):
                     logger.debug(
                         f'status: {status}, url: {response.url} response: {response}, error: {error}"'
                     )
-                    return {"status": status, "response": response, "error": error}
+                    return RetryRequestSchema(
+                        status=status, response=response, error=error
+                    )
                 except Exception as exception:
                     response = Response()
                     response.reason = exception
@@ -83,7 +94,12 @@ def retry_request(logger, num_retries=5, sleep_time=1):
                 f'status: {status}, url: {response.url} response: {response}, error: {error}"'
             )
 
-            return {"status": status, "response": response, "error": error}
+            return RetryRequestSchema(
+                status=status,
+                content=response.content,
+                headers=response.headers,
+                error=error,
+            )
 
             # Raise the exception if the function was not successful after the specified number of retries
 
