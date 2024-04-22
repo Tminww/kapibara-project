@@ -185,8 +185,13 @@ async def run_parser():
         parser_logger.critical("Выполнение задачи по расписанию оборвалось")
         return
 
-    all_types = get_all_types()
-    db.initiate.insert.table_document_types(types=all_types)
+    types_data = get_all_types()
+
+    service.
+
+
+    # parser_logger.info(f"ALL_TYPES {map(lambda x: x.model_dump, all_types)}")
+    # db.initiate.insert.table_document_types(types=all_types)
 
     # db.initiate.insert.table_regions(blocks=api_regions)
     # db.initiate.update.table_regions(mock_data=mock_regions)
@@ -199,7 +204,7 @@ def get_subblocks_public_blocks(parent) -> list:
     response = pravo_gov.api.public_blocks(parent=parent)
     subblocks: list = []
 
-    for subblock in response.content.json():
+    for subblock in json.loads(response.content):
         subblocks.append(
             dict(
                 name=subblock["name"],
@@ -212,8 +217,6 @@ def get_subblocks_public_blocks(parent) -> list:
             )
         )
 
-    print(json.dumps(subblocks[0], ensure_ascii=False, indent=4))
-    # parser_logger.debug(json.dumps(subblocks[0], indent=4, ensure_ascii=False))
     return subblocks
 
 
@@ -221,7 +224,7 @@ def get_public_blocks() -> list:
     response = pravo_gov.api.public_blocks()
     blocks: list = []
 
-    for block in response.content.json():
+    for block in json.loads(response.content):
         blocks.append(
             dict(
                 name=block["name"],
@@ -234,8 +237,6 @@ def get_public_blocks() -> list:
             )
         )
 
-    print(json.dumps(blocks[0], ensure_ascii=False, indent=4))
-    # parser_logger.debug(json.dumps(blocks[0], indent=4, ensure_ascii=False))
     return blocks
 
 
@@ -249,10 +250,6 @@ def compare_regions(
             error = region.name
             return (False, error)
 
-    # regions_data = [
-    #     RegionSchema(**pravo_gov_region.model_dump(), id_dist=) for pravo_gov_region, mock_region in api_regions, mock_regions
-    # ]
-
     return (True, None)
 
 
@@ -261,6 +258,7 @@ def combine_pydantic_list_models(
     mock_regions: List[MockRegionSchema], pravo_gov_regions: List[PravoGovRegionSchema]
 ) -> List[RegionSchema]:
     combined_list = []
+
     for mock_region in mock_regions:
         for pravo_gov_region in pravo_gov_regions:
             if mock_region.name == pravo_gov_region.name:
@@ -281,12 +279,10 @@ def combine_pydantic_list_models(
 def get_all_types() -> list[PravoGovDocumentTypesSchema]:
 
     response = pravo_gov.api.types_in_block()
-    # parser_logger.debug(
-    #     json.dumps(response["response"].json(), indent=4, ensure_ascii=False)
-    # )
+
     all_types: list = []
 
-    for type in response.content.json():
+    for type in json.loads(response.content):
         all_types.append(
             PravoGovDocumentTypesSchema(
                 name=type["name"],
@@ -294,8 +290,6 @@ def get_all_types() -> list[PravoGovDocumentTypesSchema]:
             )
         )
 
-    print(json.dumps(all_types, ensure_ascii=False, indent=4))
-    parser_logger.debug(json.dumps(all_types[0], indent=4, ensure_ascii=False))
     return all_types
 
 

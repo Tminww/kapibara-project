@@ -68,7 +68,7 @@ def retry_request(logger, num_retries=5, sleep_time=1):
             status = False
             for retry in range(1, num_retries + 1):
                 try:
-                    response = func(*args, **kwargs)
+                    response: Response = func(*args, **kwargs)
                     error = 0
                     status = True
 
@@ -77,6 +77,7 @@ def retry_request(logger, num_retries=5, sleep_time=1):
                     )
                     return RetryRequestSchema(
                         status=status,
+                        status_code=response.status_code,
                         content=response.content,
                         headers=response.headers,
                         error=error,
@@ -99,6 +100,7 @@ def retry_request(logger, num_retries=5, sleep_time=1):
 
             return RetryRequestSchema(
                 status=status,
+                status_code=response.status_code,
                 content=response.content,
                 headers=response.headers,
                 error=error,

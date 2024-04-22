@@ -36,7 +36,7 @@ services:
   #     - postgres
 
   backend:
-    build: ./services/backend/
+    build: ./backend/
     container_name: backend
     restart: unless-stopped
     volumes:
@@ -47,7 +47,7 @@ services:
       - "8080:80"
 
   # frontend:
-  #   build: ./services/frontend/
+  #   build: ./frontend/
   #   container_name: frontend
   #   volumes:
   #     - './services/frontend:/code/'
