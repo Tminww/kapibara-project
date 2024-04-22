@@ -1,13 +1,12 @@
 from abc import ABC, abstractmethod
 from typing import Annotated, List
-
-from errors import ResultIsEmptyError
-from models.organs import OrganEntity
-from schemas.organs import OrganSchema
 from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
 
-from database.setup import async_session_maker
+from src.errors import ResultIsEmptyError
+from src.models.organs import OrganEntity
+from src.schemas.organs import OrganSchema
+from src.database.setup import async_session_maker
 
 
 class IOrgansRepository(ABC):

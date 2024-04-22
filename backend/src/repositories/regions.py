@@ -1,12 +1,11 @@
 from abc import ABC, abstractmethod
 from typing import Annotated, List
-
-from models.regions import RegionEntity
-from schemas.regions import RegionSchema
 from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
 
-from database.setup import async_session_maker
+from src.models.regions import RegionEntity
+from src.schemas.regions import RegionSchema
+from src.database.setup import async_session_maker
 
 
 class IRegionsRepository(ABC):

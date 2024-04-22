@@ -1,4 +1,6 @@
-from schemas.statistics import (
+import time
+
+from src.schemas.statistics import (
     RequestBodySchema,
     StatAllDTO,
     StatDistrictDTO,
@@ -7,8 +9,7 @@ from schemas.statistics import (
     StatRegionSchema,
     StatRegionsSchema,
 )
-from utils.repository import AbstractRepository
-import time
+from src.utils.repository import AbstractRepository
 
 
 def get_count_from_stat(stat: list) -> int:
@@ -67,13 +68,12 @@ class StatisticsService:
                 )
             )
 
-        
         end_time = time.time()
         print(end_time - start_time)
-        
+
         return StatAllDTO(
-                name="Вся статистика",
-                count=get_count_from_stat(stat_all),
-                stat=stat_all,
-                districts=districts,
-            )
+            name="Вся статистика",
+            count=get_count_from_stat(stat_all),
+            stat=stat_all,
+            districts=districts,
+        )

@@ -1,6 +1,7 @@
 from typing import List
-from repositories.organs import IOrgansRepository
-from schemas.organs import OrganSchema
+
+from src.repositories.organs import IOrgansRepository
+from src.schemas.organs import OrganSchema
 
 
 class OrgansService:

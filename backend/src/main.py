@@ -3,28 +3,27 @@ from typing import List
 from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-from api.routers import all_routers
-from parser.external_api.external import pravo_gov
-
-from schemas.deadlines import DeadlinesSchema
-from schemas.districts import DistrictSchema
-from schemas.document_types import PravoGovDocumentTypesSchema
-from schemas.regions import MockRegionSchema, PravoGovRegionSchema, RegionSchema
-from schemas.organs import OrganSchema
-from services.service import Service
-from utils.utils import get_logger
-from errors import (
+from src.api.routers import all_routers
+from src.parser.external_api.external import pravo_gov
+from src.schemas.deadlines import DeadlinesSchema
+from src.schemas.districts import DistrictSchema
+from src.schemas.document_types import PravoGovDocumentTypesSchema
+from src.schemas.regions import MockRegionSchema, PravoGovRegionSchema, RegionSchema
+from src.schemas.organs import OrganSchema
+from src.services.service import Service
+from src.utils.utils import get_logger
+from src.errors import (
     DataDelitionError,
     DataInsertionError,
     DateValidationError,
     ResultIsEmptyError,
 )
-from utils.tasks import repeat_every
+from src.utils.tasks import repeat_every
 
 
-from parser.assets.deadlines.data import get_deadlines_data
-from parser.assets.districts.data import get_districts_data
-from parser.assets.regions.data import get_regions_data
+from src.parser.assets.deadlines.data import get_deadlines_data
+from src.parser.assets.districts.data import get_districts_data
+from src.parser.assets.regions.data import get_regions_data
 
 
 backend_logger = get_logger(logger_name="fastapi.main", file_name="backend")
@@ -186,9 +185,6 @@ async def run_parser():
         return
 
     types_data = get_all_types()
-
-    service.
-
 
     # parser_logger.info(f"ALL_TYPES {map(lambda x: x.model_dump, all_types)}")
     # db.initiate.insert.table_document_types(types=all_types)

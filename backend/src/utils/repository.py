@@ -2,17 +2,17 @@ from abc import ABC, abstractmethod
 from datetime import datetime
 
 
-from models.documents import DocumentEntity
-from models.regions import RegionEntity
-from models.districts import DistrictEntity
+from src.models.documents import DocumentEntity
+from src.models.regions import RegionEntity
+from src.models.districts import DistrictEntity
 
-from schemas.subjects import SubjectInfoDTO
-from schemas.statistics import StatRowSchema, StatBaseDTO, RequestBodySchema
+from src.schemas.subjects import SubjectInfoDTO
+from src.schemas.statistics import StatRowSchema, StatBaseDTO, RequestBodySchema
 
 from sqlalchemy import insert, select, func
 
-from database.setup import async_session_maker
-from errors import ResultIsEmptyError
+from src.database.setup import async_session_maker
+from src.errors import ResultIsEmptyError
 
 
 class AbstractRepository(ABC):

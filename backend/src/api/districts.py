@@ -2,9 +2,9 @@ from typing import Annotated, List
 
 from fastapi import APIRouter, Depends, HTTPException, Path
 from fastapi.responses import Response
-from services.service import Service
-from schemas.districts import DistrictSchema
-from utils.utils import get_logger
+from src.services.service import Service
+from src.schemas.districts import DistrictSchema
+from src.utils.utils import get_logger
 
 logger = get_logger(logger_name="api.districts", file_name="backend")
 

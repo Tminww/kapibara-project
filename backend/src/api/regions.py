@@ -1,10 +1,9 @@
 from typing import Annotated, List
-
 from fastapi import APIRouter, Depends
-from schemas.regions import PravoGovRegionSchema
-from services.service import Service
 
-from utils.utils import get_logger
+from src.schemas.regions import PravoGovRegionSchema
+from src.services.service import Service
+from src.utils.utils import get_logger
 
 logger = get_logger("api.regions")
 

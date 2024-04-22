@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "parser"
+name = "src"
 version = "0.1.0"
 description = ""
 authors = ["Serafim Oleynik <serafim.oleynik.5777@yandex.ru>"]
@@ -45,8 +45,7 @@ black = "^24.2.0"
 aiohttp = "^3.9.5"
 
 [tool.poetry.scripts]
-server = "run_uvicorn_server:server"
-parser = "run_parser:parser"
+
 
 
 

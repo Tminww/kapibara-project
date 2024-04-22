@@ -1,7 +1,7 @@
 from datetime import date, datetime
 from pydantic import BaseModel, validator
 from typing import Optional
-from errors import DateValidationError
+from src.errors import DateValidationError
 
 
 class ActSchema(BaseModel):

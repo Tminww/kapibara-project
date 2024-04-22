@@ -3,7 +3,7 @@ from sqlalchemy import (
     String,
     UniqueConstraint,
 )
-from models.base import Base
+from src.models.base import Base
 
 
 class DistrictEntity(Base):

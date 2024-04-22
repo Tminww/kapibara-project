@@ -1,13 +1,12 @@
 from abc import ABC, abstractmethod
 from typing import List
-
-from errors import ResultIsEmptyError
-from models.deadlines import DeadlineEntity
-from schemas.deadlines import DeadlinesSchema
 from sqlalchemy import delete, select
 from sqlalchemy.dialects.postgresql import insert
 
-from database.setup import async_session_maker
+from src.errors import ResultIsEmptyError
+from src.models.deadlines import DeadlineEntity
+from src.schemas.deadlines import DeadlinesSchema
+from src.database.setup import async_session_maker
 
 
 class IDeadlinesRepository(ABC):

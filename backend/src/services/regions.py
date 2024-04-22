@@ -1,6 +1,7 @@
 from typing import List
-from repositories.regions import IRegionsRepository
-from schemas.regions import RegionSchema
+
+from src.repositories.regions import IRegionsRepository
+from src.schemas.regions import RegionSchema
 
 
 class RegionsService:

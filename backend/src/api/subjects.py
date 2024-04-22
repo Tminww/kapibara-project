@@ -3,10 +3,10 @@ from typing import Annotated
 from fastapi import APIRouter, Depends
 
 # from api.dependencies import subjects_service
-from services.service import Service
-from services.subjects import SubjectsService
+from src.services.service import Service
+from src.services.subjects import SubjectsService
 
-from utils import utils
+from src.utils import utils
 
 logger = utils.get_logger("fastapi.api.subjects")
 

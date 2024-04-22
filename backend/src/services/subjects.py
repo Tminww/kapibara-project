@@ -1,5 +1,5 @@
-from schemas.subjects import SubjectsInDistrictDTO
-from utils.repository import AbstractRepository
+from src.schemas.subjects import SubjectsInDistrictDTO
+from src.utils.repository import AbstractRepository
 
 
 class SubjectsService:

@@ -1,22 +1,22 @@
 from typing import Annotated
-from repositories.statistics import StatisticsRepository
-from repositories.subjects import SubjectsRepository
-from repositories.regions import RegionsRepository
-from repositories.districts import DistrictsRepository
-from repositories.deadlines import DeadlinesRepository
-from repositories.organs import OrgansRepository
+from src.repositories.statistics import StatisticsRepository
+from src.repositories.subjects import SubjectsRepository
+from src.repositories.regions import RegionsRepository
+from src.repositories.districts import DistrictsRepository
+from src.repositories.deadlines import DeadlinesRepository
+from src.repositories.organs import OrgansRepository
 
-from services.statistics import StatisticsService
-from services.subjects import SubjectsService
-from services.regions import RegionsService
-from services.districts import DistrictsService
-from services.deadlines import DeadlinesService
-from services.organs import OrgansService
+from src.services.statistics import StatisticsService
+from src.services.subjects import SubjectsService
+from src.services.regions import RegionsService
+from src.services.districts import DistrictsService
+from src.services.deadlines import DeadlinesService
+from src.services.organs import OrgansService
 
 
 class Service:
-    """This class defines a Service class with attributes for different types of services, each initialized with their respective repositories.
-    """
+    """This class defines a Service class with attributes for different types of services, each initialized with their respective repositories."""
+
     statistics: StatisticsService = StatisticsService(StatisticsRepository)
     subjects: SubjectsService = SubjectsService(SubjectsRepository)
     regions: RegionsService = RegionsService(RegionsRepository)

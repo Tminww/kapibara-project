@@ -5,7 +5,7 @@ import time
 import logging
 
 from requests import Response
-from schemas.retry_request import RetryRequestSchema
+from src.schemas.retry_request import RetryRequestSchema
 
 
 def get_logger(logger_name: str, file_name: str = "logger") -> logging:

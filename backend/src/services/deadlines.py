@@ -1,6 +1,7 @@
 from typing import List
-from repositories.deadlines import IDeadlinesRepository
-from schemas.deadlines import DeadlinesSchema
+
+from src.repositories.deadlines import IDeadlinesRepository
+from src.schemas.deadlines import DeadlinesSchema
 
 
 class DeadlinesService:

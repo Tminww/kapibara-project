@@ -1,10 +1,8 @@
 from abc import ABC, abstractmethod
 import requests
-from schemas.retry_request import RetryRequestSchema
-from utils import utils
 import fake_useragent
-
-import aiohttp
+from src.schemas.retry_request import RetryRequestSchema
+from src.utils import utils
 
 
 logger = utils.get_logger(logger_name="api.http", file_name="parser")

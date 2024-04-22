@@ -1,6 +1,7 @@
 from typing import List
-from repositories.districts import IDistrictsRepository
-from schemas.districts import DistrictSchema
+
+from src.repositories.districts import IDistrictsRepository
+from src.schemas.districts import DistrictSchema
 
 
 class DistrictsService:

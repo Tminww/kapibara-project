@@ -8,7 +8,7 @@ from sqlalchemy import (
     BigInteger,
     ForeignKey,
 )
-from models.base import Base
+from src.models.base import Base
 
 
 class DocumentEntity(Base):

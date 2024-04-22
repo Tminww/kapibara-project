@@ -1,13 +1,12 @@
 from abc import ABC, abstractmethod
 from typing import Annotated, List
-
-from errors import ResultIsEmptyError
-from models.districts import DistrictEntity
-from schemas.districts import DistrictSchema
 from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
 
-from database.setup import async_session_maker
+from src.errors import ResultIsEmptyError
+from src.models.districts import DistrictEntity
+from src.schemas.districts import DistrictSchema
+from src.database.setup import async_session_maker
 
 
 class IDistrictsRepository(ABC):

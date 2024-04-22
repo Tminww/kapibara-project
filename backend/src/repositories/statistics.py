@@ -1,8 +1,8 @@
-from models.documents import DocumentEntity
-from models.regions import RegionEntity
-from models.districts import DistrictEntity
+from src.models.documents import DocumentEntity
+from src.models.regions import RegionEntity
+from src.models.districts import DistrictEntity
 
-from utils.repository import SQLAlchemyRepository
+from src.utils.repository import SQLAlchemyRepository
 
 
 class StatisticsRepository(SQLAlchemyRepository):

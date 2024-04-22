@@ -1,4 +1,4 @@
-from parser.external_api.http import IHttp
+from src.parser.external_api.http import IHttp
 
 
 class File:

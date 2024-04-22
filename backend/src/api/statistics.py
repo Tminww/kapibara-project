@@ -3,10 +3,10 @@ from fastapi import APIRouter, Depends, Query, HTTPException
 from pydantic import ValidationError
 
 # from api.dependencies import statistics_service
-from services.service import Service
-from schemas.statistics import RequestBodySchema
-from services.statistics import StatisticsService
-from errors import DateValidationError, ResultIsEmptyError
+from src.services.service import Service
+from src.schemas.statistics import RequestBodySchema
+from src.services.statistics import StatisticsService
+from src.errors import DateValidationError, ResultIsEmptyError
 
 router = APIRouter(
     prefix="/statistics",

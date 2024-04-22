@@ -1,13 +1,12 @@
 from typing import Annotated, List
-
-
 from fastapi import APIRouter, Depends, Path
 from fastapi import status
 from fastapi.responses import JSONResponse, Response
-from services.service import Service
-from schemas.deadlines import DeadlinesSchema
-from utils.utils import get_logger
-from errors import DataDelitionError, DataInsertionError
+
+from src.services.service import Service
+from src.schemas.deadlines import DeadlinesSchema
+from src.utils.utils import get_logger
+from src.errors import DataDelitionError, DataInsertionError
 
 logger = get_logger(logger_name="api.deadlines", file_name="backend")
 
