@@ -21,19 +21,19 @@ config = context.config
 
 # from src.models.base import Base
 
-from models.base import Base
-from models.blocks import BlockEntity
-from models.deadlines import DeadlineEntity
-from models.districts import DistrictEntity
-from models.document_types import DocumentTypeEntity
-from models.document_types__blocks import DocumentTypeBlockEntity
-from models.documents import DocumentEntity
-from models.organs import OrganEntity
-from models.regions import RegionEntity
-from models.roles import RoleEntity
-from models.users import UserEntity
+from src.models.base import Base
+from src.models.blocks import BlockEntity
+from src.models.deadlines import DeadlineEntity
+from src.models.districts import DistrictEntity
+from src.models.document_types import DocumentTypeEntity
+from src.models.document_types__blocks import DocumentTypeBlockEntity
+from src.models.documents import DocumentEntity
+from src.models.organs import OrganEntity
+from src.models.regions import RegionEntity
+from src.models.roles import RoleEntity
+from src.models.users import UserEntity
 
-from config import settings
+from src.config import settings
 
 
 if config.config_file_name is not None:

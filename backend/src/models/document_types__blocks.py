@@ -3,7 +3,7 @@ from sqlalchemy import (
     UniqueConstraint,
     ForeignKey,
 )
-from models.base import Base
+from src.models.base import Base
 
 
 class DocumentTypeBlockEntity(Base):
