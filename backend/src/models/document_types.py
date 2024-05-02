@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import (
+    Index,
     String,
     UniqueConstraint,
     ForeignKey,
@@ -23,3 +24,6 @@ class DocumentTypeEntity(Base):
         # Index("ix_users_role_id", role_id),
         # Comment("Комментарий к таблице пользователей"),
     )
+
+
+Index("idx_document_types_external_id", DocumentTypeEntity.external_id, unique=True)
