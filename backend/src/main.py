@@ -185,6 +185,11 @@ async def run_parser():
         return
 
     types_data = get_all_types()
+    parser_logger.debug(types_data)
+
+    # Insert Document Types
+    flag, error = await service.document_types.insert_types(types_data)
+    parser_logger.debug(flag, error)
 
     # parser_logger.info(f"ALL_TYPES {map(lambda x: x.model_dump, all_types)}")
     # db.initiate.insert.table_document_types(types=all_types)
