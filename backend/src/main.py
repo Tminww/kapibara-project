@@ -205,6 +205,7 @@ async def run_parser():
 
     # print(public_blocks_data)
 
+    #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!FIX
     for block in all_public_blocks:
         block_types = get_block_types(block=block["code"])
 
@@ -218,6 +219,8 @@ async def run_parser():
         all_public_blocks_and_regions_data.append(region.code)
 
     print(all_public_blocks_and_regions_data)
+    #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
     # parser_logger.info(f"ALL_TYPES {map(lambda x: x.model_dump, all_types)}")
     # db.initiate.insert.table_document_types(types=all_types)
 
