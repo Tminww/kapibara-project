@@ -208,6 +208,16 @@ async def run_parser():
     for block in all_public_blocks:
         block_types = get_block_types(block=block["code"])
 
+        code = block["code"]
+
+    all_public_blocks_and_regions_data = []
+
+    for block in public_blocks_data:
+        all_public_blocks_and_regions_data.append(block.code)
+    for region in pravo_gov_regions_data:
+        all_public_blocks_and_regions_data.append(region.code)
+
+    print(all_public_blocks_and_regions_data)
     # parser_logger.info(f"ALL_TYPES {map(lambda x: x.model_dump, all_types)}")
     # db.initiate.insert.table_document_types(types=all_types)
 
@@ -233,7 +243,7 @@ def get_block_types(block: str) -> list:
             )
         )
 
-    print(json.dumps(block_types[0], ensure_ascii=False, indent=4))
+    # print(json.dumps(block_types[0], ensure_ascii=False, indent=4))
     parser_logger.debug(json.dumps(block_types[0], indent=4, ensure_ascii=False))
     return block_types
 
