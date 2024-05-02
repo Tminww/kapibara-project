@@ -8,8 +8,8 @@ from sqlalchemy import (
 from src.models.base import Base
 
 
-class DocumentTypeEntity(Base):
-    __tablename__ = "document_types"
+class TypeEntity(Base):
+    __tablename__ = "types"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(128))
@@ -26,4 +26,4 @@ class DocumentTypeEntity(Base):
     )
 
 
-Index("idx_document_types_external_id", DocumentTypeEntity.external_id, unique=True)
+Index("idx_types_external_id", TypeEntity.external_id, unique=True)

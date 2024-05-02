@@ -7,7 +7,7 @@ from src.api.routers import all_routers
 from src.parser.external_api.external import pravo_gov
 from src.schemas.deadlines import DeadlinesSchema
 from src.schemas.districts import DistrictSchema
-from src.schemas.document_types import PravoGovDocumentTypesSchema
+from src.schemas.types import PravoGovDocumentTypesSchema
 from src.schemas.regions import MockRegionSchema, PravoGovRegionSchema, RegionSchema
 from src.schemas.organs import OrganSchema
 from src.services.service import Service
@@ -101,7 +101,7 @@ async def run_parser():
 
         if not flag:
             raise DataInsertionError(f"При вставке округов произошла ошибка {error}")
-        parser_logger.info("Вставка округов прошла успешно")
+        parser_logger.info("Вставка/обновление округов прошла успешно")
 
         # Insert Deadlines
         flag, error = await service.deadlines.insert_deadlines(
@@ -110,7 +110,7 @@ async def run_parser():
 
         if not flag:
             raise DataInsertionError(f"При вставке дедлайнов произошла ошибка {error}")
-        parser_logger.info("Вставка дедлайнов прошла успешно")
+        parser_logger.info("Вставка/обновление дедлайнов прошла успешно")
 
     except DataInsertionError as e:
         parser_logger.critical(str(e))
@@ -144,7 +144,7 @@ async def run_parser():
         if not flag:
             raise DataInsertionError(f"При вставке органов произошла ошибка {error}")
         parser_logger.info(
-            "Вставка органов прошла успешно",
+            "Вставка/обновление органов прошла успешно",
         )
 
     except DataInsertionError as e:
@@ -165,18 +165,17 @@ async def run_parser():
         parser_logger.critical("Выполнение задачи по расписанию оборвалось")
         return
 
-    regions_data = combine_pydantic_list_models(
-        mock_regions=mock_regions_data, pravo_gov_regions=pravo_gov_regions_data
-    )
-
     try:
+        regions_data = combine_pydantic_list_models(
+            mock_regions=mock_regions_data, pravo_gov_regions=pravo_gov_regions_data
+        )
         # Insert Regions
         flag, error = await service.regions.insert_regions(regions=regions_data)
 
         if not flag:
             raise DataInsertionError(f"При вставке регионов произошла ошибка {error}")
         parser_logger.info(
-            "Вставка регионов прошла успешно",
+            "Вставка/обновление регионов прошла успешно",
         )
 
     except DataInsertionError as e:
@@ -184,12 +183,30 @@ async def run_parser():
         parser_logger.critical("Выполнение задачи по расписанию оборвалось")
         return
 
-    types_data = get_all_types()
-    parser_logger.debug(types_data)
+    try:
+        types_data = get_all_types()
+        parser_logger.debug(types_data)
 
-    # Insert Document Types
-    flag, error = await service.document_types.insert_types(types_data)
-    parser_logger.debug(f"{flag}, {error}")
+        # Insert Document Types
+        flag, error = await service.document_types.insert_types(types_data)
+
+        if not flag:
+            raise DataInsertionError(
+                f"При вставке типов докуметов произошла ошибка {error}"
+            )
+        parser_logger.info(
+            "Вставка/обновление типов документов прошла успешно",
+        )
+
+    except DataInsertionError as e:
+        parser_logger.critical(str(e))
+        parser_logger.critical("Выполнение задачи по расписанию оборвалось")
+        return
+
+    # print(public_blocks_data)
+
+    for block in all_public_blocks:
+        block_types = get_block_types(block=block["code"])
 
     # parser_logger.info(f"ALL_TYPES {map(lambda x: x.model_dump, all_types)}")
     # db.initiate.insert.table_document_types(types=all_types)
@@ -199,6 +216,26 @@ async def run_parser():
 
     # db.initiate.insert.table_organ(all_public_blocks)
     parser_logger.info("Выполнение задачи по расписанию завершено")
+
+
+def get_block_types(block: str) -> list:
+
+    response = pravo_gov.api.types_in_block(block=block)
+    block_types: list = []
+
+    for type in json.loads(response.content):
+        block_types.append(
+            dict(
+                name=type["name"],
+                external_id=type["id"],
+                # FIXME: ЭТО КОСТЫЛЬ
+                # id_dl=1,
+            )
+        )
+
+    print(json.dumps(block_types[0], ensure_ascii=False, indent=4))
+    parser_logger.debug(json.dumps(block_types[0], indent=4, ensure_ascii=False))
+    return block_types
 
 
 def get_subblocks_public_blocks(parent) -> list:

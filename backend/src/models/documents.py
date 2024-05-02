@@ -21,9 +21,7 @@ class DocumentEntity(Base):
     pages_count: Mapped[int]
     date_of_publication: Mapped[datetime] = mapped_column(Date)
     date_of_signing: Mapped[datetime] = mapped_column(Date)
-    id_doc_type_block: Mapped[int] = mapped_column(
-        ForeignKey("document_types__blocks.id")
-    )
+    id_doc_type_block: Mapped[int] = mapped_column(ForeignKey("types_in_block.id"))
     # id_reg: Mapped[int] = mapped_column(ForeignKey("region.id"), nullable=False)
     # act = relationship("ActEntity", overlaps="act", innerjoin=True)
     # region = relationship("RegionEntity", overlaps="region", innerjoin=True)

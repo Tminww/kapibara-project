@@ -5,7 +5,7 @@ from src.repositories.regions import RegionsRepository
 from src.repositories.districts import DistrictsRepository
 from src.repositories.deadlines import DeadlinesRepository
 from src.repositories.organs import OrgansRepository
-from src.repositories.document_types import DocumentTypesRepository
+from src.repositories.types import DocumentTypesRepository
 
 from src.services.statistics import StatisticsService
 from src.services.subjects import SubjectsService
@@ -13,7 +13,7 @@ from src.services.regions import RegionsService
 from src.services.districts import DistrictsService
 from src.services.deadlines import DeadlinesService
 from src.services.organs import OrgansService
-from src.services.document_types import DocumentTypesService
+from src.services.types import DocumentTypesService
 
 
 class Service:

@@ -1,7 +1,7 @@
 from typing import List
 
-from src.repositories.document_types import IDocumentTypesRepository
-from src.schemas.document_types import DocumentTypesSchema
+from src.repositories.types import IDocumentTypesRepository
+from src.schemas.types import DocumentTypesSchema
 
 
 class DocumentTypesService:

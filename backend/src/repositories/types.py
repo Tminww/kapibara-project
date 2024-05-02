@@ -4,8 +4,8 @@ from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
 
 from src.errors import ResultIsEmptyError
-from src.models.document_types import DocumentTypeEntity
-from src.schemas.document_types import DocumentTypesSchema
+from src.models.types import TypeEntity
+from src.schemas.types import DocumentTypesSchema
 from src.database.setup import async_session_maker
 
 
@@ -22,7 +22,7 @@ class IDocumentTypesRepository(ABC):
 
 
 class DocumentTypesRepository(IDocumentTypesRepository):
-    document_types = DocumentTypeEntity
+    document_types = TypeEntity
 
     async def get_all_document_types(self) -> List[DocumentTypesSchema]:
 

@@ -25,8 +25,8 @@ from src.models.base import Base
 from src.models.blocks import BlockEntity
 from src.models.deadlines import DeadlineEntity
 from src.models.districts import DistrictEntity
-from src.models.document_types import DocumentTypeEntity
-from src.models.document_types__blocks import DocumentTypeBlockEntity
+from src.models.types import TypeEntity
+from src.models.types_in_block import TypesInBlockEntity
 from src.models.documents import DocumentEntity
 from src.models.organs import OrganEntity
 from src.models.regions import RegionEntity
