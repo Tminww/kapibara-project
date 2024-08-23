@@ -1,8 +1,9 @@
 from typing import Optional
-from pydantic import BaseModel
+from src.schemas.base import BaseSchema
 
 
-class PravoGovDocumentTypesSchema(BaseModel):
+class PravoGovDocumentTypesSchema(BaseSchema):
+    id: int | None
     name: str
     external_id: str
 

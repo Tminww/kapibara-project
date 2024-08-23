@@ -1,4 +1,4 @@
-from src.parser.external_api.http import Http, IHttp
+from .http import Http, IHttp
 from src.schemas.retry_request import RetryRequestSchema
 
 

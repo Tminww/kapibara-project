@@ -1,6 +1,7 @@
-from pydantic import BaseModel
+from src.schemas.base import BaseSchema
 
 
-class DeadlinesSchema(BaseModel):
+class DeadlinesSchema(BaseSchema):
+    id: int
     id: int
     day: int

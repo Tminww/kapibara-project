@@ -1,8 +1,8 @@
 from typing import Optional
-from pydantic import BaseModel
+from src.schemas.base import BaseSchema
 
 
-class ExternalResponseSchema(BaseModel):
+class ExternalResponseSchema(BaseSchema):
     status_code: int
     headers: dict
     content: Optional[bytes]

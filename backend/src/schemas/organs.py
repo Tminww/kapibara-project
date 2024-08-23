@@ -1,5 +1,5 @@
 from typing import Optional
-from pydantic import BaseModel
+from src.schemas.base import BaseSchema
 
 """
 "name": "Президент Российской Федерации",
@@ -12,7 +12,8 @@ from pydantic import BaseModel
 """
 
 
-class OrganSchema(BaseModel):
+class OrganSchema(BaseSchema):
+    id: int | None
     name: str
     short_name: str
     external_id: str

@@ -1,6 +1,6 @@
-from src.parser.external_api.api import Api
-from src.parser.external_api.file import File
-from src.parser.external_api.http import Http
+from .api import Api
+from .file import File
+from .http import Http
 from src.config import settings
 
 PRAVO_GOV_PATH = settings.external.EXTERNAL_PATH

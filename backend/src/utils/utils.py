@@ -72,9 +72,9 @@ def retry_request(logger, num_retries=5, sleep_time=1):
                     error = 0
                     status = True
 
-                    logger.debug(
-                        f'status: {status}, url: {response.url} response: {response}, error: {error}"'
-                    )
+                    # logger.debug(
+                    #     f'status: {status}, url: {response.url} response: {response}, error: {error}"'
+                    # )
                     return RetryRequestSchema(
                         status=status,
                         status_code=response.status_code,
@@ -94,9 +94,9 @@ def retry_request(logger, num_retries=5, sleep_time=1):
                         time.sleep(sleep_time)
 
             # logger.error(f"{func.__name__} завершилась с ошибкой")
-            logger.debug(
-                f'status: {status}, url: {response.url} response: {response}, error: {error}"'
-            )
+            # logger.debug(
+            #     f'status: {status}, url: {response.url} response: {response}, error: {error}"'
+            # )
 
             return RetryRequestSchema(
                 status=status,

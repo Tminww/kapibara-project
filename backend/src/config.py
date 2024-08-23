@@ -10,7 +10,7 @@ class DBConfig(BaseSettings):
     DB_PASS: str
     DB_NAME: str
 
-    model_config = SettingsConfigDict(env_file="./src/database.env")
+    model_config = SettingsConfigDict(env_file="./src/.db.env")
 
     @property
     def DATABASE_URL(self):
@@ -29,7 +29,7 @@ class ExternalApiConfig(BaseSettings):
     EXTERNAL_API_VERSION_PATH: str
     EXTERNAL_FILE_PATH: str
 
-    model_config = SettingsConfigDict(env_file="./src/external.env")
+    model_config = SettingsConfigDict(env_file="./src/.external.env")
 
 
 class Settings:

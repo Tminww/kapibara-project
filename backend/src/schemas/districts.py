@@ -1,7 +1,7 @@
-from pydantic import BaseModel
+from src.schemas.base import BaseSchema
 
 
-class DistrictSchema(BaseModel):
+class DistrictSchema(BaseSchema):
     id: int
     name: str
     short_name: str

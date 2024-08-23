@@ -1,13 +1,14 @@
 from typing import Optional
-from pydantic import BaseModel
+from src.schemas.base import BaseSchema
 
 
-class MockRegionSchema(BaseModel):
+class MockRegionSchema(BaseSchema):
     id_dist: int
     name: str
 
 
-class PravoGovRegionSchema(BaseModel):
+class PravoGovRegionSchema(BaseSchema):
+
     name: str
     short_name: str
     external_id: str
@@ -16,4 +17,5 @@ class PravoGovRegionSchema(BaseModel):
 
 
 class RegionSchema(PravoGovRegionSchema):
+    id: int | None
     id_dist: Optional[int]

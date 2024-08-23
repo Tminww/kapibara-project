@@ -35,16 +35,16 @@ services:
   #   depends_on:
   #     - postgres
 
-  backend:
-    build: ./backend/
-    container_name: backend
-    restart: unless-stopped
-    volumes:
-      - ./services/backend/src:/code/
-    depends_on:
-      - postgres
-    ports:
-      - "8080:80"
+  # backend:
+  #   build: ./backend/
+  #   container_name: backend
+  #   restart: unless-stopped
+  #   volumes:
+  #     - ./services/backend/src:/code/
+  #   depends_on:
+  #     - postgres
+  #   ports:
+  #     - "8080:80"
 
   # frontend:
   #   build: ./frontend/
@@ -64,7 +64,6 @@ services:
   #     - postgres
   #   ports:
   #     - "5600:8978"
-
 
 volumes:
   postgres-data:
