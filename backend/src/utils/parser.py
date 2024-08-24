@@ -28,8 +28,8 @@ parser_logger = get_logger(logger_name="repeat_task", file_name="parser")
 
 
 async def parse():
-    parser_logger.info("Выполняется задача по расписанию")
-    print("Выполняется задача по расписанию")
+
+    parser_logger.info("\n\n\nВыполняется задача по расписанию\n\n")
     service: Service = Service()
 
     # Fetch data
@@ -177,11 +177,9 @@ async def parse():
     blocks_data: List[BlockSchema] = []
 
     for public_block in public_blocks_with_inner_id_data:
-        print(public_block)
         # ОГВ Субъектов РФ - 022fd55f-9f60-481e-a636-56d74b9ca759 ( А вдруг переименуются )
         if public_block.external_id == "022fd55f-9f60-481e-a636-56d74b9ca759":
             for region in regions_with_inner_id_data:
-                print(region)
 
                 blocks_data.append(
                     BlockSchema(
@@ -198,10 +196,10 @@ async def parse():
                         id=None,
                     )
                 )
-                print(blocks_data)
+                # print(blocks_data)
 
         else:
-            print("Нет регионов")
+            # print("Нет регионов")
             blocks_data.append(
                 BlockSchema(
                     organ=OrganInBlockSchema(
@@ -213,10 +211,7 @@ async def parse():
                     id=None,
                 )
             )
-            print(blocks_data)
-
-    for data in blocks_data:
-        print(data.model_dump_json())
+            # print(blocks_data)
 
     blocks_with_inner_id_data = add_id_to_object_in_array(blocks_data)
     #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

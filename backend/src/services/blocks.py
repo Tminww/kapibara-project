@@ -1,22 +1,22 @@
-# from typing import List
+from typing import List
 
-# from src.repositories.regions import IRegionsRepository
-# from src.schemas.regions import RegionSchema
+from src.repositories.blocks import IBlocksRepository
+from src.schemas.blocks import BlockSchema
 
 
-# class RegionsService:
-#     def __init__(self, regions_repo: IRegionsRepository):
-#         self.regions_repo: IRegionsRepository = regions_repo()
+class BlocksService:
+    def __init__(self, blocks_repo: IBlocksRepository):
+        self.blocks_repo: IBlocksRepository = blocks_repo()
 
-#     async def get_all_regions(self):
-#         response = []
-#         regions = await self.regions_repo.get_all_regions()
+    async def get_all_blocks(self):
+        response = []
+        blocks = await self.blocks_repo.get_all_blocks()
 
-#         print(response)
-#         return regions
+        print(response)
+        return blocks
 
-#     async def insert_blocks(self, regions: List[RegionSchema]) -> tuple[bool, str]:
+    async def insert_blocks(self, blocks: List[BlockSchema]) -> tuple[bool, str]:
 
-#         flag, status = await self.regions_repo.insert_or_update_regions(regions)
+        flag, status = await self.blocks_repo.insert_or_update_blocks(blocks)
 
-#         return (flag, status)
+        return (flag, status)

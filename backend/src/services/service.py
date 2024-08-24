@@ -1,4 +1,5 @@
 from typing import Annotated
+from src.repositories.blocks import BlocksRepository
 from src.repositories.statistics import StatisticsRepository
 from src.repositories.subjects import SubjectsRepository
 from src.repositories.regions import RegionsRepository
@@ -7,6 +8,7 @@ from src.repositories.deadlines import DeadlinesRepository
 from src.repositories.organs import OrgansRepository
 from src.repositories.types import DocumentTypesRepository
 
+from src.services.blocks import BlocksService
 from src.services.statistics import StatisticsService
 from src.services.subjects import SubjectsService
 from src.services.regions import RegionsService
@@ -26,3 +28,4 @@ class Service:
     deadlines: DeadlinesService = DeadlinesService(DeadlinesRepository)
     organs: OrgansService = OrgansService(OrgansRepository)
     document_types: DocumentTypesService = DocumentTypesService(DocumentTypesRepository)
+    blocks: BlocksService = BlocksService(BlocksRepository)
