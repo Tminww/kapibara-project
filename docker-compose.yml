@@ -2,31 +2,31 @@ version: "3.7"
 
 services:
   postgres:
-    container_name: postgres
+    container_name: kapibara-postgres
     image: postgres
     restart: unless-stopped
     ports:
-      - "54321:5432"
+      - "127.0.0.1:5432:5432"
     environment:
       - POSTGRES_DB=fastapi-postgres
       - POSTGRES_USER=fastapi-postgres
       - POSTGRES_PASSWORD=fastapi-postgres
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - kapibara-postgres-data:/var/lib/postgresql/data
 
   pgadmin:
     image: dpage/pgadmin4
-    container_name: pgadmin
+    container_name: kapibara-pgadmin
     restart: unless-stopped
     depends_on:
       - postgres
     ports:
-      - "5500:80"
+      - "127.0.0.1:5500:80"
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@fastapi.com
       PGADMIN_DEFAULT_PASSWORD: fastapi
     volumes:
-      - pgadmin-data:/var/lib/pgadmin
+      - kapibara-pgadmin-data:/var/lib/pgadmin
 
   # parser:
   #   build: ./services/parser/
@@ -66,5 +66,5 @@ services:
   #     - "5600:8978"
 
 volumes:
-  postgres-data:
-  pgadmin-data:
+  kapibara-postgres-data:
+  kapibara-pgadmin-data:
