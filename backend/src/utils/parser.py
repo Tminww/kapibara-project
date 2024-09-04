@@ -148,7 +148,7 @@ async def parse():
 
     try:
         types_data = get_all_types()
-        types_with_inner_id_data = add_id_to_object_in_array(types_data)
+        types_with_inner_id_data: List[PravoGovDocumentTypesSchema] = add_id_to_object_in_array(types_data)
         # parser_logger.debug(types_data)
 
         # Insert Document Types
@@ -213,7 +213,7 @@ async def parse():
             )
             # print(blocks_data)
 
-    blocks_with_inner_id_data = add_id_to_object_in_array(blocks_data)
+    blocks_with_inner_id_data: List[BlockSchema] = add_id_to_object_in_array(blocks_data)
     #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     try:
         # Insert Blocks
@@ -231,6 +231,13 @@ async def parse():
         return
 
     #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    ## Вставка типов блоков
+
+    parser_logger.debug(blocks_with_inner_id_data)
+    parser_logger.debug(types_with_inner_id_data)
+
+    for block in blocks_with_inner_id_data:
+        get_block_types(block=block.code)
 
     # parser_logger.info(f"ALL_TYPES {map(lambda x: x.model_dump, all_types)}")
     # db.initiate.insert.table_document_types(types=all_types)
