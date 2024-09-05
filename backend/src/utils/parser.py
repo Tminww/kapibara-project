@@ -297,48 +297,78 @@ async def parse():
         parser_logger.critical("Выполнение задачи по расписанию оборвалось")
         return
 
-    parser_logger.info("Выполнение задачи по расписанию завершено")
-
     # ВСТАВКА ДОКУМЕНТОВ В БАЗУ
     print("ВСТАВКА ДОКУМЕНТОВ В БАЗУ")
+    parser_logger.info("ВСТАВКА ДОКУМЕНТОВ В БАЗУ Данных")
+
+    parser_logger.info("Выполнение задачи по расписанию завершено")
 
 
-# def load_districts_from_json() -> List[DistrictSchema] | None:
-#     try:
-#         mock_districts_data: List[DistrictSchema] = [
-#             DistrictSchema(**district) for district in get_districts_data()
-#         ]
-#         return mock_districts_data
-#     except Exception as e:
-#         parser_logger.error(f"Ошибка получения данных округов: {str(e)}")
-#         return
+def get_document_api(code):
+    parser_logger.info(f"Блок {code} начат")
 
+    req_total_documents = api.publication.documents_for_the_block(code)
 
-# def load_deadlines_from_json() -> List[DeadlinesSchema] | None:
-#     try:
-#         mock_deadlines_data: List[DeadlinesSchema] = [
-#             DeadlinesSchema(**deadline) for deadline in get_deadlines_data()
-#         ]
+    if insert.get_total_documents(code=code) == req_total_documents["itemsTotalCount"]:
+        logger.info(f"Блок {code} уже заполнен")
+        return
 
-#         return mock_deadlines_data
-#     except Exception as e:
-#         parser_logger.error(f"Ошибка получения данных дедлайнов: {str(e)}")
-#         return
+    req_type = api.publication.type_in_subject(code)
 
+    for npa in req_type:
+        current_page = 1
+        while True:
+            time.sleep(0.5)
+            print(npa)
+            req = api.publication.documents_on_page_type(
+                npa_id=npa["id"], block=code, index=current_page
+            )
 
-# def load_regions_from_json() -> List[MockRegionSchema] | None:
-#     try:
-#         mock_regions_data: List[MockRegionSchema] = [
-#             MockRegionSchema(**region) for region in get_regions_data()
-#         ]
-#         return mock_regions_data
-#     except Exception as e:
-#         parser_logger.error(f"Ошибка получения данных регионов: {str(e)}")
-#         return
+            # logger.debug(
+            #     api.publication.documents_on_page_type(
+            #         npa_id=npa["id"], block=code, index=str(current_page)
+            #     )
+            # )
+            if (
+                insert.get_total_documents_type(code=code, npa_id=npa["id"])
+                == req["itemsTotalCount"]
+            ):
+                break
 
+            if current_page <= req["pagesTotalCount"]:
+                complex_names: list = []
+                eo_numbers: list = []
+                pages_counts: list = []
+                view_dates: list = []
+                id_regs: list = []
+                id_acts: list = []
+                id_reg = insert.get_id_reg(code=code)
+                id_act = insert.get_id_act(npa_id=npa["id"])
 
-# def insert_districts():
-#     pass
+                for item in req["items"]:
+                    complex_names.append(item["complexName"])
+                    eo_numbers.append(item["eoNumber"])
+                    pages_counts.append(item["pagesCount"])
+                    view_dates.append(
+                        datetime.strptime(item["viewDate"], "%d.%m.%Y").strftime(
+                            "%Y-%m-%d"
+                        )
+                    )
+                    id_regs.append(id_reg)
+                    id_acts.append(id_act)
+                insert.insert_document(
+                    complex_names,
+                    eo_numbers,
+                    pages_counts,
+                    view_dates,
+                    id_regs,
+                    id_acts,
+                )
+                current_page += 1
+
+            elif current_page > req["pagesTotalCount"] or req["pagesTotalCount"] == 0:
+                break
+    logger.info(f"Блок {code} закончен")
 
 
 def add_id_to_object_in_array(

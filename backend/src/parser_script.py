@@ -1,4 +1,3 @@
-
 from parser.service.api_service import ApiService as api_service
 
 from parser.database.database import db
