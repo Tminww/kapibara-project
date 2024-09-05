@@ -10,7 +10,7 @@ from src.utils.utils import get_logger
 from src.external.external import pravo_gov
 from src.schemas.deadlines import DeadlinesSchema
 from src.schemas.districts import DistrictSchema
-from src.schemas.types import PravoGovDocumentTypesSchema
+from src.schemas.types import PravoGovDocumentTypesSchema, TypesInBlockSchema
 from src.schemas.regions import MockRegionSchema, PravoGovRegionSchema, RegionSchema
 from src.schemas.organs import OrganSchema
 from src.services.service import Service
@@ -125,9 +125,10 @@ async def parse():
     regions_data = combine_pydantic_list_models(
         mock_regions=mock_regions_data, pravo_gov_regions=pravo_gov_regions_data
     )
+    # print(regions_data)
 
     regions_with_inner_id_data = add_id_to_object_in_array(regions_data)
-
+    # print(regions_with_inner_id_data)
     try:
 
         # Insert Regions
@@ -148,7 +149,9 @@ async def parse():
 
     try:
         types_data = get_all_types()
-        types_with_inner_id_data: List[PravoGovDocumentTypesSchema] = add_id_to_object_in_array(types_data)
+        types_with_inner_id_data: List[PravoGovDocumentTypesSchema] = (
+            add_id_to_object_in_array(types_data)
+        )
         # parser_logger.debug(types_data)
 
         # Insert Document Types
@@ -173,25 +176,27 @@ async def parse():
 
     #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!FIX
 
-    print("Начинается вставка блоков")
+    # print("Начинается вставка блоков")
     blocks_data: List[BlockSchema] = []
-
+    # print(public_blocks_with_inner_id_data)
     for public_block in public_blocks_with_inner_id_data:
         # ОГВ Субъектов РФ - 022fd55f-9f60-481e-a636-56d74b9ca759 ( А вдруг переименуются )
         if public_block.external_id == "022fd55f-9f60-481e-a636-56d74b9ca759":
             for region in regions_with_inner_id_data:
-
+                # print(region)
                 blocks_data.append(
                     BlockSchema(
                         organ=OrganInBlockSchema(
                             external_id=public_block.external_id,
                             name=public_block.name,
                             id=public_block.id,
+                            code=public_block.code,
                         ),
                         region=RegionInBlockSchema(
                             external_id=region.external_id,
                             name=region.name,
                             id=region.id,
+                            code=region.code,
                         ),
                         id=None,
                     )
@@ -206,6 +211,7 @@ async def parse():
                         external_id=public_block.external_id,
                         name=public_block.name,
                         id=public_block.id,
+                        code=public_block.code,
                     ),
                     region=None,
                     id=None,
@@ -213,7 +219,9 @@ async def parse():
             )
             # print(blocks_data)
 
-    blocks_with_inner_id_data: List[BlockSchema] = add_id_to_object_in_array(blocks_data)
+    blocks_with_inner_id_data: List[BlockSchema] = add_id_to_object_in_array(
+        blocks_data
+    )
     #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     try:
         # Insert Blocks
@@ -233,20 +241,66 @@ async def parse():
     #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     ## Вставка типов блоков
 
-    parser_logger.debug(blocks_with_inner_id_data)
-    parser_logger.debug(types_with_inner_id_data)
+    # parser_logger.debug(blocks_with_inner_id_data)
+    # parser_logger.debug(types_with_inner_id_data)
 
+    types_in_block: List[TypesInBlockSchema] = []
+    counter_for_id: int = 1
     for block in blocks_with_inner_id_data:
-        get_block_types(block=block.code)
 
-    # parser_logger.info(f"ALL_TYPES {map(lambda x: x.model_dump, all_types)}")
-    # db.initiate.insert.table_document_types(types=all_types)
+        if block.region:
+            types = get_types_in_block(
+                block=block.region.code,
+                types_with_inner_id_data=types_with_inner_id_data,
+            )
 
-    # db.initiate.insert.table_regions(blocks=api_regions)
-    # db.initiate.update.table_regions(mock_data=mock_regions)
+            for type in types:
+                types_in_block.append(
+                    TypesInBlockSchema(
+                        id=counter_for_id,
+                        block=block,
+                        type=type,
+                    )
+                )
+                counter_for_id += 1
 
-    # db.initiate.insert.table_organ(all_public_blocks)
+        else:
+            types = get_types_in_block(
+                block=block.organ.code,
+                types_with_inner_id_data=types_with_inner_id_data,
+            )
+
+            for type in types:
+                types_in_block.append(
+                    TypesInBlockSchema(
+                        id=counter_for_id,
+                        block=block,
+                        type=type,
+                    )
+                )
+                counter_for_id += 1
+
+    try:
+        # Insert Types in Block
+        flag, error = await service.types_in_block.insert_types_in_block(
+            types_in_block=types_in_block
+        )
+
+        if not flag:
+            raise DataInsertionError(
+                f"При вставке типов блоков произошла ошибка {error}"
+            )
+        parser_logger.info("Вставка/обновление типов блоков прошла успешно")
+
+    except DataInsertionError as e:
+        parser_logger.critical(str(e))
+        parser_logger.critical("Выполнение задачи по расписанию оборвалось")
+        return
+
     parser_logger.info("Выполнение задачи по расписанию завершено")
+
+    # ВСТАВКА ДОКУМЕНТОВ В БАЗУ
+    print("ВСТАВКА ДОКУМЕНТОВ В БАЗУ")
 
 
 # def load_districts_from_json() -> List[DistrictSchema] | None:
@@ -296,23 +350,26 @@ def add_id_to_object_in_array(
     return array
 
 
-def get_block_types(block: str) -> list:
+def get_types_in_block(
+    block: str, types_with_inner_id_data: List[PravoGovDocumentTypesSchema]
+) -> List[PravoGovDocumentTypesSchema]:
 
     response = pravo_gov.api.types_in_block(block=block)
-    block_types: list = []
+    block_types: List[PravoGovDocumentTypesSchema] = []
 
     for type in json.loads(response.content):
-        block_types.append(
-            dict(
-                name=type["name"],
-                external_id=type["id"],
-                # FIXME: ЭТО КОСТЫЛЬ
-                # id_dl=1,
-            )
-        )
-
+        for type_with_inner_id in types_with_inner_id_data:
+            if type["id"] == type_with_inner_id.external_id:
+                block_types.append(
+                    PravoGovDocumentTypesSchema(
+                        id=type_with_inner_id.id,
+                        name=type["name"],
+                        external_id=type["id"],
+                    )
+                )
+    # print(block_types)
     # print(json.dumps(block_types[0], ensure_ascii=False, indent=4))
-    parser_logger.debug(json.dumps(block_types[0], indent=4, ensure_ascii=False))
+    # parser_logger.debug(json.dumps(block_types[0], indent=4, ensure_ascii=False))
     return block_types
 
 
@@ -393,7 +450,7 @@ def combine_pydantic_list_models(
     return combined_list
 
 
-def get_all_types() -> list[PravoGovDocumentTypesSchema]:
+def get_all_types() -> List[PravoGovDocumentTypesSchema]:
 
     response = pravo_gov.api.types_in_block()
 

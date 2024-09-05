@@ -7,6 +7,7 @@ from src.repositories.districts import DistrictsRepository
 from src.repositories.deadlines import DeadlinesRepository
 from src.repositories.organs import OrgansRepository
 from src.repositories.types import DocumentTypesRepository
+from src.repositories.types_in_block import TypesInBlockRepository
 
 from src.services.blocks import BlocksService
 from src.services.statistics import StatisticsService
@@ -16,6 +17,7 @@ from src.services.districts import DistrictsService
 from src.services.deadlines import DeadlinesService
 from src.services.organs import OrgansService
 from src.services.types import DocumentTypesService
+from src.services.types_in_block import TypesInBlockService
 
 
 class Service:
@@ -29,3 +31,4 @@ class Service:
     organs: OrgansService = OrgansService(OrgansRepository)
     document_types: DocumentTypesService = DocumentTypesService(DocumentTypesRepository)
     blocks: BlocksService = BlocksService(BlocksRepository)
+    types_in_block: TypesInBlockService = TypesInBlockService(TypesInBlockRepository)

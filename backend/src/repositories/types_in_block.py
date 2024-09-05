@@ -4,23 +4,23 @@ from sqlalchemy import delete, select
 from sqlalchemy.dialects.postgresql import insert
 
 from src.errors import ResultIsEmptyError
-from src.models.blocks import BlockEntity
-from src.schemas.blocks import BlockSchema
+from src.models.types_in_block import TypesInBlockEntity
+from src.schemas.types import TypesInBlockSchema
 from src.database.setup import async_session_maker
 
 
-class IBlocksRepository(ABC):
+class ITypesInBlockRepository(ABC):
     @abstractmethod
-    async def get_all_blocks() -> List[BlockSchema]:
+    async def get_all_types_in_block() -> List[TypesInBlockSchema]:
         raise NotImplementedError
 
     @abstractmethod
-    async def get_block_by_id(id_item: int) -> List[BlockSchema]:
+    async def get_block_by_id(id_item: int) -> List[TypesInBlockSchema]:
         raise NotImplementedError
 
     @abstractmethod
-    async def insert_or_update_blocks(
-        blocks: List[BlockSchema],
+    async def insert_or_update_types_in_block(
+        types_in_block: List[TypesInBlockSchema],
     ) -> tuple[bool, str]:
         raise NotImplementedError
 
@@ -29,14 +29,14 @@ class IBlocksRepository(ABC):
         raise NotImplementedError
 
 
-class BlocksRepository(IBlocksRepository):
+class TypesInBlockRepository(ITypesInBlockRepository):
 
-    blocks = BlockEntity
+    types_in_block = TypesInBlockEntity
 
-    async def get_all_blocks(self) -> List[BlockSchema]:
+    async def get_all_types_in_block(self) -> List[TypesInBlockSchema]:
 
         async with async_session_maker() as session:
-            stmt = select(self.blocks)
+            stmt = select(self.types_in_block)
             res = await session.execute(stmt)
 
             res = [row[0] for row in res.all()]
@@ -46,10 +46,10 @@ class BlocksRepository(IBlocksRepository):
             else:
                 raise ResultIsEmptyError("Result is empty")
 
-    async def get_block_by_id(self, id_item: int) -> List[BlockSchema]:
+    async def get_block_by_id(self, id_item: int) -> List[TypesInBlockSchema]:
 
         async with async_session_maker() as session:
-            stmt = select(self.blocks).where(self.blocks.id == id_item)
+            stmt = select(self.types_in_block).where(self.types_in_block.id == id_item)
             res = await session.execute(stmt)
 
             res = [row[0] for row in res.all()]
@@ -59,33 +59,25 @@ class BlocksRepository(IBlocksRepository):
             else:
                 raise ResultIsEmptyError("Result is empty")
 
-    async def insert_or_update_blocks(
-        self, blocks: List[BlockEntity]
+    async def insert_or_update_types_in_block(
+        self, types_in_block: List[TypesInBlockSchema]
     ) -> tuple[bool, str]:
 
         values: List[dict] = []
 
-        for block in blocks:
-            # print(block.model_dump())
-            # print(block.id, block.organ.id, block.region.id if block.region else None)
-            # print(dict(id=block.id, id_organ=block.organ.id, id_reg=block.region.id))
+        for item in types_in_block:
             values.append(
-                dict(
-                    id=block.id,
-                    id_organ=block.organ.id,
-                    id_reg=block.region.id if block.region else None,
-                )
+                dict(id=item.id, id_block=item.block.id, id_type=item.type.id)
             )
-            # print(values)
 
         async with async_session_maker() as session:
-            stmt_insert = insert(self.blocks).values(values)
+            stmt_insert = insert(self.types_in_block).values(values)
 
             stmt_on_conflict = stmt_insert.on_conflict_do_update(
                 index_elements=["id"],
                 set_=dict(
-                    id_organ=stmt_insert.excluded.id_organ,
-                    id_reg=stmt_insert.excluded.id_reg,
+                    id_block=stmt_insert.excluded.id_block,
+                    id_type=stmt_insert.excluded.id_type,
                 ),
             )
 
@@ -100,7 +92,7 @@ class BlocksRepository(IBlocksRepository):
 
         async with async_session_maker() as session:
 
-            stmt = delete(self.blocks).where(self.blocks.id == id_item)
+            stmt = delete(self.types_in_block).where(self.types_in_block.id == id_item)
             try:
                 res = await session.execute(stmt)
                 await session.commit()

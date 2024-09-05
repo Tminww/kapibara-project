@@ -12,7 +12,7 @@ class RegionsService:
         response = []
         regions = await self.regions_repo.get_all_regions()
 
-        print(response)
+        # print(response)
         return regions
 
     async def insert_regions(self, regions: List[RegionSchema]) -> tuple[bool, str]:

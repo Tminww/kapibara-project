@@ -1,5 +1,6 @@
-from typing import Optional
+from typing import List, Optional
 from src.schemas.base import BaseSchema
+from src.schemas.blocks import BlockSchema
 
 
 class PravoGovDocumentTypesSchema(BaseSchema):
@@ -10,3 +11,9 @@ class PravoGovDocumentTypesSchema(BaseSchema):
 
 class DocumentTypesSchema(PravoGovDocumentTypesSchema):
     id_dl: Optional[int]
+
+
+class TypesInBlockSchema(BaseSchema):
+    id: int | None
+    block: BlockSchema
+    type: PravoGovDocumentTypesSchema

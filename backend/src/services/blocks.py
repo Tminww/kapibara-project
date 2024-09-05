@@ -12,7 +12,7 @@ class BlocksService:
         response = []
         blocks = await self.blocks_repo.get_all_blocks()
 
-        print(response)
+        # print(response)
         return blocks
 
     async def insert_blocks(self, blocks: List[BlockSchema]) -> tuple[bool, str]:
