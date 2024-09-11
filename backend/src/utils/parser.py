@@ -305,20 +305,28 @@ async def parse():
         print(type_in_block)
         if type_in_block.block.region:
             get_document_api(
-                type_in_block.block.region.code, type_in_block.type.external_id
+                type_in_block.id,
+                type_in_block.block.region.code,
+                type_in_block.type.external_id,
             )
 
         else:
             get_document_api(
-                type_in_block.block.organ.code, type_in_block.type.external_id
+                type_in_block.id,
+                type_in_block.block.organ.code,
+                type_in_block.type.external_id,
             )
 
     parser_logger.info("Выполнение задачи по расписанию завершено")
 
 
-def get_document_api(block_code, type_external_id):
+def get_document_api(block_type_id, block_code, type_external_id):
+
     parser_logger.info(f"Блок {block_code} начат")
-    print(get_document_count_api(block_code, type_external_id))
+    document_count_api: int = get_document_count_api(block_code, type_external_id)
+    document_count_db: int = insert.get_total_documents_type(
+        code=block_code, npa_id=type_external_id
+    )
 
     # req_total_documents = api.publication.documents_for_the_block(code)
 
@@ -388,7 +396,6 @@ def get_document_count_api(block_code, type_external_id) -> int:
     response = pravo_gov.api.documents_for_the_block(
         block=block_code, index=1, document_type=type_external_id
     )
-    print(response.content)
     return json.loads(response.content)["itemsTotalCount"]
 
 
