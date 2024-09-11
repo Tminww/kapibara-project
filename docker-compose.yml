@@ -14,19 +14,19 @@ services:
     volumes:
       - kapibara-postgres-data:/var/lib/postgresql/data
 
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: kapibara-pgadmin
-    restart: unless-stopped
-    depends_on:
-      - postgres
-    ports:
-      - "127.0.0.1:5500:80"
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@fastapi.com
-      PGADMIN_DEFAULT_PASSWORD: fastapi
-    volumes:
-      - kapibara-pgadmin-data:/var/lib/pgadmin
+  # pgadmin:
+  #   image: dpage/pgadmin4
+  #   container_name: kapibara-pgadmin
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - postgres
+  #   ports:
+  #     - "127.0.0.1:5500:80"
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: admin@fastapi.com
+  #     PGADMIN_DEFAULT_PASSWORD: fastapi
+  #   volumes:
+  #     - kapibara-pgadmin-data:/var/lib/pgadmin
 
   # parser:
   #   build: ./services/parser/
