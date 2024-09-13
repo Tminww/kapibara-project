@@ -25,12 +25,12 @@ import json
 from typing import List
 
 parser_logger = get_logger(logger_name="repeat_task", file_name="parser")
-
+service: Service = Service()
 
 async def parse():
 
     parser_logger.info("\n\n\nВыполняется задача по расписанию\n\n")
-    service: Service = Service()
+    
 
     # Fetch data
     try:
@@ -302,16 +302,16 @@ async def parse():
     parser_logger.info("ВСТАВКА ДОКУМЕНТОВ В БАЗУ Данных")
 
     for type_in_block in types_in_block:
-        print(type_in_block)
+
         if type_in_block.block.region:
-            get_document_api(
+            await get_document_api(
                 type_in_block.id,
                 type_in_block.block.region.code,
                 type_in_block.type.external_id,
             )
 
         else:
-            get_document_api(
+            await get_document_api(
                 type_in_block.id,
                 type_in_block.block.organ.code,
                 type_in_block.type.external_id,
@@ -320,13 +320,13 @@ async def parse():
     parser_logger.info("Выполнение задачи по расписанию завершено")
 
 
-def get_document_api(block_type_id, block_code, type_external_id):
-
+async def get_document_api(block_type_id, block_code, type_external_id):
+    print(block_type_id, block_code, type_external_id)
     parser_logger.info(f"Блок {block_code} начат")
     document_count_api: int = get_document_count_api(block_code, type_external_id)
-    document_count_db: int = insert.get_total_documents_type(
-        code=block_code, npa_id=type_external_id
-    )
+    print(document_count_api)
+    document_count_db: int = await get_document_count_db(block_type_id)
+    print(document_count_db)
 
     # req_total_documents = api.publication.documents_for_the_block(code)
 
@@ -398,6 +398,11 @@ def get_document_count_api(block_code, type_external_id) -> int:
     )
     return json.loads(response.content)["itemsTotalCount"]
 
+async def get_document_count_db(block_type_id) -> int:
+    response = await service.documents.get_documents_count_in_block(
+        block_type_id
+    )
+    return response
 
 def add_id_to_object_in_array(
     array: List[BaseSchema], inner_id_start_value: int = 1

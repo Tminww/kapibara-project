@@ -12,8 +12,8 @@ class DocumentsService:
         documents = await self.documents_repo.get_all_documents()
 
         return documents
-    async def get_documents_count_in_block(self, block_code) -> int:
-        count = await self.documents_repo.get_documents_count_in_block()
+    async def get_documents_count_in_block(self, block_type_id) -> int:
+        count = await self.documents_repo.get_documents_count_in_block(block_type_id)
 
         return count
 

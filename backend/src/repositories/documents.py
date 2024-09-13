@@ -20,7 +20,7 @@ class IDocumentsRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def get_documents_count_in_block(block_type_id: int) -> int:
+    async def get_documents_count_in_block(block_type_id) -> int:
         raise NotImplementedError
 
     @abstractmethod
@@ -33,15 +33,14 @@ class IDocumentsRepository(ABC):
 class DocumentsRepository(IDocumentsRepository):
     documents = DocumentEntity
 
-    async def get_documents_count_in_block(self, block_type_id: int) -> int:
+    async def get_documents_count_in_block(self, block_type_id) -> int:
         async with async_session_maker() as session:
             stmt = select(func.count(self.documents.id)).where(
                 self.documents.id_doc_type_block == block_type_id
             )
             res = await session.execute(stmt)
-
-            res = [row[0] for row in res.all()]
-
+            print(res.scalar())
+            res = res.scalar()
             if res:
                 return res
             else:
