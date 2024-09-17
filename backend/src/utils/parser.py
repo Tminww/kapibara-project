@@ -1,3 +1,4 @@
+import time
 from pydantic import BaseModel
 from src.errors import DataInsertionError
 from src.schemas.base import BaseSchema
@@ -27,11 +28,12 @@ from typing import List
 parser_logger = get_logger(logger_name="repeat_task", file_name="parser")
 service: Service = Service()
 
+
 async def parse():
 
     parser_logger.info("\n\n\nВыполняется задача по расписанию\n\n")
-    
 
+    # await service.documents.test_insert_documents()
     # Fetch data
     try:
         mock_districts_data: List[DistrictSchema] = [
@@ -304,14 +306,14 @@ async def parse():
     for type_in_block in types_in_block:
 
         if type_in_block.block.region:
-            await get_document_api(
+            await get_documents_in_block_api(
                 type_in_block.id,
                 type_in_block.block.region.code,
                 type_in_block.type.external_id,
             )
 
         else:
-            await get_document_api(
+            await get_documents_in_block_api(
                 type_in_block.id,
                 type_in_block.block.organ.code,
                 type_in_block.type.external_id,
@@ -320,76 +322,49 @@ async def parse():
     parser_logger.info("Выполнение задачи по расписанию завершено")
 
 
-async def get_document_api(block_type_id, block_code, type_external_id):
+async def get_documents_in_block_api(block_type_id, block_code, type_external_id):
     print(block_type_id, block_code, type_external_id)
-    parser_logger.info(f"Блок {block_code} начат")
+    parser_logger.info(f"Блок {block_type_id} {block_code} начат")
+
     document_count_api: int = get_document_count_api(block_code, type_external_id)
-    print(document_count_api)
+    print("Document Count API", document_count_api)
+
     document_count_db: int = await get_document_count_db(block_type_id)
-    print(document_count_db)
+    print("Document Count DB", document_count_db)
 
-    # req_total_documents = api.publication.documents_for_the_block(code)
+    if document_count_api == document_count_db:
+        parser_logger.info(f"Блок {block_code} уже заполнен")
+        return
 
-    # if insert.get_total_documents(code=code) == req_total_documents["itemsTotalCount"]:
-    #     logger.info(f"Блок {code} уже заполнен")
-    #     return
+    documents: List[dict] = []
 
-    # req_type = api.publication.type_in_subject(code)
+    current_page = 1
+    while True:
+        time.sleep(0.5)
+        response = get_documents_api(block_code, type_external_id, current_page)
 
-    # for npa in req_type:
-    #     current_page = 1
-    #     while True:
-    #         time.sleep(0.5)
-    #         print(npa)
-    #         req = api.publication.documents_on_page_type(
-    #             npa_id=npa["id"], block=code, index=current_page
-    #         )
+        documents.extend(response["items"])
+        if response["pagesTotalCount"] == current_page:
+            break
+        else:
+            current_page += 1
 
-    #         # logger.debug(
-    #         #     api.publication.documents_on_page_type(
-    #         #         npa_id=npa["id"], block=code, index=str(current_page)
-    #         #     )
-    #         # )
-    #         if (
-    #             insert.get_total_documents_type(code=code, npa_id=npa["id"])
-    #             == req["itemsTotalCount"]
-    #         ):
-    #             break
+    print("Documents", documents)
 
-    #         if current_page <= req["pagesTotalCount"]:
-    #             complex_names: list = []
-    #             eo_numbers: list = []
-    #             pages_counts: list = []
-    #             view_dates: list = []
-    #             id_regs: list = []
-    #             id_acts: list = []
-    #             id_reg = insert.get_id_reg(code=code)
-    #             id_act = insert.get_id_act(npa_id=npa["id"])
+    try:
+        # Insert Documents
+        flag, error = await insert_documents_in_db(
+            documents=documents, block_type_id=block_type_id
+        )
 
-    #             for item in req["items"]:
-    #                 complex_names.append(item["complexName"])
-    #                 eo_numbers.append(item["eoNumber"])
-    #                 pages_counts.append(item["pagesCount"])
-    #                 view_dates.append(
-    #                     datetime.strptime(item["viewDate"], "%d.%m.%Y").strftime(
-    #                         "%Y-%m-%d"
-    #                     )
-    #                 )
-    #                 id_regs.append(id_reg)
-    #                 id_acts.append(id_act)
-    #             insert.insert_document(
-    #                 complex_names,
-    #                 eo_numbers,
-    #                 pages_counts,
-    #                 view_dates,
-    #                 id_regs,
-    #                 id_acts,
-    #             )
-    #             current_page += 1
+        if not flag:
+            raise DataInsertionError(f"При вставке документов произошла ошибка {error}")
+        parser_logger.info(f"Блок {block_type_id} {block_code} завершен")
 
-    #         elif current_page > req["pagesTotalCount"] or req["pagesTotalCount"] == 0:
-    #             break
-    # logger.info(f"Блок {code} закончен")
+    except DataInsertionError as e:
+        parser_logger.critical(str(e))
+        parser_logger.critical("Выполнение задачи по расписанию оборвалось")
+        return
 
 
 def get_document_count_api(block_code, type_external_id) -> int:
@@ -398,11 +373,24 @@ def get_document_count_api(block_code, type_external_id) -> int:
     )
     return json.loads(response.content)["itemsTotalCount"]
 
-async def get_document_count_db(block_type_id) -> int:
-    response = await service.documents.get_documents_count_in_block(
-        block_type_id
+
+def get_documents_api(block_code, type_external_id, current_page) -> int:
+    response = pravo_gov.api.documents_for_the_block(
+        block=block_code, index=current_page, document_type=type_external_id
     )
+
+    return json.loads(response.content)
+
+
+async def get_document_count_db(block_type_id) -> int:
+    response = await service.documents.get_documents_count_in_block(block_type_id)
     return response
+
+
+async def insert_documents_in_db(documents: List[dict], block_type_id: int):
+    print("insert_documents_in_db")
+    await service.documents.insert_documents(documents, block_type_id)
+
 
 def add_id_to_object_in_array(
     array: List[BaseSchema], inner_id_start_value: int = 1

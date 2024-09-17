@@ -1,8 +1,8 @@
-"""create all table, index
+"""initial
 
-Revision ID: fd383bf7bcf9
+Revision ID: 7ec6bdb5288d
 Revises: 
-Create Date: 2024-05-02 16:36:01.136836
+Create Date: 2024-09-17 18:18:34.114107
 
 """
 
@@ -13,7 +13,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = "fd383bf7bcf9"
+revision: str = "7ec6bdb5288d"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -105,8 +105,6 @@ def upgrade() -> None:
     op.create_table(
         "blocks",
         sa.Column("id", sa.Integer(), nullable=False),
-        sa.Column("name", sa.String(length=128), nullable=False),
-        sa.Column("short_name", sa.String(length=64), nullable=False),
         sa.Column("id_organ", sa.Integer(), nullable=True),
         sa.Column("id_reg", sa.Integer(), nullable=True),
         sa.ForeignKeyConstraint(
@@ -118,31 +116,39 @@ def upgrade() -> None:
             ["regions.id"],
         ),
         sa.PrimaryKeyConstraint("id"),
-        sa.UniqueConstraint("id", "name", "short_name", "id_organ", "id_reg"),
+        sa.UniqueConstraint("id", "id_organ", "id_reg"),
     )
     op.create_table(
         "types_in_block",
         sa.Column("id", sa.Integer(), nullable=False),
-        sa.Column("id_doc_type", sa.Integer(), nullable=True),
         sa.Column("id_block", sa.Integer(), nullable=True),
+        sa.Column("id_type", sa.Integer(), nullable=True),
         sa.ForeignKeyConstraint(
             ["id_block"],
             ["blocks.id"],
         ),
         sa.ForeignKeyConstraint(
-            ["id_doc_type"],
+            ["id_type"],
             ["types.id"],
         ),
         sa.PrimaryKeyConstraint("id"),
-        sa.UniqueConstraint("id", "id_doc_type", "id_block"),
+        sa.UniqueConstraint("id", "id_type", "id_block"),
     )
     op.create_table(
         "documents",
         sa.Column("id", sa.BigInteger(), nullable=False),
-        sa.Column("name", sa.Text(), nullable=False),
         sa.Column("eo_number", sa.String(length=16), nullable=False),
-        sa.Column("hash", sa.String(length=256), nullable=True),
+        sa.Column("complex_name", sa.Text(), nullable=False),
         sa.Column("pages_count", sa.Integer(), nullable=False),
+        sa.Column("pdf_file_length", sa.Integer(), nullable=False),
+        sa.Column("name", sa.Text(), nullable=False),
+        sa.Column("document_date", sa.Date(), nullable=False),
+        sa.Column("signatory_authority_id", sa.String(length=256), nullable=False),
+        sa.Column("document_type_id", sa.String(length=256), nullable=False),
+        sa.Column("title", sa.Text(), nullable=False),
+        sa.Column("view_date", sa.Date(), nullable=False),
+        sa.Column("external_id", sa.String(length=256), nullable=False),
+        sa.Column("hash", sa.String(length=256), nullable=True),
         sa.Column("date_of_publication", sa.Date(), nullable=False),
         sa.Column("date_of_signing", sa.Date(), nullable=False),
         sa.Column("id_doc_type_block", sa.Integer(), nullable=False),
