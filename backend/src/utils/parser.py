@@ -33,7 +33,7 @@ async def parse():
 
     parser_logger.info("\n\n\nВыполняется задача по расписанию\n\n")
 
-    # await service.documents.test_insert_documents()
+    print("Test insert documents in db", await service.documents.test_insert_documents())
     # Fetch data
     try:
         mock_districts_data: List[DistrictSchema] = [
@@ -349,7 +349,7 @@ async def get_documents_in_block_api(block_type_id, block_code, type_external_id
         else:
             current_page += 1
 
-    print("Documents", documents)
+    # print("Documents", documents)
 
     try:
         # Insert Documents

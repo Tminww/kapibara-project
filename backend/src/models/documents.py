@@ -8,6 +8,7 @@ from sqlalchemy import (
     UniqueConstraint,
     BigInteger,
     ForeignKey,
+    Index,
 )
 from src.models.base import Base
 
@@ -38,7 +39,7 @@ class DocumentEntity(Base):
     # region = relationship("RegionEntity", overlaps="region", innerjoin=True)
 
     __table_args__ = (
-        UniqueConstraint("id", "name", "eo_number"),
+        UniqueConstraint("id", "eo_number"),
         {"extend_existing": True},
     )
 
@@ -52,3 +53,6 @@ class DocumentEntity(Base):
     #         pagesCount=self.pages_count,
     #         id_reg=self.id_reg,
     #     )
+
+
+Index("idx_documents_eo_number", DocumentEntity.eo_number, unique=True)

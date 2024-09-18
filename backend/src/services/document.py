@@ -35,7 +35,8 @@ class DocumentsService:
         return (flag, status)
 
     async def test_insert_documents(self) -> tuple[bool, str]:
+        print("test_insert_documents")
 
-        flag, status = await self.documents_repo.test_insert_or_update_documents()
+        flag, status = await self.documents_repo.test_insert_documents()
 
         return (flag, status)
