@@ -7,7 +7,7 @@ from src.schemas.deadlines import DeadlinesSchema
 from src.schemas.districts import DistrictSchema
 from src.schemas.regions import MockRegionSchema
 from src.services.service import Service
-from src.utils.utils import get_logger
+from src.utils.utils import check_time, parser_logger
 from src.external.external import pravo_gov
 from src.schemas.deadlines import DeadlinesSchema
 from src.schemas.districts import DistrictSchema
@@ -25,7 +25,6 @@ from src.assets.data import (
 import json
 from typing import List
 
-parser_logger = get_logger(logger_name="repeat_task", file_name="parser")
 service: Service = Service()
 
 
@@ -33,9 +32,6 @@ async def parse():
 
     parser_logger.info("\n\n\nВыполняется задача по расписанию\n\n")
 
-    print(
-        "Test insert documents in db", await service.documents.test_insert_documents()
-    )
     # Fetch data
     try:
         mock_districts_data: List[DistrictSchema] = [
@@ -324,6 +320,7 @@ async def parse():
     parser_logger.info("Выполнение задачи по расписанию завершено")
 
 
+@check_time(logger=parser_logger)
 async def get_documents_in_block_api(block_type_id, block_code, type_external_id):
     print(block_type_id, block_code, type_external_id)
     parser_logger.info(f"Блок {block_type_id} {block_code} начат")
@@ -363,6 +360,7 @@ async def get_documents_in_block_api(block_type_id, block_code, type_external_id
         if not flag:
             raise DataInsertionError(f"При вставке документов произошла ошибка {error}")
         parser_logger.info(f"Блок {block_type_id} {block_code} завершен")
+        return
 
     except DataInsertionError as e:
         parser_logger.critical(str(e))
@@ -391,7 +389,7 @@ async def get_document_count_db(block_type_id) -> int:
 
 
 async def insert_documents_in_db(documents: List[dict], block_type_id: int):
-    print("insert_documents_in_db")
+
     await service.documents.insert_documents(documents, block_type_id)
 
 

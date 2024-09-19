@@ -32,6 +32,8 @@ def get_logger(logger_name: str, file_name: str = "logger") -> logging:
     return logger  # type: ignore
 
 
+parser_logger = get_logger(logger_name="repeat_task", file_name="parser")
+
 def check_time(logger):
     def decorate(func):
         @wraps(func)

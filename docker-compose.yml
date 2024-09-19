@@ -12,7 +12,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     volumes:
-      - kapibara-postgres-data:/var/lib/postgresql/data
+      - kapibara-postgres:/var/lib/postgresql/data
 
   # pgadmin:
   #   image: dpage/pgadmin4
@@ -26,7 +26,7 @@ services:
   #     PGADMIN_DEFAULT_EMAIL: admin@fastapi.com
   #     PGADMIN_DEFAULT_PASSWORD: fastapi
   #   volumes:
-  #     - kapibara-pgadmin-data:/var/lib/pgadmin
+  #     - kapibara-pgadmin:/var/lib/pgadmin
 
   # parser:
   #   build: ./services/parser/
@@ -66,5 +66,5 @@ services:
   #     - "5600:8978"
 
 volumes:
-  kapibara-postgres-data:
-  kapibara-pgadmin-data:
+  kapibara-postgres:
+  kapibara-pgadmin:
