@@ -331,6 +331,10 @@ async def get_documents_in_block_api(block_type_id, block_code, type_external_id
     document_count_db: int = await get_document_count_db(block_type_id)
     print("Document Count DB", document_count_db)
 
+    if document_count_api == 0:
+        parser_logger.info(f"Блок {block_code} пуст")
+        return
+    
     if document_count_api == document_count_db:
         parser_logger.info(f"Блок {block_code} уже заполнен")
         return
@@ -343,11 +347,13 @@ async def get_documents_in_block_api(block_type_id, block_code, type_external_id
         time.sleep(0.5)
         response = get_documents_api(block_code, type_external_id, current_page)
 
-        documents.extend(response["items"])
-        if response["pagesTotalCount"] == current_page:
+        documents.extend(response.get("items"))
+        print("Pages Total Count", response["pagesTotalCount"], "Current Page", current_page)
+        if response.get("pagesTotalCount") == current_page:
+            print("break")
             break
-        else:
-            current_page += 1
+        
+        current_page += 1
 
     # print("Documents", documents)
 
@@ -356,6 +362,7 @@ async def get_documents_in_block_api(block_type_id, block_code, type_external_id
         flag, error = await insert_documents_in_db(
             documents=documents, block_type_id=block_type_id
         )
+        print(flag, error)
 
         if not flag:
             raise DataInsertionError(f"При вставке документов произошла ошибка {error}")
@@ -372,10 +379,10 @@ def get_document_count_api(block_code, type_external_id) -> int:
     response = pravo_gov.api.documents_for_the_block(
         block=block_code, index=1, document_type=type_external_id
     )
-    return json.loads(response.content)["itemsTotalCount"]
+    return json.loads(response.content).get("itemsTotalCount", 0)
 
 
-def get_documents_api(block_code, type_external_id, current_page) -> int:
+def get_documents_api(block_code, type_external_id, current_page) -> dict:
     response = pravo_gov.api.documents_for_the_block(
         block=block_code, index=current_page, document_type=type_external_id
     )
@@ -388,9 +395,11 @@ async def get_document_count_db(block_type_id) -> int:
     return response
 
 
-async def insert_documents_in_db(documents: List[dict], block_type_id: int):
+async def insert_documents_in_db(documents: List[dict], block_type_id: int)-> tuple[bool, str]:
 
-    await service.documents.insert_documents(documents, block_type_id)
+    flag, status = await service.documents.insert_documents(documents, block_type_id)
+
+    return (flag, status)
 
 
 def add_id_to_object_in_array(

@@ -163,6 +163,7 @@ class DocumentsRepository(IDocumentsRepository):
                     res = await session.execute(stmt_on_conflict)
                     print('inserted', res.rowcount)
                 await session.commit()
+                print("commit")
                 return (True, "Success")
                         
             except Exception as ex:
