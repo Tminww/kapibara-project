@@ -1,7 +1,8 @@
 import json
+from src.config import settings
 
-BASE_ASSETS_PATH = "./src/assets"
 
+BASE_ASSETS_PATH = settings.app_path + "/parser/assets"
 
 def get_deadlines_data():
     with open(f"{BASE_ASSETS_PATH}/deadlines.json", "r") as file:

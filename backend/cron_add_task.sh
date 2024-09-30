@@ -1,0 +1,1 @@
+echo "* * * * * ./.venv/bin/python3 /src/parser/main.py" > crontab -e

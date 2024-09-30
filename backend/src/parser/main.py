@@ -1,3 +1,4 @@
+import asyncio
 import time
 from pydantic import BaseModel
 from src.errors import DataInsertionError
@@ -73,14 +74,14 @@ async def parse():
         return
 
     # Get public blocks
-    public_blocks = get_public_blocks()
+    public_blocks = await get_public_blocks()
 
     all_public_blocks = []
     for public_block in public_blocks:
 
         if public_block["has_children"] == True:
 
-            subblocks = get_subblocks_public_blocks(parent=public_block["code"])
+            subblocks = await get_subblocks_public_blocks(parent=public_block["code"])
 
             for subblock in subblocks:
                 all_public_blocks.append(subblock)
@@ -111,7 +112,7 @@ async def parse():
 
     pravo_gov_regions_data: List[PravoGovRegionSchema] = [
         PravoGovRegionSchema(**region)
-        for region in get_subblocks_public_blocks(parent="subjects")
+        for region in await get_subblocks_public_blocks(parent="subjects")
     ]
 
     status, error = compare_regions(
@@ -148,7 +149,7 @@ async def parse():
         return
 
     try:
-        types_data = get_all_types()
+        types_data = await get_all_types()
         types_with_inner_id_data: List[PravoGovDocumentTypesSchema] = (
             add_id_to_object_in_array(types_data)
         )
@@ -249,7 +250,7 @@ async def parse():
     for block in blocks_with_inner_id_data:
 
         if block.region:
-            types = get_types_in_block(
+            types = await get_types_in_block(
                 block=block.region.code,
                 types_with_inner_id_data=types_with_inner_id_data,
             )
@@ -265,7 +266,7 @@ async def parse():
                 counter_for_id += 1
 
         else:
-            types = get_types_in_block(
+            types = await get_types_in_block(
                 block=block.organ.code,
                 types_with_inner_id_data=types_with_inner_id_data,
             )
@@ -325,7 +326,7 @@ async def get_documents_in_block_api(block_type_id, block_code, type_external_id
     print(block_type_id, block_code, type_external_id)
     parser_logger.info(f"Блок {block_type_id} {block_code} начат")
 
-    document_count_api: int = get_document_count_api(block_code, type_external_id)
+    document_count_api: int = await get_document_count_api(block_code, type_external_id)
     print("Document Count API", document_count_api)
 
     document_count_db: int = await get_document_count_db(block_type_id)
@@ -345,7 +346,7 @@ async def get_documents_in_block_api(block_type_id, block_code, type_external_id
     while True:
         print("Current Page", current_page)
         time.sleep(0.5)
-        response = get_documents_api(block_code, type_external_id, current_page)
+        response = await get_documents_api(block_code, type_external_id, current_page)
 
         documents.extend(response.get("items"))
         print("Pages Total Count", response["pagesTotalCount"], "Current Page", current_page)
@@ -375,15 +376,15 @@ async def get_documents_in_block_api(block_type_id, block_code, type_external_id
         return
 
 
-def get_document_count_api(block_code, type_external_id) -> int:
-    response = pravo_gov.api.documents_for_the_block(
+async def get_document_count_api(block_code, type_external_id) -> int:
+    response = await pravo_gov.api.documents_for_the_block(
         block=block_code, index=1, document_type=type_external_id
     )
     return json.loads(response.content).get("itemsTotalCount", 0)
 
 
-def get_documents_api(block_code, type_external_id, current_page) -> dict:
-    response = pravo_gov.api.documents_for_the_block(
+async def get_documents_api(block_code, type_external_id, current_page) -> dict:
+    response = await pravo_gov.api.documents_for_the_block(
         block=block_code, index=current_page, document_type=type_external_id
     )
 
@@ -411,11 +412,11 @@ def add_id_to_object_in_array(
     return array
 
 
-def get_types_in_block(
+async def get_types_in_block(
     block: str, types_with_inner_id_data: List[PravoGovDocumentTypesSchema]
 ) -> List[PravoGovDocumentTypesSchema]:
 
-    response = pravo_gov.api.types_in_block(block=block)
+    response = await pravo_gov.api.types_in_block(block=block)
     block_types: List[PravoGovDocumentTypesSchema] = []
 
     for type in json.loads(response.content):
@@ -434,8 +435,8 @@ def get_types_in_block(
     return block_types
 
 
-def get_subblocks_public_blocks(parent) -> list:
-    response = pravo_gov.api.public_blocks(parent=parent)
+async def get_subblocks_public_blocks(parent) -> list:
+    response = await pravo_gov.api.public_blocks(parent=parent)
     subblocks: list = []
 
     for subblock in json.loads(response.content):
@@ -454,10 +455,10 @@ def get_subblocks_public_blocks(parent) -> list:
     return subblocks
 
 
-def get_public_blocks() -> list:
-    response = pravo_gov.api.public_blocks()
+async def get_public_blocks() -> list:
+    response = await pravo_gov.api.public_blocks()
     blocks: list = []
-
+    print(response.content)
     for block in json.loads(response.content):
         blocks.append(
             dict(
@@ -511,9 +512,9 @@ def combine_pydantic_list_models(
     return combined_list
 
 
-def get_all_types() -> List[PravoGovDocumentTypesSchema]:
+async def get_all_types() -> List[PravoGovDocumentTypesSchema]:
 
-    response = pravo_gov.api.types_in_block()
+    response = await pravo_gov.api.types_in_block()
 
     all_types: list = []
 
@@ -527,3 +528,6 @@ def get_all_types() -> List[PravoGovDocumentTypesSchema]:
         )
 
     return all_types
+
+if __name__ == "__main__":
+    asyncio.run(parse())

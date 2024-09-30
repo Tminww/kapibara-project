@@ -9,7 +9,7 @@ import logging
 logger = get_logger(logger_name="database", file_name="backend")
 
 logging.basicConfig(
-    filename="./src/log/sqlalchemy.log",
+    filename=f"{settings.app_path}/log/sqlalchemy.log",
     filemode="a",
     format="[%(asctime)s] [%(name)s] [%(levelname)s] > %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",

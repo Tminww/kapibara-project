@@ -1,7 +1,9 @@
+import os
 from typing import Annotated
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from functools import lru_cache
 
+APP_PATH = os.path.dirname(__file__)
 
 class DBConfig(BaseSettings):
     DB_HOST: str
@@ -10,7 +12,7 @@ class DBConfig(BaseSettings):
     DB_PASS: str
     DB_NAME: str
 
-    model_config = SettingsConfigDict(env_file="./src/.db.env")
+    model_config = SettingsConfigDict(env_file=f"{APP_PATH}/.db.env")
 
     @property
     def DATABASE_URL(self):
@@ -29,10 +31,11 @@ class ExternalApiConfig(BaseSettings):
     EXTERNAL_API_VERSION_PATH: str
     EXTERNAL_FILE_PATH: str
 
-    model_config = SettingsConfigDict(env_file="./src/.external.env")
+    model_config = SettingsConfigDict(env_file=f"{APP_PATH}/.external.env")
 
 
 class Settings:
+    app_path = APP_PATH
     db = DBConfig()
     external = ExternalApiConfig()
 

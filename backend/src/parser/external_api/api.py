@@ -1,14 +1,14 @@
-from .http import Http, IHttp
+from .http import IHttpClient
 from src.schemas.retry_request import RetryRequestSchema
 
 
-class Api:
+class ApiClient:
 
-    def __init__(self, endpoint_name: str, http: IHttp) -> None:
-        self.http: IHttp = http
+    def __init__(self, endpoint_name: str, http: IHttpClient) -> None:
+        self.http: IHttpClient = http
         self.endpoint = endpoint_name
 
-    def documents_for_the_block(
+    async def documents_for_the_block(
         self, block: str, index: int, page_size: int = 200, document_type: str = None
     ) -> RetryRequestSchema:
         """Выводит документы для указанного блока с соответствующим типом.
@@ -33,18 +33,18 @@ class Api:
         if document_type is not None:
             payload["DocumentTypes"] = document_type
 
-        return self.http.get(path=path, payload=payload)
+        return await self.http.get(path=path, payload=payload)
 
-    def public_blocks(self, parent: str = None) -> RetryRequestSchema:
+    async def public_blocks(self, parent: str = None) -> RetryRequestSchema:
 
         path = f"{self.endpoint}/PublicBlocks"
         payload = {}
         if parent is not None:
             payload["parent"] = parent
 
-        return self.http.get(path=path, payload=payload)
+        return await self.http.get(path=path, payload=payload)
 
-    def types_in_block(self, block: str = None) -> RetryRequestSchema:
+    async def types_in_block(self, block: str = None) -> RetryRequestSchema:
         """Получение номенклатуры для конкретного блока
 
         Args:
@@ -61,4 +61,4 @@ class Api:
         if block is not None:
             payload["block"] = block
 
-        return self.http.get(path=path, payload=payload)
+        return await self.http.get(path=path, payload=payload)
