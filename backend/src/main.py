@@ -40,18 +40,18 @@ for router in all_routers:
     app.include_router(router)
 
 
-@app.on_event("startup")
-@repeat_every(
-    seconds=43200,
-)
-async def run_parser():
-    """
-    Executes a scheduled task that performs parsing and data insertion into a database.
+# @app.on_event("startup")
+# @repeat_every(
+#     seconds=43200,
+# )
+# async def run_parser():
+#     """
+#     Executes a scheduled task that performs parsing and data insertion into a database.
 
-    This function is executed on the startup of a FastAPI application and runs periodically every 60 seconds.
+#     This function is executed on the startup of a FastAPI application and runs periodically every 60 seconds.
 
-    """
-    await parse()
+#     """
+#     await parse()
 
 
 @app.exception_handler(DateValidationError)

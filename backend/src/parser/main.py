@@ -1,6 +1,8 @@
 import asyncio
 import time
-from pydantic import BaseModel
+import json
+from typing import List
+
 from src.errors import DataInsertionError
 from src.schemas.base import BaseSchema
 from src.schemas.blocks import BlockSchema, OrganInBlockSchema, RegionInBlockSchema
@@ -23,8 +25,7 @@ from src.parser.assets.data import (
     get_regions_data,
 )
 
-import json
-from typing import List
+
 
 service: Service = Service()
 

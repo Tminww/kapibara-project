@@ -1,3 +1,4 @@
+from datetime import datetime
 from functools import wraps
 import sys
 import time
@@ -33,7 +34,8 @@ def get_logger(logger_name: str, file_name: str = "logger") -> logging:
     return logger  # type: ignore
 
 
-parser_logger = get_logger(logger_name="repeat_task", file_name="parser")
+timestamp = datetime.now().strftime("%d-%m-%Y-%H-%M-%S")
+parser_logger = get_logger(logger_name="repeat_task", file_name=f"parser{timestamp}")
 
 def check_time(logger):
     def decorate(func):
