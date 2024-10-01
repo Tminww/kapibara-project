@@ -1,15 +1,12 @@
 #!/bin/bash
 
 # Определяем директорию, где находится этот скрипт
-SCRIPT_DIR="$(dirname "$(realpath "$0")")"
-
-# Определяем путь к виртуальному окружению и Python
-PYTHON_PATH="$SCRIPT_DIR/.venv/bin/python3"
+SCRIPT_PARSER_PATH="$(dirname "$(realpath "$0")")"
 
 # Определяем путь к Python-скрипту, который нужно запустить
-SCRIPT_RUN_PARSER_PATH="$SCRIPT_DIR/run_parser.sh"
+RUN_PARSER_SCRIPT_PATH="$SCRIPT_PARSER_PATH/backend/run_parser.sh"
 
-chmod +x $SCRIPT_RUN_PARSER_PATH
+chmod +x $RUN_PARSER_SCRIPT_PATH
 
 # Запланированное время для задачи cron (например, каждую минуту)
 # `* * * * *` — каждый minute
@@ -19,7 +16,7 @@ chmod +x $SCRIPT_RUN_PARSER_PATH
 CRON_SCHEDULE="* * * * *"
 
 # Создание уникального лог-файла с датой и временем
-CRON_LOG_DIR="$SCRIPT_DIR/logs"
+CRON_LOG_DIR="$SCRIPT_PARSER_PATH/logs"
 
 mkdir $CRON_LOG_DIR
 
@@ -27,7 +24,7 @@ CRON_LOG_FILE="$CRON_LOG_DIR/cron.log"
 
 
 # Полная строка для crontab
-CRON_JOB="$CRON_SCHEDULE $SCRIPT_RUN_PARSER_PATH >> $CRON_LOG_FILE 2>&1"
+CRON_JOB="$CRON_SCHEDULE $RUN_PARSER_SCRIPT_PATH >> $CRON_LOG_FILE 2>&1"
 
 # Проверка, существует ли уже такая запись в crontab
 crontab -l | grep -F "$CRON_JOB" > /dev/null
