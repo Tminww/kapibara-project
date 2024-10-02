@@ -29,6 +29,3 @@ class RegionDTO(BaseSchema):
     code: str
     parent_id: str
     id_dist: int
-
-    class Config:
-        orm_mode = True  # Это позволяет использовать Pydantic с SQLAlchemy

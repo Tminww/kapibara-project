@@ -1,7 +1,7 @@
 from typing import List
 
 from src.repositories.districts import IDistrictsRepository
-from src.schemas.districts import DistrictSchema
+from src.schemas.districts import DistrictDTO
 
 
 class DistrictsService:
@@ -18,9 +18,7 @@ class DistrictsService:
 
         return districts
 
-    async def insert_districts(
-        self, districts: List[DistrictSchema]
-    ) -> tuple[bool, str]:
+    async def insert_districts(self, districts: List[DistrictDTO]) -> tuple[bool, str]:
 
         flag, status = await self.districts_repo.insert_or_update_districts(districts)
 

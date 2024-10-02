@@ -3,7 +3,7 @@ from typing import Annotated, List
 from fastapi import APIRouter, Depends, HTTPException, Path
 from fastapi.responses import Response
 from src.services.service import Service
-from src.schemas.districts import DistrictSchema
+from src.schemas.districts import DistrictDTO
 from src.utils.utils import get_logger
 
 logger = get_logger(logger_name="api.districts", file_name="backend")
@@ -17,7 +17,7 @@ router = APIRouter(
 @router.get("", description="Get all districts")
 async def get_districts(
     service: Annotated[Service, Depends()],
-) -> List[DistrictSchema]:
+) -> List[DistrictDTO]:
 
     districts = await service.districts.get_all_districts()
     return districts
@@ -27,7 +27,7 @@ async def get_districts(
 async def get_district_by_id(
     item_id: Annotated[int, Path(title="The ID of the item to get", gt=0, le=1000)],
     service: Annotated[Service, Depends()],
-) -> List[DistrictSchema]:
+) -> List[DistrictDTO]:
 
     districts = await service.districts.get_district_by_id(item_id)
     return districts
@@ -36,7 +36,7 @@ async def get_district_by_id(
 @router.post("", description="Insert or Update districts")
 async def insert_districts(
     service: Annotated[Service, Depends()],
-    districts: List[DistrictSchema],
+    districts: List[DistrictDTO],
 ):
 
     flag, status = await service.districts.insert_districts(districts=districts)

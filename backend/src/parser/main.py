@@ -7,13 +7,13 @@ from src.errors import DataInsertionError
 from src.schemas.base import BaseSchema
 from src.schemas.blocks import BlockSchema, OrganInBlockSchema, RegionInBlockSchema
 from src.schemas.deadlines import DeadlinesSchema
-from src.schemas.districts import DistrictSchema
+
 from src.schemas.regions import MockRegionSchema
 from src.services.service import Service
 from src.utils.utils import check_time, parser_logger
 from src.parser.external_api.external import pravo_gov
 from src.schemas.deadlines import DeadlinesSchema
-from src.schemas.districts import DistrictSchema
+from src.schemas.districts import DistrictDTO
 from src.schemas.types import PravoGovDocumentTypesSchema, TypesInBlockSchema
 from src.schemas.regions import MockRegionSchema, PravoGovRegionSchema, RegionSchema
 from src.schemas.organs import OrganSchema
@@ -26,7 +26,6 @@ from src.parser.assets.data import (
 )
 
 
-
 service: Service = Service()
 
 
@@ -36,8 +35,8 @@ async def parse():
 
     # Fetch data
     try:
-        mock_districts_data: List[DistrictSchema] = [
-            DistrictSchema(**district) for district in get_districts_data()
+        mock_districts_data: List[DistrictDTO] = [
+            DistrictDTO(**district) for district in get_districts_data()
         ]
 
         mock_deadlines_data: List[DeadlinesSchema] = [
@@ -300,7 +299,7 @@ async def parse():
         return
 
     # ВСТАВКА ДОКУМЕНТОВ В БАЗУ
-    print("ВСТАВКА ДОКУМЕНТОВ В БАЗУ")
+    parser_logger.info("ВСТАВКА ДОКУМЕНТОВ В БАЗУ")
     parser_logger.info("ВСТАВКА ДОКУМЕНТОВ В БАЗУ Данных")
 
     for type_in_block in types_in_block:
@@ -324,19 +323,19 @@ async def parse():
 
 @check_time(logger=parser_logger)
 async def get_documents_in_block_api(block_type_id, block_code, type_external_id):
-    print(block_type_id, block_code, type_external_id)
+    parser_logger.info(block_type_id, block_code, type_external_id)
     parser_logger.info(f"Блок {block_type_id} {block_code} начат")
 
     document_count_api: int = await get_document_count_api(block_code, type_external_id)
-    print("Document Count API", document_count_api)
+    parser_logger.info("Document Count API", document_count_api)
 
     document_count_db: int = await get_document_count_db(block_type_id)
-    print("Document Count DB", document_count_db)
+    parser_logger.info("Document Count DB", document_count_db)
 
     if document_count_api == 0:
         parser_logger.info(f"Блок {block_code} пуст")
         return
-    
+
     if document_count_api == document_count_db:
         parser_logger.info(f"Блок {block_code} уже заполнен")
         return
@@ -345,16 +344,21 @@ async def get_documents_in_block_api(block_type_id, block_code, type_external_id
 
     current_page = 1
     while True:
-        print("Current Page", current_page)
+        parser_logger.info("Current Page", current_page)
         time.sleep(0.5)
         response = await get_documents_api(block_code, type_external_id, current_page)
 
         documents.extend(response.get("items"))
-        print("Pages Total Count", response["pagesTotalCount"], "Current Page", current_page)
+        print(
+            "Pages Total Count",
+            response["pagesTotalCount"],
+            "Current Page",
+            current_page,
+        )
         if response.get("pagesTotalCount") == current_page:
             print("break")
             break
-        
+
         current_page += 1
 
     # print("Documents", documents)
@@ -397,7 +401,9 @@ async def get_document_count_db(block_type_id) -> int:
     return response
 
 
-async def insert_documents_in_db(documents: List[dict], block_type_id: int)-> tuple[bool, str]:
+async def insert_documents_in_db(
+    documents: List[dict], block_type_id: int
+) -> tuple[bool, str]:
 
     flag, status = await service.documents.insert_documents(documents, block_type_id)
 
@@ -530,5 +536,7 @@ async def get_all_types() -> List[PravoGovDocumentTypesSchema]:
 
     return all_types
 
+
 if __name__ == "__main__":
     asyncio.run(parse())
+    print("1")
