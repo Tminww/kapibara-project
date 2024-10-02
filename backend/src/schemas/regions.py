@@ -19,3 +19,16 @@ class PravoGovRegionSchema(BaseSchema):
 class RegionSchema(PravoGovRegionSchema):
     id: int | None
     id_dist: Optional[int]
+
+
+class RegionDTO(BaseSchema):
+    id: int
+    name: str
+    short_name: str
+    external_id: str
+    code: str
+    parent_id: str
+    id_dist: int
+
+    class Config:
+        orm_mode = True  # Это позволяет использовать Pydantic с SQLAlchemy
