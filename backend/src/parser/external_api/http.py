@@ -5,7 +5,7 @@ from src.schemas.retry_request import RetryRequestSchema
 from src.utils import utils
 
 
-logger = utils.get_logger(logger_name="api.http", file_name="parser")
+logger = utils.parser_logger(logger_name="api.http", file_name="http")
 
 
 class IHttpClient(ABC):
@@ -24,7 +24,7 @@ class HttpClient(IHttpClient):
     async def get(self, path: str, payload: dict = None) -> RetryRequestSchema:
         try:
             # Используем асинхронный httpx.AsyncClient
-            async with httpx.AsyncClient(base_url=self.base_url, headers=self.headers) as client:
+            async with httpx.AsyncClient(base_url=self.base_url, headers=self.headers, timeout=60) as client:
                 response = await client.get(url=path, params=payload)
 
                 # Логгируем успешный ответ

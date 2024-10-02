@@ -14,7 +14,7 @@ cd $CURRENT_SCRIPT_DIR
 
 source .venv/bin/activate
 
-echo 'Запуск скрипта: $(date +"%Y-%m-%d-%H-%M-%S")'
+echo "Запуск скрипта: $(date +"%Y-%m-%d-%H-%M-%S")"
 python3 $PARSER_SCRIPT_RELATIVE_PATH >> $CRON_LOG_FILE 2>&1
 
 echo "Завершение работы скрипта: $(date +"%Y-%m-%d-%H-%M-%S")"
