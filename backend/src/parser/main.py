@@ -373,7 +373,7 @@ async def get_documents_in_block_api(block_type_id, block_code, type_external_id
 
     except DataInsertionError as e:
         parser_logger.critical(str(e))
-        parser_logger.critical("Выполнение задачи по расписанию оборвалось")
+        parser_logger.critical("Блок {block_type_id} {block_code} завершен с ошибкой")
         return
 
 

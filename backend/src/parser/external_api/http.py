@@ -5,7 +5,7 @@ from src.schemas.retry_request import RetryRequestSchema
 from src.utils import utils
 
 
-logger = utils.parser_logger(logger_name="api.http", file_name="http")
+logger = utils.get_logger(logger_name="http_external_requests", file_name="http")
 
 
 class IHttpClient(ABC):

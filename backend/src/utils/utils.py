@@ -147,10 +147,11 @@ def async_retry_request(logger: logging.Logger, num_retries=5, sleep_time=2):
                     logger.error(
                         f"Ошибка: {exception}, попытка {retry}/{num_retries}..."
                     )
-                    response: Response = Response()
-                    response.reason = exception
-                    response.status_code = 444
-                    response.content = bytes('[]', 'utf-8')
+                    response = Response(
+                        status_code=444,
+                        content=bytes('[]', 'utf-8'),
+                        reason_phrase=str(exception)  # reason_phrase задается через параметр
+                    )
                     if retry < num_retries:
                         await asyncio.sleep(sleep_time)  # Используем asyncio.sleep для асинхронных функций
                     else:
