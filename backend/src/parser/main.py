@@ -364,7 +364,7 @@ async def get_documents_in_block_api(block_type_id, block_code, type_external_id
         flag, error = await insert_documents_in_db(
             documents=documents, block_type_id=block_type_id
         )
-        print(flag, error)
+        # print(flag, error)
 
         if not flag:
             raise DataInsertionError(f"При вставке документов произошла ошибка {error}")
@@ -459,7 +459,7 @@ async def get_subblocks_public_blocks(parent) -> list:
 async def get_public_blocks() -> list:
     response = await pravo_gov.api.public_blocks()
     blocks: list = []
-    print(response.content)
+    # print(response.content)
     for block in json.loads(response.content):
         blocks.append(
             dict(
