@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Определяем директорию, где находится этот скрипт
-SCRIPT_PARSER_PATH="$(dirname "$(realpath "$0")")"
+CURRENT_SCRIPT_PATH="$(dirname "$(realpath "$0")")"
 
 # Определяем путь к Python-скрипту, который нужно запустить
-RUN_PARSER_SCRIPT_PATH="$SCRIPT_PARSER_PATH/backend/run_parser.sh"
+RUN_PARSER_SCRIPT_PATH="$CURRENT_SCRIPT_PATH/backend/run_parser.sh"
 
 chmod +x $RUN_PARSER_SCRIPT_PATH
 
@@ -13,10 +13,10 @@ chmod +x $RUN_PARSER_SCRIPT_PATH
 # `*/5 * * * *` — каждые 5 минут
 # `0 * * * *` — каждый час (в начале)
 # `0 0 * * *` — каждый день в полночь
-CRON_SCHEDULE="* * * * *"
+CRON_SCHEDULE="*/10 * * * *"
 
 # Создание уникального лог-файла с датой и временем
-CRON_LOG_DIR="$SCRIPT_PARSER_PATH/logs"
+CRON_LOG_DIR="$CURRENT_SCRIPT_PATH/backend/logs"
 
 mkdir $CRON_LOG_DIR
 
