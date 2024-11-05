@@ -8,7 +8,7 @@ from services.statistics import StatisticsService
 from errors import DateValidationError, ResultIsEmptyError
 
 router = APIRouter(
-    prefix="/statistics",
+    prefix="/api/statistics",
     tags=["Statistic in regions"],
 )
 

@@ -5,7 +5,7 @@ from api.dependencies import subjects_service
 from services.subjects import SubjectsService
 
 router = APIRouter(
-    prefix="/subjects",
+    prefix="/api/subjects",
     tags=["Subjects"],
 )
 

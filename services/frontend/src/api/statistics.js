@@ -3,7 +3,7 @@ import statistics from '../mock/statistics.json'
 import subjects from '../mock/subjects.json'
 
 // axios.defaults.withCredentials = true;
-axios.defaults.baseURL = 'http://localhost:8080/'
+axios.defaults.baseURL = 'https://kapi.tminww.site/api/'
 axios.defaults.headers.common["Access-Control-Allow-Origin"] = "*";
 
 export async function getAllStatistics() {
