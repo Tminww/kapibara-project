@@ -6,7 +6,7 @@ services:
     image: postgres
     restart: unless-stopped
     ports:
-      - "54321:5432"
+      - "127.0.0.1:54321:5432"
     environment:
       - POSTGRES_DB=fastapi-postgres
       - POSTGRES_USER=fastapi-postgres
@@ -21,7 +21,7 @@ services:
     depends_on:
       - postgres
     ports:
-      - "5500:80"
+      - "127.0.0.1:8082:80"
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@fastapi.com
       PGADMIN_DEFAULT_PASSWORD: fastapi
@@ -44,7 +44,7 @@ services:
     depends_on:
       - postgres
     ports:
-      - "8080:80"
+      - "127.0.0.1:8080:80"
 
   frontend:
     build: ./services/frontend/
@@ -55,7 +55,7 @@ services:
     depends_on:
       - backend
     ports:
-      - "8081:5173"
+      - "127.0.0.1:8081:5173"
 
 volumes:
   postgres-data:
