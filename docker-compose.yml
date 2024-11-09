@@ -1,7 +1,7 @@
 version: "3.7"
 
 services:
-  postgres:
+  database:
     container_name: kapibara-postgres
     image: postgres
     restart: unless-stopped
@@ -19,7 +19,7 @@ services:
     container_name: kapibara-pgadmin
     restart: unless-stopped
     depends_on:
-      - kapibara-postgres
+      - database
     ports:
       - "127.0.0.1:8082:80"
     environment:
@@ -33,7 +33,7 @@ services:
     container_name: kapibara-parser
     restart: unless-stopped
     depends_on:
-      - kapibara-postgres
+      - database
 
   backend:
     build: ./services/backend/
@@ -42,7 +42,7 @@ services:
     volumes:
       - ./services/backend/src:/code/
     depends_on:
-      - kapibara-postgres
+      - database
     ports:
       - "127.0.0.1:8080:80"
 
@@ -53,7 +53,7 @@ services:
       - './services/frontend:/code/'
       - '/code/node_modules'
     depends_on:
-      - kapibara-backend
+      - backend
     ports:
       - "127.0.0.1:8081:5173"
 
