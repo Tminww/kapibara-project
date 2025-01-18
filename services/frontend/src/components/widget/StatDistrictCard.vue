@@ -32,8 +32,8 @@
 				<v-card>
 					<v-toolbar dark color="primary">
 						<v-toolbar-title
-							>Статистика за {{ district.name }}</v-toolbar-title
-						>
+							>Статистика в {{ shortName }} за {{ timeInterval }}
+						</v-toolbar-title>
 						<v-spacer></v-spacer>
 						<v-toolbar-items>
 							<v-btn icon dark @click="dialog = false">
@@ -68,6 +68,7 @@
 		components: { DoughnutChart, StatRegionCard },
 		props: {
 			district: { type: Object, required: true },
+			timeInterval: { type: String, required: true },
 		},
 
 		data() {
@@ -77,6 +78,9 @@
 			}
 		},
 		computed: {
+			shortName() {
+				return this.getShortDistrictName(this.district.name)
+			},
 			chartData() {
 				let labels = []
 				let data = []
@@ -136,9 +140,23 @@
 				this.chartData
 				this.chartOptions
 			},
+			getShortDistrictName(fullName) {
+				const districtAbbreviations = {
+					'Центральный Федеральный округ': 'ЦФО',
+					'Северо-Западный Федеральный округ': 'СЗФО',
+					'Южный Федеральный округ': 'ЮФО',
+					'Северо-Кавказский Федеральный округ': 'СКФО',
+					'Приволжский Федеральный округ': 'ПФО',
+					'Уральский Федеральный округ': 'УФО',
+					'Сибирский Федеральный округ': 'СФО',
+					'Дальневосточный Федеральный округ': 'ДФО',
+				}
+				return districtAbbreviations[fullName] || fullName
+			},
 		},
 		async mounted() {
 			console.log('DISTRICT', this.district)
+			console.log('TIME', this.timeInterval)
 			this.loaded = false
 			this.setup()
 			this.loaded = true

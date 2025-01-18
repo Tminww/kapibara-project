@@ -9,7 +9,13 @@
 								@click.stop="leftMenu = !leftMenu"
 							></v-app-bar-nav-icon>
 						</template>
-						<v-toolbar-title>Капибара</v-toolbar-title>
+						<v-toolbar-title>
+							<span> Капибара</span>
+							<v-divider class="mx-4" vertical></v-divider>
+							<span>
+								Cтатистика за: {{ timeInterval }}
+							</span></v-toolbar-title
+						>
 					</v-app-bar>
 
 					<v-navigation-drawer
@@ -39,13 +45,9 @@
 								<template v-else>
 									<request-form
 										@loading-successful="
-											(leftMenu = false),
-												(resultIsEmpty = false)
+											handleLoadingSuccessful
 										"
-										@loading-error="
-											(leftMenu = false),
-												(resultIsEmpty = true)
-										"
+										@loading-error="handleLoadingError"
 										:districts="getRegionsToRequest"
 									/>
 								</template>
@@ -98,6 +100,7 @@
 									>
 										<stat-district-card
 											:district="district"
+											:timeInterval="timeInterval"
 										/>
 									</v-col>
 								</template>
@@ -138,6 +141,7 @@
 				errorSubjects: null,
 				leftMenu: false,
 				resultIsEmpty: false,
+				searchParameters: null,
 			}
 		},
 		computed: {
@@ -152,6 +156,19 @@
 				console.log('NO RESULT', this.resultIsEmpty)
 				return this.resultIsEmpty
 			},
+
+			timeInterval() {
+				if (!this.searchParameters) {
+					return ' все время'
+				}
+
+				const { startDate, endDate } = this.searchParameters
+
+				let start = this.formatDate(startDate) || '01.01.2011'
+				let end = this.formatDate(endDate) || this.getTodayDate()
+
+				return `    ${start} - ${end}`
+			},
 		},
 
 		methods: {
@@ -162,6 +179,37 @@
 				'loadStatisticsAPI',
 				'updateStatisticsAPI',
 			]),
+			formatDate(date) {
+				if (!date) return null
+
+				// Если дата уже в формате dd.MM.YYYY, возвращаем её
+				if (date.match(/^\d{2}\.\d{2}\.\d{4}$/)) {
+					return date
+				}
+
+				// Если дата в формате YYYY-MM-DD, преобразуем её
+				const [year, month, day] = date.split('-')
+				return `${day}.${month}.${year}`
+			},
+			getTodayDate() {
+				const today = new Date()
+				const day = String(today.getDate()).padStart(2, '0')
+				const month = String(today.getMonth() + 1).padStart(2, '0')
+				const year = today.getFullYear()
+				return `${day}.${month}.${year}`
+			},
+			handleLoadingSuccessful(parameters) {
+				this.leftMenu = false
+				this.resultIsEmpty = false
+				console.log('Полученные параметры поиска:', parameters)
+				// Здесь вы можете использовать параметры для дальнейшей обработки
+				this.searchParameters = parameters // Сохраняем параметры поиска
+				console.log('Полученные параметры поиска:', parameters)
+			},
+			handleLoadingError() {
+				this.leftMenu = false
+				this.resultIsEmpty = true
+			},
 			async loadStatistics() {
 				try {
 					this.loadingStatistics = true

@@ -172,15 +172,17 @@
 						this.startDate,
 						this.endDate,
 					)
+
 					await this.updateStatisticsAPI(parameters)
-					this.$emit('loadingSuccessful')
+
+					// Передаем параметры поиска вместе с событием
+					this.$emit('loadingSuccessful', parameters)
 				} catch (e) {
 					this.errorStatistics = e.message
 					this.dropStatistics()
 					this.$emit('loadingError')
 				} finally {
 					this.loadingStatistics = false
-					// this.setDefaultValue()
 				}
 			},
 
