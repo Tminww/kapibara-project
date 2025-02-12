@@ -1,4 +1,4 @@
-docker import psycopg2
+import psycopg2
 from dbconfig import get_settings
 from log.createLogger import get_logger
 
