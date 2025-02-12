@@ -37,8 +37,6 @@ services:
     build: ./backend/
     container_name: kapibara-backend
     restart: unless-stopped
-    volumes:
-      - ./backend/src:/code/
     depends_on:
       - database
     ports:
