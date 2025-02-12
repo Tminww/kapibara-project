@@ -9,10 +9,13 @@ WORKDIR /code
 
 RUN curl -fsSL https://bun.sh/install | bash
 
-RUN source /root/.bashrc
+ENV PATH="/root/.bun/bin:${PATH}"
+
+
 # install and cache app dependencies
 COPY package.json /code/package.json
 COPY bun.lock /code/bun.lock
+
 
 COPY . .
 
