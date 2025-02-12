@@ -1,6 +1,8 @@
 from pydantic_settings import BaseSettings
 from functools import lru_cache
+import os
 
+PATH = os.path.dirname(__file__)
 
 class Settings(BaseSettings):
     DB_HOST: str
@@ -10,7 +12,7 @@ class Settings(BaseSettings):
     DB_NAME: str
 
     class Config:
-        env_file = ".env"
+        env_file = f"{PATH}/.env"
 
     @property
     def DATABASE_URL(self):
