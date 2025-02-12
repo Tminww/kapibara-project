@@ -25,4 +25,4 @@ RUN bun install
 
 # start app
 # CMD ["npm", "run", "dev", "--", "--host"]
-CMD ["bun", "run", "dev"]
+CMD ["bun", "run", "dev", "--", "--host"]

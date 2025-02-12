@@ -21,10 +21,10 @@ jobs:
           echo "Остановка всех контейнеров..."
           docker compose --file $DOCKER_COMPOSE_FILE down || exit
 
-      - name: Удаление неиспользуемых томов
-        run: |
-          echo "Удаление неиспользуемых томов..."
-          docker volume rm $(docker volume ls -q) || true
+      # - name: Удаление неиспользуемых томов
+      #   run: |
+      #     echo "Удаление неиспользуемых томов..."
+      #     docker volume rm $(docker volume ls -q) || true
 
       - name: Запуск контейнеров
         run: |
