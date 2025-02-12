@@ -7,8 +7,7 @@ function dateFormat(date) {
 	return `${year}-${month}-${day}`
 }
 
-export function getLastQuarter() {
-	const currentDate = new Date()
+export function getLastQuarter(currentDate = new Date()) {
 	const currentMonth = currentDate.getMonth()
 	const currentYear = currentDate.getFullYear()
 	const currentQuarter = Math.floor(currentMonth / 3) + 1
@@ -26,8 +25,7 @@ export function getLastQuarter() {
 	return { startDate, endDate }
 }
 
-export function getLastMonth() {
-	const currentDate = new Date()
+export function getLastMonth(currentDate = new Date()) {
 	const currentMonth = currentDate.getMonth()
 	const currentYear = currentDate.getFullYear()
 	let startDate = new Date(currentYear, currentMonth - 1, 1)
@@ -38,8 +36,7 @@ export function getLastMonth() {
 	return { startDate, endDate }
 }
 
-export function getLastYear() {
-	const currentDate = new Date()
+export function getLastYear(currentDate = new Date()) {
 	const currentYear = currentDate.getFullYear()
 	let startDate = new Date(currentYear - 1, 0, 1)
 	let endDate = new Date(currentYear, 0, 0)
@@ -47,4 +44,32 @@ export function getLastYear() {
 	startDate = dateFormat(startDate)
 	endDate = dateFormat(endDate)
 	return { startDate, endDate }
+}
+
+export const mapDistrictNameToShortName = name => {
+	const map = {
+		'Центральный Федеральный округ': 'ЦФО',
+		'Северо-Западный Федеральный округ': 'СЗФО',
+		'Северо-Кавказский Федеральный округ': 'СКФО',
+		'Южный Федеральный округ': 'ЮФО',
+		'Приволжский Федеральный округ': 'ПФО',
+		'Уральский Федеральный округ': 'УФО',
+		'Сибирский Федеральный округ': 'СФО',
+		'Дальневосточный Федеральный округ': 'ДФО',
+	}
+	return map[name]
+}
+
+export const mapDistrictShortNameToName = name => {
+	const map = {
+		ЦФО: 'Центральный Федеральный округ',
+		СЗФО: 'Северо-Западный Федеральный округ',
+		СКФО: 'Северо-Кавказский Федеральный округ',
+		ЮФО: 'Южный Федеральный округ',
+		ПФО: 'Приволжский Федеральный округ',
+		УФО: 'Уральский Федеральный округ',
+		СФО: 'Сибирский Федеральный округ',
+		ДФО: 'Дальневосточный Федеральный округ',
+	}
+	return map[name]
 }

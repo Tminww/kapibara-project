@@ -5,19 +5,22 @@ class StatisticsClient {
 		this.endpoint = endpoint
 	}
 	read = async function (params = {}) {
-		console.log('CRUD GET: ' + this.endpoint + { params })
-		return (await axiosClient.get(this.endpoint, params)).data
+		console.log('STAT GET: ' + this.endpoint)
+		console.table('STAT GET PARAMS:', params)
+		return (await axiosClient.get(this.endpoint, { params })).data
 	}
 	readOneDistrict = async function (id, params = {}) {
-		console.log('CRUD GET ONE: ' + this.endpoint + { params })
-		return (
-			await axiosClient.get(this.endpoint + '/' + String(id), params)
-		).data
+		console.log('STAT GET ONE: ' + this.endpoint + { params })
+		return (await axiosClient.get(this.endpoint + '/' + String(id), params))
+			.data
 	}
 	readOneRegion = async function (id, params = {}) {
-		console.log('CRUD GET ONE: ' + this.endpoint + { params })
+		console.log('STAT GET ONE: ' + this.endpoint + { params })
 		return (
-			await axiosClient.get(this.endpoint + '?regions=' + String(id), params)
+			await axiosClient.get(
+				this.endpoint + '?regions=' + String(id),
+				params,
+			)
 		).data
 	}
 }

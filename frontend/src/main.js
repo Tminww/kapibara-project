@@ -1,35 +1,23 @@
-import { createApp } from 'vue'
-import './assets/style.css'
-import App from './App.vue'
-import { createPinia } from 'pinia'
+import App from '@/app/App.vue'
 
-import 'vuetify/styles'
-import '@mdi/font/css/materialdesignicons.css'
-import '@fortawesome/fontawesome-free/css/all.css'
-import { createVuetify } from 'vuetify'
-import { aliases, mdi } from 'vuetify/lib/iconsets/mdi'
-import * as components from 'vuetify/components'
-import * as directives from 'vuetify/directives'
+import { createApp } from 'vue'
+
+import './assets/style.css'
+
+import { createPinia } from 'pinia'
 
 import VueApexCharts from 'vue3-apexcharts'
 
-const vuetify = createVuetify({
-	theme: {
-		defaultTheme: 'light',
-	},
-	icons: {
-		defaultSet: 'mdi',
-		aliases,
-		sets: {
-			mdi,
-		},
-	},
-	components,
-	directives,
-})
+import vuetify from '@/plugins/vuetify'
+
+import i18n from '@/plugins/i18n'
+
+import router from './router'
 
 const app = createApp(App)
 app.use(createPinia())
+app.use(router)
 app.use(vuetify)
+app.use(i18n)
 app.use(VueApexCharts)
 app.mount('#app')

@@ -1,0 +1,6 @@
+export { default as TBaseChart } from './TBaseChart.vue'
+export { default as TDonutChart } from './TDonutChart.vue'
+export { default as THorizontalBarChart } from './THorizontalBarChart.vue'
+export { default as TSkeletonDonutChart } from './TSkeletonDonutChart.vue'
+export { default as TColumnChart } from './TColumnChart.vue'
+export { default as TSkeletonColumnChart } from './TSkeletonColumnChart.vue'
