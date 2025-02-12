@@ -1,4 +1,5 @@
 import { HomePage } from '@/pages'
+import { DashboardPage } from '@/pages'
 
 const meta = {
 	requiresAuth: false,
@@ -11,7 +12,7 @@ const homeRoutes = [
 	{
 		path: '/',
 		name: 'home',
-		component: HomePage,
+		component: DashboardPage,
 		meta,
 	},
 ]
