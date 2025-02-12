@@ -1,37 +1,25 @@
-# use the official Bun image
-# see all versions at https://hub.docker.com/r/oven/bun/tags
-FROM oven/bun:1 AS base
-WORKDIR /usr/src/app
+# base image
+FROM node:latest
 
-# install dependencies into temp directory
-# this will cache them and speed up future builds
-FROM base AS install
-RUN mkdir -p /temp/dev
-COPY package.json bun.lock /temp/dev/
-RUN cd /temp/dev && bun install --frozen-lockfile
+# set working directory
+WORKDIR /code
 
-# install with --production (exclude devDependencies)
-RUN mkdir -p /temp/prod
-COPY package.json bun.lock /temp/prod/
-RUN cd /temp/prod && bun install --frozen-lockfile --production
+# add `/app/node_modules/.bin` to $PATH
+# ENV PATH /code/node_modules/.bin:$PATH
 
-# copy node_modules from temp directory
-# then copy all (non-ignored) project files into the image
-FROM base AS prerelease
-COPY --from=install /temp/dev/node_modules node_modules
+RUN curl -fsSL https://bun.sh/install | bash
+
+# install and cache app dependencies
+COPY package.json /code/package.json
+COPY bun.lock /code/bun.lock
+
 COPY . .
 
-# [optional] tests & build
-ENV NODE_ENV=production
-RUN bun test
-RUN bun run build
 
-# copy production dependencies and source code into final image
-FROM base AS release
-COPY --from=install /temp/prod/node_modules node_modules
-COPY --from=prerelease /usr/src/app/index.js .
-COPY --from=prerelease /usr/src/app/package.json .
+RUN bun install
+# RUN npm install @vue/cli@3.7.0 -g
 
-# run the app
-USER bun
-ENTRYPOINT [ "bun", "run", "dev" ]
+# start app
+# CMD ["npm", "run", "dev", "--", "--host"]
+EXPOSE 5173
+CMD ["bun", "run", "dev"]

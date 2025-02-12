@@ -47,9 +47,6 @@ services:
   frontend:
     build: ./frontend/
     container_name: kapibara-frontend
-    volumes:
-      - "./frontend:/code/"
-      - "/code/node_modules"
     depends_on:
       - backend
     ports:
