@@ -6,9 +6,9 @@ services:
     ports:
       - "127.0.0.1:54321:5432"
     environment:
-      - POSTGRES_DB=fastapi-postgres
-      - POSTGRES_USER=fastapi-postgres
-      - POSTGRES_PASSWORD=fastapi-postgres
+      - POSTGRES_DB=kapibara-postgres
+      - POSTGRES_USER=kapibara-postgres
+      - POSTGRES_PASSWORD=kapibara-postgres
     volumes:
       - kapibara-postgres-data:/var/lib/postgresql/data
 
