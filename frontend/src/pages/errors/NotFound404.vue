@@ -1,22 +1,28 @@
 <template>
-	<div class="error-container">
-		<div class="picture">
-			<t-error-icon-ui></t-error-icon-ui>
-		</div>
-		<div class="content">
-			<h1>{{ t('errors.notFound.code') }}</h1>
-			<h2>{{ t('errors.notFound.title') }}</h2>
-			<p>
-				{{ t('errors.notFound.text') }}
-			</p>
-			<v-btn
-				:color="t('errors.notFound.button.color')"
-				class="btn"
-				@click="goToHome()"
-				>{{ t('errors.notFound.button.text') }}</v-btn
-			>
-		</div>
-	</div>
+	<v-container class="mt-15">
+		<v-row class="d-flex align-center">
+			<v-col cols="auto">
+				<v-container width="500">
+					<t-error-icon-ui></t-error-icon-ui>
+				</v-container>
+			</v-col>
+			<v-col cols="auto">
+				<v-container width="400">
+					<h1>{{ t('errors.notFound.code') }}</h1>
+					<h2>{{ t('errors.notFound.title') }}</h2>
+					<p>
+						{{ t('errors.notFound.text') }}
+					</p>
+					<v-btn
+						:color="t('errors.notFound.button.color')"
+						class="btn"
+						@click="goToHome()"
+						>{{ t('errors.notFound.button.text') }}</v-btn
+					>
+				</v-container>
+			</v-col>
+		</v-row>
+	</v-container>
 </template>
 
 <script setup>

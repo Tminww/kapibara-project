@@ -1,12 +1,84 @@
 <template>
 	<v-container>
-		<v-row no-gutters
+		<v-row no-gutters>
+			<v-col cols="auto">
+				<v-container>
+					<t-dashboard-area-card
+						:isLoading="isThirdAreaLoading"
+						:min-width="700"
+						:max-width="700"
+						title="Опубликование по Федеральным округам"
+					>
+						<template #chart>
+							<v-date-input
+								class="mb-2"
+								v-model="rangeDates"
+								variant="outlined"
+								prepend-icon=""
+								prepend-inner-icon=""
+								label="Выбрать период"
+								max-width="360"
+								multiple="range"
+								hide-details
+								rounded
+								density="compact"
+								placeholder="DD.MM.YYYY - DD.MM.YYYY"
+								@update:model-value="onSubmit"
+							></v-date-input>
+							<div class="button-group-wrap">
+								<v-btn color="primary" variant="tonal" rounded
+									>Прошлый месяц</v-btn
+								>
+								<v-btn color="primary" variant="tonal" rounded
+									>Прошлый квартал</v-btn
+								>
+								<v-btn color="primary" variant="tonal" rounded
+									>Прошлый год</v-btn
+								>
+							</div>
+							<t-skeleton-donut-chart
+								v-if="isThirdAreaLoading"
+							></t-skeleton-donut-chart>
+
+							<t-donut-chart
+								v-else
+								:labels="thirdAreaLabels"
+								:series="thirdAreaSeries"
+								:is-legend-clickable="true"
+								:height="410"
+							/>
+						</template>
+						<template #previous>
+							<v-btn
+								color="primary"
+								:loading="isThirdAreaPreviousLoading"
+								@click="thirdAreaPreviousQuarter"
+							>
+								<v-icon>mdi-arrow-left</v-icon>
+							</v-btn>
+						</template>
+						<template #next
+							><v-btn
+								color="primary"
+								:loading="isThirdAreaNextLoading"
+								@click="thirdAreaNextQuarter"
+							>
+								<v-icon>mdi-arrow-right</v-icon>
+							</v-btn>
+						</template>
+						<template #quarter v-if="!isThirdAreaLoading">
+							{{ thirdAreaQuarter.startDate }} -
+							{{ thirdAreaQuarter.endDate }}
+						</template>
+						<template #error> {{ thirdAreaError }}</template>
+					</t-dashboard-area-card>
+				</v-container> </v-col
 			><v-col cols="auto">
 				<v-container>
 					<t-dashboard-area-card
 						:isLoading="isFirstAreaLoading"
-						:min-width="300"
-						:max-width="580"
+						:min-width="700"
+						:max-width="700"
 						title="Опубликование всех нормативных правовых актов"
 					>
 						<template #chart>
@@ -69,80 +141,6 @@
 						<!-- <template #quarter>
 						
 					</template> -->
-						<template #error> {{ thirdAreaError }}</template>
-					</t-dashboard-area-card>
-				</v-container>
-			</v-col>
-
-			<v-col cols="auto">
-				<v-container>
-					<t-dashboard-area-card
-						:isLoading="isThirdAreaLoading"
-						:min-width="300"
-						:max-width="580"
-						title="Опубликование по Федеральным округам"
-					>
-						<template #chart>
-							<v-date-input
-								class="mb-2"
-								v-model="rangeDates"
-								variant="outlined"
-								prepend-icon=""
-								prepend-inner-icon=""
-								label="Выбрать период"
-								max-width="360"
-								multiple="range"
-								hide-details
-								rounded
-								density="compact"
-								placeholder="DD.MM.YYYY - DD.MM.YYYY"
-								@update:model-value="onSubmit"
-							></v-date-input>
-							<div class="button-group-wrap">
-								<v-btn color="primary" variant="tonal" rounded
-									>Прошлый месяц</v-btn
-								>
-								<v-btn color="primary" variant="tonal" rounded
-									>Прошлый квартал</v-btn
-								>
-								<v-btn color="primary" variant="tonal" rounded
-									>Прошлый год</v-btn
-								>
-							</div>
-							<t-skeleton-donut-chart
-								v-if="isThirdAreaLoading"
-							></t-skeleton-donut-chart>
-
-							<t-donut-chart
-								v-else
-								:labels="thirdAreaLabels"
-								:series="thirdAreaSeries"
-								:is-legend-clickable="true"
-								:height="300"
-							/>
-						</template>
-						<template #previous>
-							<v-btn
-								color="primary"
-								:loading="isThirdAreaPreviousLoading"
-								@click="thirdAreaPreviousQuarter"
-							>
-								<v-icon>mdi-arrow-left</v-icon>
-							</v-btn>
-						</template>
-						<template #next
-							><v-btn
-								color="primary"
-								:loading="isThirdAreaNextLoading"
-								@click="thirdAreaNextQuarter"
-							>
-								<v-icon>mdi-arrow-right</v-icon>
-							</v-btn>
-						</template>
-						<template #quarter v-if="!isThirdAreaLoading">
-							{{ thirdAreaQuarter.startDate }} -
-							{{ thirdAreaQuarter.endDate }}
-						</template>
 						<template #error> {{ thirdAreaError }}</template>
 					</t-dashboard-area-card>
 				</v-container>
