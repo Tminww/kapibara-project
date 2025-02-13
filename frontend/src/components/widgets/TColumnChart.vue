@@ -4,7 +4,7 @@
 
 <script setup>
 	import { computed } from 'vue'
-	import { TBaseChart } from '@/components/charts'
+	import { TBaseChart } from '@/components/widgets'
 	import { createColumnChartConfig } from '@/utils/columnChartConfig'
 
 	const props = defineProps({

@@ -2,6 +2,7 @@ export const createDonutChartConfig = ({
 	series,
 	labels,
 	isLegendClickable,
+	legendPosition,
 	router,
 }) => {
 	return {
@@ -174,7 +175,7 @@ export const createDonutChartConfig = ({
 				showForSingleSeries: false,
 				showForNullSeries: true,
 				showForZeroSeries: true,
-				position: 'right',
+				position: legendPosition,
 				horizontalAlign: 'center',
 				floating: false,
 				fontSize: '14px',

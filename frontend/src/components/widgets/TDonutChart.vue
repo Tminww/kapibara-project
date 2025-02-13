@@ -4,7 +4,7 @@
 
 <script setup>
 	import { computed } from 'vue'
-	import { TBaseChart } from '@/components/charts'
+	import { TBaseChart } from '@/components/widgets'
 	import { createDonutChartConfig } from '@/utils/donutChartConfig'
 	import { useRouter } from 'vue-router'
 
@@ -14,6 +14,11 @@
 		labels: { type: Array, required: true },
 		series: { type: Array, required: true },
 		height: { type: Number, required: false },
+		legendPosition: {
+			type: String,
+			default: 'left',
+			validators: ['top', 'bottom', 'left', 'right'],
+		},
 		isLegendClickable: { type: Boolean, default: false },
 	})
 
@@ -22,6 +27,7 @@
 			labels: props.labels,
 			series: props.series,
 			isLegendClickable: props.isLegendClickable,
+			legendPosition: props.legendPosition,
 			router,
 		})
 	})

@@ -17,7 +17,7 @@ export const createColumnChartConfig = ({
 		chartOptions: {
 			chart: {
 				animations: {
-					enabled: true,
+					enabled: false,
 					speed: 1000,
 					animateGradually: {
 						enabled: true,
@@ -35,7 +35,7 @@ export const createColumnChartConfig = ({
 				height: 150,
 				redrawOnParentResize: false,
 				zoom: {
-					enabled: true,
+					enabled: false,
 					type: 'x',
 					autoScaleYaxis: true,
 					allowMouseWheelZoom: false,
@@ -102,17 +102,16 @@ export const createColumnChartConfig = ({
 
 			xaxis: {
 				categories: labels,
-				tickPlacement: 'on',
-				tickAmount: undefined,
+				tickAmount: 30,
 				position: 'bottom',
 				axisBorder: {
 					show: false,
 				},
 				axisTicks: {
-					show: false,
+					show: true,
 				},
 				labels: {
-					show: false,
+					show: true,
 					trim: true,
 					style: {
 						fontSize: 12,
@@ -166,7 +165,7 @@ export const createColumnChartConfig = ({
 					offsetY: 0,
 					rotate: 0,
 					formatter: function (val, index) {
-						return val
+						return val.toFixed(0)
 					},
 				},
 				axisBorder: {

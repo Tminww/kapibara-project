@@ -6,7 +6,7 @@
 			</div>
 		</template>
 
-		<template #login>
+		<!-- <template #login>
 			<div
 				v-if="authData.token === null"
 				@click="goToLogin()"
@@ -24,29 +24,43 @@
 				({{ authData.username }})
 				{{ t('layouts.dashboard.header.logout') }}
 			</div>
-		</template>
+		</template> -->
 	</t-header-widget>
 
-	<v-main> <slot></slot></v-main>
+	<v-main>
+		<v-container v-if="route.name !== 'home'" class="pb-0 mb-0">
+			<t-breadcrumbs divider="/" class="pb-0 mb-0"></t-breadcrumbs>
+		</v-container>
+		<slot></slot
+	></v-main>
 
 	<Toaster richColors :expand="true" position="bottom-right" />
 </template>
 
 <script setup>
-	import { THeaderWidget, TFooterWidget } from '@/components/widgets'
+	import { THeaderWidget, TBreadcrumbs } from '@/components/widgets'
 	import { Toaster } from 'vue-sonner'
 	import { getAuthDataFromLocalStorage } from '@/utils/auth'
 	import { computed } from 'vue'
-	import { useRouter } from 'vue-router'
+	import { useRouter, useRoute } from 'vue-router'
 	import { useI18n } from 'vue-i18n'
 
 	const router = useRouter()
+	const route = useRoute()
 	const { t } = useI18n()
 
 	const authData = computed(() => {
 		console.log(getAuthDataFromLocalStorage())
 		return getAuthDataFromLocalStorage()
 	})
+
+	const breadcrumbs = [
+		{
+			text: 'Главная',
+			disabled: false,
+			href: 'home',
+		},
+	]
 
 	const goToLogin = async () => {
 		await router.push({

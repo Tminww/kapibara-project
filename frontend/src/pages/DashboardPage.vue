@@ -289,7 +289,7 @@
 		TSkeletonDonutChart,
 		TColumnChart,
 		TSkeletonColumnChart,
-	} from '@/components/charts'
+	} from '@/components/widgets'
 	import { useFirstDashboardArea } from '@/composables/useFirstDashboartArea'
 	import { useSecondDashboardArea } from '@/composables/useSecondDashboardArea'
 	import { useThirdDashboardArea } from '@/composables/useThirdDashboardArea'

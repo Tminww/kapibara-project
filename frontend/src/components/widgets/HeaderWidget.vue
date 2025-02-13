@@ -1,5 +1,5 @@
 <template>
-	<v-app-bar :color="color" scroll-behavior="elevate" scroll-threshold="100">
+	<v-app-bar :color="color">
 		<template #title>
 			<div class="cursor-pointer">
 				<slot name="title"></slot>

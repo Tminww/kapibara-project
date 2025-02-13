@@ -1,50 +1,56 @@
 <template>
 	<v-card
-		:loading="isLoading"
-		:max-width="maxWidth"
-		:min-width="minWidth"
-		:max-height="maxHeight"
-		:width
-		:height
+		class="mx-auto"
+		:max-width="props.maxWidth"
+		:min-width="props.minWidth"
 		rounded="xl"
 		elevation="10"
 	>
-		<v-card-title class="title-wrap">
-			{{ title }}
-		</v-card-title>
+		<v-card-title>
+			<div class="container">
+				<t-icon :name="props.icon" :width="80" :height="80" />
 
-		<v-card-subtitle class="subtitle-wrap" v-if="subtitle">
-			{{ subtitle }}
+				<div class="title-wrap">
+					{{ props.title }}
+				</div>
+			</div>
+		</v-card-title>
+		<v-card-subtitle class="subtitle-wrap">
+			{{ props.description }}
 		</v-card-subtitle>
 
 		<v-card-text class="pb-0 pt-0">
-			<slot name="chart" />
+			<slot name="chart"> </slot>
 		</v-card-text>
-		<!-- <v-card-actions class="justify-space-between mb-2 mt-0 pt-0">
-			<slot name="previous"></slot>
-			<div class="time-wrap">
-				<slot name="quarter"></slot>
+
+		<v-card-actions>
+			<div class="button-wrap">
+				<v-btn color="primary" rounded @click="goToNamedRouter">
+					Перейти
+				</v-btn>
 			</div>
-			<slot name="next"></slot>
-		</v-card-actions> -->
-		<slot name="error"></slot>
+		</v-card-actions>
 	</v-card>
 </template>
 
 <script setup>
+	import { useRouter } from 'vue-router'
+	import { TIcon } from '@/components/ui'
 	const props = defineProps({
-		title: { type: String, required: false, default: 'Область' },
-		subtitle: {
-			type: String,
-			required: false,
-		},
-		width: { type: Number, required: false },
-		maxHeight: { type: Number, required: false },
-		height: { type: Number, required: false },
+		title: { type: String, required: true },
+		description: { type: String, required: true },
+		icon: { type: String, required: true },
+		linkName: { type: String, required: true },
 		maxWidth: { type: Number, required: false },
 		minWidth: { type: Number, required: false },
-		isLoading: { type: Boolean, required: true, default: true },
 	})
+
+	const router = useRouter()
+
+	const goToNamedRouter = () => {
+		console.log(props.linkName)
+		router.push({ name: props.linkName })
+	}
 </script>
 
 <style scoped>
@@ -64,15 +70,18 @@
 		max-width: 100%; /* Ограничивает ширину заголовка */
 		text-align: left; /* По желанию, можно выровнять текст */
 		font-size: 14px;
-		height: 20px;
+		height: 60px;
 		/* font-weight: bold; */
 	}
-
-	.time-wrap {
-		flex: 1; /* Занимает всю доступную ширину */
-		text-align: center; /* Центрирует текст */
+	.button-wrap {
 		display: flex;
 		justify-content: center;
 		align-items: center;
+		width: 100%; /* Или нужное значение */
+	}
+	.container {
+		display: flex;
+		align-items: center; /* Выравнивание элементов по центру */
+		gap: 25px; /* Отступ между иконкой и текстом */
 	}
 </style>
