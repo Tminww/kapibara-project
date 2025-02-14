@@ -1,12 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { NotFound404 } from '@/pages/errors'
-import {
-	HomePage,
-	LoginPage,
-	DashboardPage,
-	DistrictPage,
-	SubjectPage,
-} from '@/pages'
+import { HomePage, LoginPage, SubjectPage } from '@/pages'
 
 const meta = {
 	requiresAuth: false,
@@ -29,23 +23,7 @@ const routes = [
 			],
 		},
 	},
-	{
-		path: '/dashboard',
-		name: 'dashboard',
-		component: DashboardPage,
-		meta: {
-			...meta,
-			breadCrumb: [
-				{
-					text: 'Главная',
-					to: { name: 'home' },
-				},
-				{
-					text: 'Дашборд',
-				},
-			],
-		},
-	},
+
 	{
 		path: '/subjects',
 		name: 'subjects',

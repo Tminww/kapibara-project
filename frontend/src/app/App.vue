@@ -1,13 +1,13 @@
 <template>
 	<v-app>
-		<dashboard-layout>
+		<main-layout>
 			<router-view> </router-view>
-		</dashboard-layout>
+		</main-layout>
 	</v-app>
 </template>
 
 <script setup>
-	import { DashboardLayout } from '@/layouts'
+	import { MainLayout } from '@/layouts'
 </script>
 
 <style scoped></style>

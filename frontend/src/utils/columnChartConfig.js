@@ -6,7 +6,6 @@ export const createColumnChartConfig = ({
 	yStartValue,
 	tickAmount,
 }) => {
-	const height = 350
 	return {
 		series: [
 			{
@@ -17,7 +16,7 @@ export const createColumnChartConfig = ({
 		chartOptions: {
 			chart: {
 				animations: {
-					enabled: false,
+					enabled: true,
 					speed: 1000,
 					animateGradually: {
 						enabled: true,

@@ -1,11 +1,73 @@
 <template>
+	<v-navigation-drawer
+		location="left"
+		temporary
+		:width="450"
+		elevation="10"
+		v-model="leftMenu"
+		permanent=""
+		:rail="rail"
+		@click="rail = false"
+	>
+		<v-list-item nav>
+			<v-list-item-title
+				><h2 class="font-weight-bold pl-2">
+					Выбрать регионы
+				</h2></v-list-item-title
+			>
+			<template v-slot:append>
+				<v-btn
+					icon="mdi-chevron-left"
+					variant="text"
+					@click.stop="leftMenu = !leftMenu"
+				></v-btn>
+			</template>
+		</v-list-item>
+
+		<v-divider></v-divider>
+
+		<v-container>
+			<div v-if="errorSubjects">
+				<v-alert
+					class="d-flex align-center justify-center"
+					type="error"
+					title="Произошла ошибка"
+					:text="errorSubjects"
+					variant="tonal"
+				></v-alert>
+			</div>
+			<template v-else>
+				<div
+					v-if="loadingSubjests"
+					class="d-flex align-center justify-center"
+				>
+					<v-progress-circular indeterminate />
+				</div>
+
+				<template v-else>
+					<t-filter-form
+						:districts="subjectStore.getRegionsToRequest"
+					/>
+				</template>
+			</template>
+		</v-container>
+	</v-navigation-drawer>
+
 	<v-container>
+		<v-btn
+			color="primary"
+			variant="tonal"
+			rounded
+			@click="leftMenu = !leftMenu"
+		>
+			Фильтры</v-btn
+		>
 		<v-row no-gutters>
 			<v-col cols="auto">
 				<v-container>
 					<t-dashboard-area-card
 						:isLoading="isThirdAreaLoading"
-						:min-width="700"
+						:min-width="500"
 						:max-width="700"
 						title="Опубликование по Федеральным округам"
 					>
@@ -16,7 +78,7 @@
 								variant="outlined"
 								prepend-icon=""
 								prepend-inner-icon=""
-								label="Выбрать период"
+								label="Выбрать временной интервал"
 								max-width="360"
 								multiple="range"
 								hide-details
@@ -48,28 +110,7 @@
 								:height="410"
 							/>
 						</template>
-						<template #previous>
-							<v-btn
-								color="primary"
-								:loading="isThirdAreaPreviousLoading"
-								@click="thirdAreaPreviousQuarter"
-							>
-								<v-icon>mdi-arrow-left</v-icon>
-							</v-btn>
-						</template>
-						<template #next
-							><v-btn
-								color="primary"
-								:loading="isThirdAreaNextLoading"
-								@click="thirdAreaNextQuarter"
-							>
-								<v-icon>mdi-arrow-right</v-icon>
-							</v-btn>
-						</template>
-						<template #quarter v-if="!isThirdAreaLoading">
-							{{ thirdAreaQuarter.startDate }} -
-							{{ thirdAreaQuarter.endDate }}
-						</template>
+
 						<template #error> {{ thirdAreaError }}</template>
 					</t-dashboard-area-card>
 				</v-container> </v-col
@@ -88,7 +129,7 @@
 								variant="outlined"
 								prepend-icon=""
 								prepend-inner-icon=""
-								label="Выбрать период"
+								label="Выбрать временной интервал"
 								max-width="360"
 								multiple="range"
 								hide-details
@@ -117,30 +158,9 @@
 								v-else
 								:labels="firstAreaLabels"
 								:series="firstAreaSeries"
-								:height="400"
+								:height="410"
 							/>
 						</template>
-						<!-- <template #previous>
-						<v-btn
-							color="primary"
-							:loading="isFirstAreaPreviousLoading"
-							@click="firstAreaPreviousYear"
-						>
-							<v-icon>mdi-arrow-left</v-icon>
-						</v-btn>
-					</template>
-					<template #next
-						><v-btn
-							color="primary"
-							:loading="isFirstAreaNextLoading"
-							@click="firstAreaNextYear"
-						>
-							<v-icon>mdi-arrow-right</v-icon>
-						</v-btn>
-					</template> -->
-						<!-- <template #quarter>
-						
-					</template> -->
 						<template #error> {{ thirdAreaError }}</template>
 					</t-dashboard-area-card>
 				</v-container>
@@ -150,28 +170,49 @@
 </template>
 
 <script setup>
-	import { ref, computed } from 'vue'
-	import { TDashboardAreaCard } from '@/components/widgets'
+	import { ref, computed, onMounted } from 'vue'
+	import { TDashboardAreaCard, TFilterForm } from '@/components/widgets'
 	import { VDateInput } from 'vuetify/labs/VDateInput'
-
+	import { useSubjectStore } from '@/stores'
 	import {
 		TDonutChart,
 		TSkeletonDonutChart,
 		TColumnChart,
 		TSkeletonColumnChart,
 	} from '@/components/widgets'
+	import { useSubjectDashboardArea } from '@/composables/useSubjectDashboardArea'
 	import { useFirstDashboardArea } from '@/composables/useFirstDashboartArea'
-	import { useSecondDashboardArea } from '@/composables/useSecondDashboardArea'
-	import { useThirdDashboardArea } from '@/composables/useThirdDashboardArea'
-	import { useFourthDashboardArea } from '@/composables/useFourthDashboardArea'
-	import { useFifthDashboardArea } from '@/composables/useFifthDashboardArea'
-	import { useSixthDashboardArea } from '@/composables/useSixthDashboardArea'
 
 	import { useDate } from 'vuetify'
 
 	const date = useDate()
-	const formatted = date.format('2010-04-13', 'keyboardDate')
+	const loadingSubjects = ref(false)
+	const errorSubjects = ref(null)
+	const leftMenu = ref(false)
+	const rail = ref(false)
+	const resultIsEmpty = ref(false)
 
+	const subjectStore = useSubjectStore()
+
+	const emptyRequest = computed(() => {
+		return resultIsEmpty.value
+	})
+	const loadSubjects = async () => {
+		try {
+			loadingSubjects.value = true
+			errorSubjects.value = null
+			await subjectStore.loadSubjectsAPI()
+		} catch (e) {
+			errorSubjects.value = e.message
+			subjectStore.dropRegionsToRequest()
+		} finally {
+			loadingSubjects.value = false
+		}
+	}
+
+	onMounted(async () => {
+		await loadSubjects()
+	})
 	const rangeDates = ref([])
 
 	const getEndsOfDateRange = computed(() => {
@@ -203,19 +244,6 @@
 	} = useFirstDashboardArea()
 
 	const {
-		secondAreaLabels,
-		secondAreaSeries,
-		secondAreaError,
-		secondAreaDate,
-		secondAreaMonth,
-		isSecondAreaPreviousLoading,
-		isSecondAreaNextLoading,
-		isSecondAreaLoading,
-		secondAreaPreviousMonth,
-		secondAreaNextMonth,
-	} = useSecondDashboardArea()
-
-	const {
 		thirdAreaLabels,
 		thirdAreaSeries,
 		thirdAreaError,
@@ -226,44 +254,7 @@
 		isThirdAreaLoading,
 		thirdAreaPreviousQuarter,
 		thirdAreaNextQuarter,
-	} = useThirdDashboardArea()
-	const {
-		fourthAreaLabels,
-		fourthAreaSeries,
-		fourthAreaError,
-		fourthAreaDate,
-		fourthAreaYear,
-		isFourthAreaPreviousLoading,
-		isFourthAreaNextLoading,
-		isFourthAreaLoading,
-		fourthAreaPreviousYear,
-		fourthAreaNextYear,
-	} = useFourthDashboardArea()
-
-	const {
-		fifthAreaLabels,
-		fifthAreaSeries,
-		fifthAreaError,
-		fifthAreaDate,
-		fifthAreaQuarter,
-		isFifthAreaPreviousLoading,
-		isFifthAreaNextLoading,
-		isFifthAreaLoading,
-		fifthAreaPreviousQuarter,
-		fifthAreaNextQuarter,
-	} = useFifthDashboardArea()
-	const {
-		sixthAreaLabels,
-		sixthAreaSeries,
-		sixthAreaError,
-		sixthAreaDate,
-		sixthAreaQuarter,
-		isSixthAreaPreviousLoading,
-		isSixthAreaNextLoading,
-		isSixthAreaLoading,
-		sixthAreaPreviousQuarter,
-		sixthAreaNextQuarter,
-	} = useSixthDashboardArea()
+	} = useSubjectDashboardArea()
 </script>
 
 <style scoped>

@@ -292,7 +292,7 @@
 	} from '@/components/widgets'
 	import { useFirstDashboardArea } from '@/composables/useFirstDashboartArea'
 	import { useSecondDashboardArea } from '@/composables/useSecondDashboardArea'
-	import { useThirdDashboardArea } from '@/composables/useThirdDashboardArea'
+	import { useThirdDashboardArea } from '@/composables/useSubjectDashboardArea'
 	import { useFourthDashboardArea } from '@/composables/useFourthDashboardArea'
 	import { useFifthDashboardArea } from '@/composables/useFifthDashboardArea'
 	import { useSixthDashboardArea } from '@/composables/useSixthDashboardArea'

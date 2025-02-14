@@ -2,10 +2,14 @@
 	<v-form class="form-container" @submit.prevent="onFormSubmit()">
 		<div v-for="district in districts" :key="district.id">
 			<v-select
+				class="mb-3"
+				color="primary"
 				cache-items
 				density="comfortable"
 				clearable
 				multiple
+				rounded
+				hide-details
 				variant="outlined"
 				@update:modelValue="e => selectModelUpdate(district.id, e)"
 				:label="district.name"
@@ -19,7 +23,7 @@
 					</div>
 					<span
 						v-if="index === 1"
-						class="text-grey text-caption align-self-center"
+						class="text-caption align-self-center"
 					>
 						(+{{ selectedSubjects[district.id].length - 1 }} другие)
 					</span>
@@ -27,13 +31,15 @@
 			</v-select>
 		</div>
 
+		<h3 class="font-weight-bold pl-2 mt-5">Выбрать временной промежуток</h3>
 		<v-divider class="mb-5"></v-divider>
 
 		<v-select
 			density="comfortable"
 			variant="outlined"
+			rounded
 			@update:modelValue="e => comboBoxModelUpdate(e)"
-			label="Выбор периода"
+			label="Выбрать период"
 			:items="[
 				'За прошлый месяц',
 				'За прошлый квартал',
@@ -41,15 +47,30 @@
 			]"
 		>
 		</v-select>
-
+		<!-- <v-date-input
+			class="mb-2"
+			v-model="rangeDates"
+			variant="outlined"
+			prepend-icon=""
+			prepend-inner-icon=""
+			label="Выбрать временной интервал"
+			max-width="360"
+			multiple="range"
+			hide-details
+			rounded
+			density="compact"
+			placeholder="DD.MM.YYYY - DD.MM.YYYY"
+			@update:model-value="onSubmit"
+		></v-date-input> -->
 		<div class="group-date">
 			<v-text-field
 				class="items"
 				@update:modelValue="e => startDateModelUpdate(e)"
 				placeholder="yyyy-mm-dd"
-				density="default"
-				variant="solo"
+				density="compact"
+				variant="outlined"
 				type="date"
+				rounded
 				:value="startDate"
 			>
 				<!-- {{ startDate }} -->
@@ -59,9 +80,10 @@
 				class="items"
 				@update:modelValue="e => endDateModelUpdate(e)"
 				placeholder="yyyy-mm-dd"
-				density="default"
-				variant="solo"
+				density="compact"
+				variant="outlined"
 				type="date"
+				rounded
 				:value="endDate"
 			>
 				<!-- {{ endDate }} -->
@@ -72,24 +94,34 @@
 				class="items"
 				type="submit"
 				:loading="loadingStatistics"
-				color="green"
+				color="primary"
+				variant="tonal"
+				rounded
 				text="Применить"
 			/>
 
-			<v-btn class="items" text="Отменить" color="red" />
+			<!-- <v-btn
+				class="items"
+				text="Отменить"
+				color="red"
+				rounded
+				variant="tonal"
+			/> -->
 		</div>
 	</v-form>
-	<!-- <t-date-picker v-model="selectedDate" /> -->
-	<!-- <p>Selected Date: {{ selectedDate }}</p> -->
-
-	<!-- <div v-if="errorStatistics">{{ errorStatistics }}</div> -->
 </template>
 <script setup>
 	import { ref, computed } from 'vue'
-	import { TDatePicker } from '@/components/widgets'
+	import { VDateInput } from 'vuetify/labs/VDateInput'
 	import { getLastYear, getLastMonth, getLastQuarter } from '@/utils/utils.js'
 	import { useStatisticStore } from '@/stores/statisticStore' // Импортируем store
+	import { useDate } from 'vuetify'
 
+	const date = useDate()
+
+	const rangeDates = async () => {
+		console('rangeDates', date.getWeekArray(new Date()))
+	}
 	// Инициализация store
 	const statisticStore = useStatisticStore()
 
@@ -99,7 +131,6 @@
 	})
 
 	// Эмиты
-	const emit = defineEmits(['loadingSuccessful', 'loadingError'])
 
 	// Реактивные переменные
 	const loadingStatistics = ref(false)
@@ -151,6 +182,7 @@
 	// Метод для отправки формы
 	const onFormSubmit = async event => {
 		try {
+			await statisticStore.startLoading()
 			loadingStatistics.value = true
 			errorStatistics.value = null
 
@@ -159,15 +191,13 @@
 				startDate.value,
 				endDate.value,
 			)
-
 			await statisticStore.updateStatisticsAPI(parameters)
-			emit('loadingSuccessful')
 		} catch (e) {
 			errorStatistics.value = e.message
 			statisticStore.dropStatistics()
-			emit('loadingError')
 		} finally {
 			loadingStatistics.value = false
+			await statisticStore.endLoading()
 			// setDefaultValue() // Раскомментируйте, если нужно сбрасывать значения
 		}
 	}

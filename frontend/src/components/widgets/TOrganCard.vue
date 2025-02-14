@@ -3,6 +3,7 @@
 		class="mx-auto"
 		:max-width="props.maxWidth"
 		:min-width="props.minWidth"
+		width="100%"
 		rounded="xl"
 		elevation="10"
 	>
@@ -15,9 +16,9 @@
 				</div>
 			</div>
 		</v-card-title>
-		<v-card-subtitle class="subtitle-wrap">
+		<v-card-text class="subtitle-wrap">
 			{{ props.description }}
-		</v-card-subtitle>
+		</v-card-text>
 
 		<v-card-text class="pb-0 pt-0">
 			<slot name="chart"> </slot>

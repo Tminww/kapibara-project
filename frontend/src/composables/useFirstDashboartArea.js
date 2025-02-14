@@ -14,11 +14,7 @@ export function useFirstDashboardArea() {
 	const isStatisticsLoading = ref(false)
 
 	const isFirstAreaLoading = computed(() => {
-		return (
-			isFirstAreaPreviousLoading.value ||
-			isFirstAreaNextLoading.value ||
-			isStatisticsLoading.value
-		)
+		return statisticStore.isLoading || isStatisticsLoading.value
 	})
 	const firstAreaYear = computed(() => {
 		console.log(firstAreaDate.value)
@@ -38,8 +34,8 @@ export function useFirstDashboardArea() {
 		}
 	})
 	const data = computed(() =>
-		Array.isArray(statisticStore.getFirstAreaDocumentsStatisticsByYear)
-			? statisticStore.getFirstAreaDocumentsStatisticsByYear
+		Array.isArray(statisticStore.statistics.stat)
+			? statisticStore.statistics.stat
 			: [],
 	)
 

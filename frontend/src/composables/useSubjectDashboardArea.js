@@ -4,7 +4,7 @@ import { toast } from 'vue-sonner'
 import { useStatisticStore } from '@/stores/'
 import { getLastQuarter, mapDistrictNameToShortName } from '@/utils/utils.js'
 
-export function useThirdDashboardArea() {
+export function useSubjectDashboardArea() {
 	const statisticStore = useStatisticStore()
 	const thirdAreaError = ref(null)
 	const thirdAreaDate = ref(new Date())
@@ -13,11 +13,7 @@ export function useThirdDashboardArea() {
 	const isStatisticsLoading = ref(false)
 
 	const isThirdAreaLoading = computed(() => {
-		return (
-			isThirdAreaPreviousLoading.value ||
-			isThirdAreaNextLoading.value ||
-			isStatisticsLoading.value
-		)
+		return statisticStore.isLoading || isStatisticsLoading.value
 	})
 	const thirdAreaQuarter = computed(() => {
 		const { startDate, endDate } = getLastQuarter(thirdAreaDate.value)

@@ -2,9 +2,10 @@ import { defineStore } from 'pinia'
 import apiClient from '@/api'
 import { ref, computed } from 'vue'
 import { allDocumentTypes, allOrgans } from '@/mock'
-import { toast } from 'vue-sonner'
 
 export const useStatisticStore = defineStore('statistic', () => {
+	const loading = ref(false)
+
 	const firstAreaStatistics = ref([])
 	const secondAreaStatistics = ref([])
 	const fourthAreaStatistics = ref([])
@@ -26,6 +27,18 @@ export const useStatisticStore = defineStore('statistic', () => {
 			stat: statistics.value.stat,
 		}
 	})
+
+	const isLoading = computed(() => {
+		return loading.value
+	})
+
+	const startLoading = async () => {
+		loading.value = true
+	}
+
+	const endLoading = async () => {
+		loading.value = false
+	}
 
 	const getFirstAreaDocumentsStatisticsByYear = computed(() => {
 		return firstAreaStatistics.value
@@ -265,5 +278,9 @@ export const useStatisticStore = defineStore('statistic', () => {
 		dropStatistics,
 		loadStatisticsAPI,
 		updateStatisticsAPI,
+
+		isLoading,
+		startLoading,
+		endLoading,
 	}
 })

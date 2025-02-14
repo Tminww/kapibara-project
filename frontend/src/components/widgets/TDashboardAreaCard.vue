@@ -9,7 +9,7 @@
 		rounded="xl"
 		elevation="10"
 	>
-		<v-card-title class="title-wrap">
+		<v-card-title class="title-wrap mt-2">
 			{{ title }}
 		</v-card-title>
 
@@ -20,13 +20,7 @@
 		<v-card-text class="pb-0 pt-0">
 			<slot name="chart" />
 		</v-card-text>
-		<!-- <v-card-actions class="justify-space-between mb-2 mt-0 pt-0">
-			<slot name="previous"></slot>
-			<div class="time-wrap">
-				<slot name="quarter"></slot>
-			</div>
-			<slot name="next"></slot>
-		</v-card-actions> -->
+
 		<slot name="error"></slot>
 	</v-card>
 </template>
@@ -54,7 +48,7 @@
 		overflow-wrap: break-word;
 		max-width: 100%; /* Ограничивает ширину заголовка */
 		text-align: left; /* По желанию, можно выровнять текст */
-		font-size: 18px;
+		font-size: 20px;
 		font-weight: bold;
 	}
 	.subtitle-wrap {
