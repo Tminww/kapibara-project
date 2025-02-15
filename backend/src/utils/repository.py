@@ -111,7 +111,7 @@ class SQLAlchemyRepository(AbstractRepository):
             res = [StatBaseDTO(name=row.name, count=row.count) for row in res.all()]
             print(res)
             if res:
-                return {res, start_date, end_date}
+                return (res, start_date, end_date)
             else:
                 print("get_stat_all")
                 raise ResultIsEmptyError("Result is empty")
