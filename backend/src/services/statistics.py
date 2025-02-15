@@ -76,6 +76,4 @@ class StatisticsService:
                 count=get_count_from_stat(stat_all),
                 stat=stat_all,
                 districts=districts,
-                startDate=parameters.start_date,
-                endDate=parameters.end_date
             )

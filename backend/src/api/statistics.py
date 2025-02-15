@@ -54,4 +54,6 @@ async def get_documents_in_districts(
         raise DateValidationError(e)
     else:
         documents = await statistics_service.get_stat_in_districts(parameters)
+        documents.startDate = startDate.strftime("%Y-%m-%d")
+        documents.endDate = endDate.strftime("%Y-%m-%d")
         return documents
