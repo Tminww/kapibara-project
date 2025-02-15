@@ -53,7 +53,10 @@
 							/>
 						</template>
 						<template #interval>
-							<div>За {{ startDate }} - {{ endDate }}</div>
+							<div v-if="!isThirdAreaLoading">
+								{{ subjectStore.startDate }} -
+								{{ subjectStore.endDate }}
+							</div>
 						</template>
 						<template #error> {{ thirdAreaError }} </template>
 					</t-dashboard-area-card>
@@ -83,10 +86,6 @@
 							</div></template
 						>
 						<template #chart>
-							<PeriodFilter
-								v-model="rangeDates"
-								@submit="onSubmit"
-							/>
 							<t-skeleton-column-chart
 								v-if="isLogColumnChartLoading"
 							/>
@@ -98,7 +97,10 @@
 							/>
 						</template>
 						<template #interval>
-							<div>За {{ startDate }} - {{ endDate }}</div>
+							<div v-if="!isLogColumnChartLoading">
+								{{ subjectStore.startDate }} -
+								{{ subjectStore.endDate }}
+							</div>
 						</template>
 						<template #error> {{ logColumnChartError }} </template>
 					</t-dashboard-area-card>

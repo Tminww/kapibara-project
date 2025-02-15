@@ -12,6 +12,14 @@ export const useSubjectStore = defineStore('subject', () => {
 		return subjects.value
 	})
 
+	const startDate = computed(() => {
+		return statistics.value?.startDate
+	})
+
+	const endDate = computed(() => {
+		return statistics.value?.endDate
+	})
+
 	const dropRegionsToRequest = () => {
 		subjects.value = []
 	}
@@ -83,5 +91,8 @@ export const useSubjectStore = defineStore('subject', () => {
 		getRegionsToRequest,
 		dropRegionsToRequest,
 		loadSubjectsAPI,
+
+		startDate,
+		endDate,
 	}
 })
