@@ -25,22 +25,46 @@ def check_time(func):
 @check_time
 def get_document_api(code):
     logging.info(f"Регион {code} начат")
+    print(f"Регион {code} начат")
 
-    req_total_documents = requests.get(
-        url=parser.get_documents_on_page(code),
-    )
+    # Запрос общего количества документов
+    req_total_documents = requests.get(url=parser.get_documents_on_page(code))
 
-    if (
-        query.get_total_documents(code=code)
-        == req_total_documents.json()["itemsTotalCount"]
-    ):
-        logging.info(f"Регион {code} уже заполнен")
+    # Проверка статуса ответа
+    if req_total_documents.status_code != 200:
+        logging.error(f"Ошибка при запросе: статус {req_total_documents.status_code}")
         return
 
-    req_type = requests.get(
-        url=parser.get_type_in_subject(code),
-    )
-    for npa in req_type.json():
+    # Попытка парсинга JSON
+    try:
+        total_documents_data = req_total_documents.json()
+    except ValueError as e:
+        logging.error(f"Ошибка при парсинге JSON: {e}")
+        return
+
+    # Проверка, нужно ли обновлять данные
+    if query.get_total_documents(code=code) == total_documents_data.get("itemsTotalCount"):
+        logging.info(f"Регион {code} уже заполнен")
+        print(f"Регион {code} уже заполнен")
+        return
+
+    # Запрос типов документов
+    req_type = requests.get(url=parser.get_type_in_subject(code))
+
+    # Проверка статуса ответа
+    if req_type.status_code != 200:
+        logging.error(f"Ошибка при запросе типов документов: статус {req_type.status_code}")
+        return
+
+    # Попытка парсинга JSON
+    try:
+        type_data = req_type.json()
+    except ValueError as e:
+        logging.error(f"Ошибка при парсинге JSON типов документов: {e}")
+        return
+
+    # Обработка каждого типа документа
+    for npa in type_data:
         current_page = 1
         while True:
             time.sleep(0.5)
@@ -49,33 +73,43 @@ def get_document_api(code):
                     npa_id=npa["id"], code=code, index=str(current_page)
                 )
             )
-            if (
-                query.get_total_documents_type(code=code, npa_id=npa["id"])
-                == req.json()["itemsTotalCount"]
-            ):
+
+            # Проверка статуса ответа
+            if req.status_code != 200:
+                logging.error(f"Ошибка при запросе документов: статус {req.status_code}")
                 break
 
-            if current_page <= req.json()["pagesTotalCount"]:
-                complex_names: list = []
-                eo_numbers: list = []
-                pages_counts: list = []
-                view_dates: list = []
-                id_regs: list = []
-                id_acts: list = []
+            # Попытка парсинга JSON
+            try:
+                documents_data = req.json()
+            except ValueError as e:
+                logging.error(f"Ошибка при парсинге JSON документов: {e}")
+                break
+
+            # Проверка, нужно ли обновлять данные
+            if query.get_total_documents_type(code=code, npa_id=npa["id"]) == documents_data.get("itemsTotalCount"):
+                break
+
+            if current_page <= documents_data.get("pagesTotalCount", 0):
+                complex_names = []
+                eo_numbers = []
+                pages_counts = []
+                view_dates = []
+                id_regs = []
+                id_acts = []
                 id_reg = query.get_id_reg(code=code)
                 id_act = query.get_id_act(npa_id=npa["id"])
 
-                for item in req.json()["items"]:
-                    complex_names.append(item["complexName"])
-                    eo_numbers.append(item["eoNumber"])
-                    pages_counts.append(item["pagesCount"])
+                for item in documents_data.get("items", []):
+                    complex_names.append(item.get("complexName"))
+                    eo_numbers.append(item.get("eoNumber"))
+                    pages_counts.append(item.get("pagesCount"))
                     view_dates.append(
-                        datetime.strptime(item["viewDate"], "%d.%m.%Y").strftime(
-                            "%Y-%m-%d"
-                        )
+                        datetime.strptime(item.get("viewDate"), "%d.%m.%Y").strftime("%Y-%m-%d")
                     )
                     id_regs.append(id_reg)
                     id_acts.append(id_act)
+
                 query.insert_document(
                     complex_names,
                     eo_numbers,
@@ -85,14 +119,11 @@ def get_document_api(code):
                     id_acts,
                 )
                 current_page += 1
-
-            elif (
-                current_page > req.json()["pagesTotalCount"]
-                or req.json()["pagesTotalCount"] == 0
-            ):
+            else:
                 break
-    logging.info(f"Регион {code} закончен")
 
+    logging.info(f"Регион {code} закончен")
+    print(f"Регион {code} закончен")
 
 def get_npa_api() -> list:
     names: list = []
@@ -141,8 +172,7 @@ def get_subject_api() -> list:
     
     for code in other_codes:
         codes.append(code)
-        
-    
+
     return list(zip(names, codes))
 
 

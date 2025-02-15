@@ -108,6 +108,7 @@ def get_total_documents(code):
                                id_reg = {id_reg};"""
                 )
                 count = cursor.fetchone()[0]
+                print(count)
                 return count
             except Exception as e:
                 logging.exception(Exception)
