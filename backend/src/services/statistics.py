@@ -3,6 +3,9 @@ from schemas.statistics import (
     StatAllDTO,
     StatDistrictDTO,
     StatRegionDTO,
+    SubjectsStatDTO,
+    DistrictsStatDTO,
+    DistrictStatDTO,
     StatBaseDTO,
     StatRegionSchema,
     StatRegionsSchema,
@@ -23,6 +26,62 @@ class StatisticsService:
     def __init__(self, statistics_repo: AbstractRepository):
         self.statistics_repo: AbstractRepository = statistics_repo()
 
+    async def get_subjects_stat(self, parameters: RequestBodySchema):
+        stat_all = await self.statistics_repo.get_stat_all(parameters)
+        
+        return SubjectsStatDTO(
+            name="Вся статистика по субъектам",
+            count=get_count_from_stat(stat_all),
+            stat=stat_all,
+            
+        )
+    
+    async def get_districts_stat(self, parameters: RequestBodySchema):
+        districts = []
+
+        districts_info = await self.statistics_repo.get_districts_by_regions(
+            parameters.regions
+        )
+        for district in districts_info:
+            print(district)
+
+            stat_in_district = await self.statistics_repo.get_stat_in_district(
+                parameters, district.id
+            )
+            print(stat_in_district)
+            
+
+            districts.append(
+                DistrictStatDTO(
+                    name=district.name,
+                    id=district.id,
+                    count=get_count_from_stat(stat_in_district),
+                    stat=stat_in_district,
+                )
+            )
+        
+        return districts
+    
+    # async def get_stat_in_region(self, parameters: RequestBodySchema, id_reg):
+    #     regions = []
+    #     regions_info = await self.statistics_repo.get_definite_regions_in_district(
+    #             parameters, district.id
+    #     )
+
+    #     for region in regions_info:
+    #         stat_in_region = await self.statistics_repo.get_stat_in_region(
+    #             parameters, region.id
+    #         )
+
+    #         regions.append(
+    #             StatRegionDTO(
+    #                 name=region.name,
+    #                 id=region.id,
+    #                 count=get_count_from_stat(stat_in_region),
+    #                 stat=stat_in_region,
+    #             )
+    #         )
+    
     async def get_stat_in_districts(self, parameters: RequestBodySchema):
         start_time = time.time()
         districts = []

@@ -112,6 +112,37 @@ def get_subject_api() -> list:
     for subject in req.json():
         names.append(subject["name"])
         codes.append(subject["code"])
+    
+    other_names = [
+        "president",
+        "council_1",
+        "council_2",
+        "government",
+        "federal_authorities",
+        "court",
+        "international",
+        "un_securitycouncil",
+    ]
+    
+    other_codes = [
+        'Президент РФ',
+        'Совет Федерации Федерального Собрания РФ',
+        'Государственная Дума Федерального Собрания РФ',
+        'Правительство РФ',
+        'ФОИВ и ФГО РФ',
+        'Конституционный Суд РФ',
+        'Международные договоры РФ',
+        'Совет Безопасности ООН',
+        
+    ]
+    
+    for name in other_names:
+        names.append(name)
+    
+    for code in other_codes:
+        codes.append(code)
+        
+    
     return list(zip(names, codes))
 
 

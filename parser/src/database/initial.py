@@ -8,11 +8,12 @@ from log.createLogger import get_logger
 logging = get_logger()
 
 CREATE_REGION_TABLE = """
+        DROP TABLE  IF EXISTS region CASCADE;
         CREATE TABLE IF NOT EXISTS region (
         id SERIAL NOT NULL, 
         id_dist INTEGER, 
         name VARCHAR(128) NOT NULL, 
-        code VARCHAR(16) NOT NULL, 
+        code VARCHAR(64) NOT NULL, 
         PRIMARY KEY (id), 
         UNIQUE (name, code),
         FOREIGN KEY(id_dist) REFERENCES district (id)

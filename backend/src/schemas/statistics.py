@@ -80,6 +80,28 @@ class StatRegionDTO(BaseModel):
         validate_assignment = True
 
 
+class SubjectsStatDTO(BaseModel):
+    name: Optional[str] = None
+    count: Optional[int] = None
+    stat: Optional[list[StatBaseDTO]] = None
+    startDate: Optional[str] = None
+    endDate: Optional[str] = None
+    
+
+
+class DistrictStatDTO(BaseModel):
+    name: Optional[str] = None
+    id: Optional[int] = None
+    count: Optional[int] = None
+    stat: Optional[list[StatBaseDTO]] = None
+    
+class DistrictsStatDTO(BaseModel):
+    name: Optional[str] = None
+    districts: Optional[list[DistrictStatDTO]] = None
+    startDate: Optional[str] = None
+    endDate: Optional[str] = None
+
+
 class StatDistrictDTO(BaseModel):
     name: Optional[str] = None
     id: Optional[int] = None

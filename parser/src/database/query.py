@@ -66,7 +66,7 @@ def update_region():
             try:
                 values = get_subjects_data()
                 for row in values:
-                    cursor.execute(UPDATE_REGION_TABLE, (row["id_dist"], row["name"]))
+                    cursor.execute(UPDATE_REGION_TABLE, (row.get("id_dist", None), row["name"]))
             except errors.lookup(UNIQUE_VIOLATION) as e:
                 logging.exception(UNIQUE_VIOLATION)
 
