@@ -97,6 +97,10 @@ class StatAllDTO(BaseModel):
     count: Optional[int] = None
     stat: Optional[list[StatBaseDTO]] = None
     districts: Optional[list[StatDistrictDTO]] = None
+    startDate: Optional[str] = None
+    endDate: Optional[str] = None
+
+    
 
     class Config:
         from_attributes = True

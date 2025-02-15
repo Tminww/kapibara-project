@@ -1,21 +1,23 @@
 <template>
-	<v-form class="form-container" @submit.prevent="onFormSubmit()">
+	<v-form class="form-container" @submit.prevent="onFormSubmit">
 		<div v-for="district in districts" :key="district.id">
 			<v-select
 				class="mb-3"
 				color="primary"
-				cache-items
 				density="comfortable"
 				clearable
 				multiple
 				rounded
 				hide-details
 				variant="outlined"
-				@update:modelValue="e => selectModelUpdate(district.id, e)"
 				:label="district.name"
 				item-title="name"
 				item-value="id"
 				:items="getSubjectItemsAndId(district)"
+				:model-value="form.selectedSubjects[district.id] || []"
+				@update:modelValue="
+					value => (form.selectedSubjects[district.id] = value)
+				"
 			>
 				<template v-slot:selection="{ item, index }">
 					<div v-if="index < 1">
@@ -25,70 +27,53 @@
 						v-if="index === 1"
 						class="text-caption align-self-center"
 					>
-						(+{{ selectedSubjects[district.id].length - 1 }} другие)
+						(+{{
+							(form.selectedSubjects[district.id] || []).length -
+							1
+						}}
+						другие)
 					</span>
 				</template>
 			</v-select>
 		</div>
 
-		<h3 class="font-weight-bold pl-2 mt-5">Выбрать временной промежуток</h3>
-		<v-divider class="mb-5"></v-divider>
+		<v-divider class="my-4"></v-divider>
 
 		<v-select
 			density="comfortable"
 			variant="outlined"
 			rounded
-			@update:modelValue="e => comboBoxModelUpdate(e)"
 			label="Выбрать период"
+			v-model="form.selectedPeriod"
 			:items="[
 				'За прошлый месяц',
 				'За прошлый квартал',
 				'За прошлый год',
 			]"
-		>
-		</v-select>
-		<!-- <v-date-input
-			class="mb-2"
-			v-model="rangeDates"
-			variant="outlined"
-			prepend-icon=""
-			prepend-inner-icon=""
-			label="Выбрать временной интервал"
-			max-width="360"
-			multiple="range"
-			hide-details
-			rounded
-			density="compact"
-			placeholder="DD.MM.YYYY - DD.MM.YYYY"
-			@update:model-value="onSubmit"
-		></v-date-input> -->
+			@update:modelValue="comboBoxModelUpdate"
+		></v-select>
+
 		<div class="group-date">
 			<v-text-field
 				class="items"
-				@update:modelValue="e => startDateModelUpdate(e)"
+				v-model="form.startDate"
 				placeholder="yyyy-mm-dd"
 				density="compact"
 				variant="outlined"
 				type="date"
 				rounded
-				:value="startDate"
-			>
-				<!-- {{ startDate }} -->
-			</v-text-field>
-
+			/>
 			<v-text-field
 				class="items"
-				@update:modelValue="e => endDateModelUpdate(e)"
+				v-model="form.endDate"
 				placeholder="yyyy-mm-dd"
 				density="compact"
 				variant="outlined"
 				type="date"
 				rounded
-				:value="endDate"
-			>
-				<!-- {{ endDate }} -->
-			</v-text-field>
+			/>
 		</div>
+
 		<div class="group-botton">
 			<v-btn
 				class="items"
@@ -99,48 +84,42 @@
 				rounded
 				text="Применить"
 			/>
-
-			<!-- <v-btn
+			<v-btn
 				class="items"
 				text="Отменить"
 				color="red"
 				rounded
 				variant="tonal"
-			/> -->
+				@click="setDefaultValue"
+			/>
 		</div>
 	</v-form>
 </template>
+
 <script setup>
-	import { ref, computed } from 'vue'
-	import { VDateInput } from 'vuetify/labs/VDateInput'
+	import { reactive, ref } from 'vue'
 	import { getLastYear, getLastMonth, getLastQuarter } from '@/utils/utils.js'
-	import { useStatisticStore } from '@/stores/statisticStore' // Импортируем store
-	import { useDate } from 'vuetify'
+	import { useSubjectStore } from '@/stores/'
 
-	const date = useDate()
-
-	const rangeDates = async () => {
-		console('rangeDates', date.getWeekArray(new Date()))
-	}
-	// Инициализация store
-	const statisticStore = useStatisticStore()
+	const subjectStore = useSubjectStore()
 
 	// Пропсы
 	const props = defineProps({
 		districts: { type: Object, required: true },
 	})
 
-	// Эмиты
+	// Реактивный объект для хранения значений формы
+	const form = reactive({
+		startDate: null,
+		endDate: null,
+		selectedSubjects: {},
+		selectedPeriod: null,
+	})
 
-	// Реактивные переменные
 	const loadingStatistics = ref(false)
 	const errorStatistics = ref(null)
-	const startDate = ref(null)
-	const endDate = ref(null)
-	const selectedSubjects = ref({})
-	const selectedDate = ref('')
 
-	// Метод для получения списка регионов и их ID
+	// Возвращает список регионов для селекта
 	const getSubjectItemsAndId = district => {
 		return district.regions.map(region => ({
 			name: region.name,
@@ -148,79 +127,57 @@
 		}))
 	}
 
-	// Метод для обработки параметров запроса
+	// Формирование параметров запроса
 	const paramsProcessing = (selected, startDate, endDate) => {
 		const params = {}
-		if (startDate !== null) {
-			params['startDate'] = startDate
-		}
-		if (endDate !== null) {
-			params['endDate'] = endDate
-		}
+		if (startDate) params.startDate = startDate
+		if (endDate) params.endDate = endDate
 
-		const subjects = []
-		for (const subjectsInDistrict of Object.values(selected)) {
-			for (const subjectId of subjectsInDistrict) {
-				subjects.push(subjectId)
-			}
-		}
+		// Объединяем все выбранные регионы в один массив
+		const subjects = Object.values(selected).flat()
 		if (subjects.length > 0) {
-			params['regions'] = subjects.toString()
+			params.regions = subjects.toString()
 		}
 		return params
 	}
 
-	// Метод для сброса значений формы
+	// Сброс значений формы
 	const setDefaultValue = () => {
 		loadingStatistics.value = false
 		errorStatistics.value = null
-		startDate.value = null
-		endDate.value = null
-		selectedSubjects.value = {}
+		form.startDate = null
+		form.endDate = null
+		form.selectedSubjects = {}
+		form.selectedPeriod = null
 	}
 
-	// Метод для отправки формы
-	const onFormSubmit = async event => {
+	// Обработчик отправки формы
+	const onFormSubmit = async () => {
 		try {
-			await statisticStore.startLoading()
+			console.log('onFormSubmit', form)
+			await subjectStore.startLoading()
 			loadingStatistics.value = true
 			errorStatistics.value = null
 
 			const parameters = paramsProcessing(
-				selectedSubjects.value,
-				startDate.value,
-				endDate.value,
+				form.selectedSubjects,
+				form.startDate,
+				form.endDate,
 			)
-			await statisticStore.updateStatisticsAPI(parameters)
+			await subjectStore.loadSubjectStatisticsAPI(parameters)
 		} catch (e) {
 			errorStatistics.value = e.message
-			statisticStore.dropStatistics()
+			subjectStore.dropStatistics()
 		} finally {
 			loadingStatistics.value = false
-			await statisticStore.endLoading()
-			// setDefaultValue() // Раскомментируйте, если нужно сбрасывать значения
+			await subjectStore.endLoading()
 		}
 	}
 
-	// Метод для обновления выбранных регионов
-	const selectModelUpdate = (id, data) => {
-		selectedSubjects.value[id] = data
-	}
-
-	// Метод для обновления начальной даты
-	const startDateModelUpdate = data => {
-		startDate.value = data.trim() === '' ? null : data
-	}
-
-	// Метод для обновления конечной даты
-	const endDateModelUpdate = data => {
-		endDate.value = data.trim() === '' ? null : data
-	}
-
-	// Метод для обновления даты в зависимости от выбора в комбобоксе
-	const comboBoxModelUpdate = data => {
+	// Обновление дат в зависимости от выбора периода
+	const comboBoxModelUpdate = selection => {
 		let interval
-		switch (data) {
+		switch (selection) {
 			case 'За прошлый месяц':
 				interval = getLastMonth()
 				break
@@ -233,8 +190,8 @@
 			default:
 				interval = { startDate: null, endDate: null }
 		}
-		startDate.value = interval.startDate
-		endDate.value = interval.endDate
+		form.startDate = interval.startDate
+		form.endDate = interval.endDate
 	}
 </script>
 
@@ -243,15 +200,17 @@
 		display: flex;
 		flex-direction: column;
 	}
-
 	.group-botton,
 	.group-date {
 		display: flex;
+		justify-content: space-between;
 		flex-wrap: wrap;
+		width: 100%;
+		gap: 10px;
 	}
 
 	.items {
-		flex-grow: 1;
-		margin: 0 10px;
+		flex: 1;
+		min-width: 150px; /* Минимальная ширина для адаптивности */
 	}
 </style>

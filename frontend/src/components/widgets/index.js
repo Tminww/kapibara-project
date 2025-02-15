@@ -4,7 +4,6 @@ export { default as TFilterForm } from './TFilterForm.vue'
 export { default as TDatePicker } from './TDatePicker.vue'
 
 export { default as TLoginFormWidget } from './LoginFormWidget.vue'
-export { default as TFooterWidget } from './FooterWidget.vue'
 export { default as THeaderWidget } from './HeaderWidget.vue'
 export { default as TPagesNavigationWidget } from './PagesNavigationWidget.vue'
 
@@ -17,3 +16,4 @@ export { default as TSkeletonColumnChart } from './TSkeletonColumnChart.vue'
 
 export { default as TOrganCard } from './TOrganCard.vue'
 export { default as TBreadcrumbs } from './TBreadcrumbs.vue'
+export { default as TFilterSidebar } from './TFilterSidebar.vue'

@@ -26,7 +26,7 @@ class StatisticsService:
     async def get_stat_in_districts(self, parameters: RequestBodySchema):
         start_time = time.time()
         districts = []
-        stat_all = await self.statistics_repo.get_stat_all(parameters)
+        stat_all, start_date, end_date = await self.statistics_repo.get_stat_all(parameters)
 
         districts_info = await self.statistics_repo.get_districts_by_regions(
             parameters.regions
@@ -76,4 +76,6 @@ class StatisticsService:
                 count=get_count_from_stat(stat_all),
                 stat=stat_all,
                 districts=districts,
+                startDate=start_date,
+                endDate=end_date
             )

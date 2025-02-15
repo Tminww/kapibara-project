@@ -1,11 +1,11 @@
 import { ref, computed, onMounted } from 'vue'
 import { toast } from 'vue-sonner'
 
-import { useStatisticStore } from '@/stores/'
+import { useSubjectStore } from '@/stores/'
 import { getLastQuarter, mapDistrictNameToShortName } from '@/utils/utils.js'
 
 export function useSubjectDashboardArea() {
-	const statisticStore = useStatisticStore()
+	const subjectStore = useSubjectStore()
 	const thirdAreaError = ref(null)
 	const thirdAreaDate = ref(new Date())
 	const isThirdAreaPreviousLoading = ref(false)
@@ -13,7 +13,7 @@ export function useSubjectDashboardArea() {
 	const isStatisticsLoading = ref(false)
 
 	const isThirdAreaLoading = computed(() => {
-		return statisticStore.isLoading || isStatisticsLoading.value
+		return subjectStore.isLoading || isStatisticsLoading.value
 	})
 	const thirdAreaQuarter = computed(() => {
 		const { startDate, endDate } = getLastQuarter(thirdAreaDate.value)
@@ -27,8 +27,8 @@ export function useSubjectDashboardArea() {
 		}
 	})
 	const districtData = computed(() =>
-		Array.isArray(statisticStore.getDistricts)
-			? statisticStore.getDistricts
+		Array.isArray(subjectStore.getDistricts)
+			? subjectStore.getDistricts
 			: [],
 	)
 
@@ -52,7 +52,7 @@ export function useSubjectDashboardArea() {
 
 			const parameters = getLastQuarter(thirdAreaDate.value)
 
-			await statisticStore.updateStatisticsAPI(parameters)
+			await subjectStore.loadSubjectStatisticsAPI(parameters)
 		} catch (e) {
 			thirdAreaError.value = e.message
 		} finally {
@@ -76,7 +76,7 @@ export function useSubjectDashboardArea() {
 
 			const parameters = getLastQuarter(thirdAreaDate.value)
 
-			await statisticStore.updateStatisticsAPI(parameters)
+			await subjectStore.loadSubjectStatisticsAPI(parameters)
 		} catch (e) {
 			thirdAreaError.value = e.message
 		} finally {
@@ -91,10 +91,10 @@ export function useSubjectDashboardArea() {
 
 			const parameters = getLastQuarter()
 
-			await statisticStore.updateStatisticsAPI(parameters)
+			await subjectStore.loadSubjectStatisticsAPI(parameters)
 		} catch (e) {
 			thirdAreaError.value = e.message
-			statisticStore.dropStatistics()
+			subjectStore.dropStatistics()
 		} finally {
 			// setDefaultValue() // Раскомментируйте, если нужно сбрасывать значения}
 			isStatisticsLoading.value = false

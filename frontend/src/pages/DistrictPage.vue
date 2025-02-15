@@ -36,17 +36,17 @@
 	import { TDashboardAreaCard } from '@/components/widgets'
 	import { useRoute, useRouter } from 'vue-router'
 	import { mapDistrictShortNameToName } from '@/utils/utils.js'
-	import { useStatisticStore } from '@/stores'
+	import { useSubjectStore } from '@/stores'
 	import { computed, ref, onMounted } from 'vue'
 	const route = useRoute()
 	const router = useRouter()
-	const statisticStore = useStatisticStore()
+	const subjectStore = useSubjectStore()
 
 	const errorStatistics = ref(null)
 	const isStatisticsLoading = ref(false)
 
 	const currentDistrictStat = computed(() => {
-		const data = statisticStore.getDistricts
+		const data = subjectStore.getDistricts
 		for (districts of data) {
 			console.log(districts)
 		}
@@ -59,10 +59,10 @@
 			isStatisticsLoading.value = true
 			const parameters = getLastQuarter()
 
-			await statisticStore.updateStatisticsAPI(parameters)
+			await subjectStore.loadSubjectStatisticsAPI(parameters)
 		} catch (e) {
 			errorStatistics.value = e.message
-			statisticStore.dropStatistics()
+			subjectStore.dropStatistics()
 		} finally {
 			// setDefaultValue() // Раскомментируйте, если нужно сбрасывать значения}
 			isStatisticsLoading.value = false

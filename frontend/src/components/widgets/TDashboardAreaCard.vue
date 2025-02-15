@@ -18,9 +18,13 @@
 		</v-card-subtitle>
 
 		<v-card-text class="pb-0 pt-0">
+			<slot name="filter"></slot>
 			<slot name="chart" />
 		</v-card-text>
 
+		<div class="time-wrap">
+			<slot name="interval"></slot>
+		</div>
 		<slot name="error"></slot>
 	</v-card>
 </template>
@@ -68,5 +72,8 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
+		font-size: 20px;
+		margin-top: 10px;
+		margin-bottom: 10px;
 	}
 </style>
