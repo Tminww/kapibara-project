@@ -23,20 +23,19 @@ async def get_documents_in_districts(
 ):
     try:
         current_date = datetime.now().strftime("%Y-%m-%d")
-        current_date = datetime.strptime(current_date, "%Y-%m-%d")
 
         if startDate is None and endDate is None:
             startDate = None
             endDate = None
         elif startDate is None and endDate is not None:
-            startDate = datetime.strptime(endDate, "%Y-%m-%d")
-            endDate = datetime.strptime(endDate, "%Y-%m-%d")
+            startDate = endDate
+            endDate = endDate
         elif startDate is not None and endDate is None:
-            startDate = datetime.strptime(startDate, "%Y-%m-%d")
+            startDate = startDate
             endDate = current_date
         elif startDate is not None and endDate is not None:
-            startDate = datetime.strptime(startDate, "%Y-%m-%d")
-            endDate = datetime.strptime(endDate, "%Y-%m-%d")
+            startDate = startDate
+            endDate = endDate
         
         print(regions)
         print(startDate)
@@ -54,6 +53,6 @@ async def get_documents_in_districts(
         raise DateValidationError(e)
     else:
         documents = await statistics_service.get_stat_in_districts(parameters)
-        documents.startDate = startDate.strftime("%Y-%m-%d") if startDate is not None else None 
-        documents.endDate = endDate.strftime("%Y-%m-%d") if endDate is not None else None
+        documents.startDate = startDate if startDate is not None else None 
+        documents.endDate = endDate if endDate is not None else None
         return documents
