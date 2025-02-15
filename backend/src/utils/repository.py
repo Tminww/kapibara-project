@@ -68,22 +68,7 @@ class SQLAlchemyRepository(AbstractRepository):
 
     async def get_stat_all(self, parameters: RequestBodySchema):
         async with async_session_maker() as session:
-            current_date = datetime.now().strftime("%Y-%m-%d")
-            current_date = datetime.strptime(current_date, "%Y-%m-%d")
-
-            if parameters.start_date is None and parameters.end_date is None:
-                start_date = None
-                end_date = None
-            elif parameters.start_date is None and parameters.end_date is not None:
-                start_date = datetime.strptime(parameters.end_date, "%Y-%m-%d")
-                end_date = datetime.strptime(parameters.end_date, "%Y-%m-%d")
-            elif parameters.start_date is not None and parameters.end_date is None:
-                start_date = datetime.strptime(parameters.start_date, "%Y-%m-%d")
-                end_date = current_date
-            elif parameters.start_date is not None and parameters.end_date is not None:
-                start_date = datetime.strptime(parameters.start_date, "%Y-%m-%d")
-                end_date = datetime.strptime(parameters.end_date, "%Y-%m-%d")
-            print(type(start_date), end_date, sep=" ")
+            
             stmt = (
                 select(
                     self.act.name.label("name"),
@@ -100,7 +85,7 @@ class SQLAlchemyRepository(AbstractRepository):
                     (
                         parameters.start_date is None
                         and parameters.end_date is None
-                        or self.document.view_date.between(start_date, end_date)
+                        or self.document.view_date.between(parameters.start_date, parameters.end_date)
                     ),
                 )
                 .group_by(self.act.name)
@@ -111,29 +96,14 @@ class SQLAlchemyRepository(AbstractRepository):
             res = [StatBaseDTO(name=row.name, count=row.count) for row in res.all()]
             print(res)
             if res:
-                return (res, start_date, end_date)
+                return res
             else:
                 print("get_stat_all")
                 raise ResultIsEmptyError("Result is empty")
 
     async def get_stat_in_district(self, parameters: RequestBodySchema, id_dist):
         async with async_session_maker() as session:
-            current_date = datetime.now().strftime("%Y-%m-%d")
-            current_date = datetime.strptime(current_date, "%Y-%m-%d")
-
-            if parameters.start_date is None and parameters.end_date is None:
-                start_date = None
-                end_date = None
-            elif parameters.start_date is None and parameters.end_date is not None:
-                start_date = datetime.strptime(parameters.end_date, "%Y-%m-%d")
-                end_date = datetime.strptime(parameters.end_date, "%Y-%m-%d")
-            elif parameters.start_date is not None and parameters.end_date is None:
-                start_date = datetime.strptime(parameters.start_date, "%Y-%m-%d")
-                end_date = current_date
-            elif parameters.start_date is not None and parameters.end_date is not None:
-                start_date = datetime.strptime(parameters.start_date, "%Y-%m-%d")
-                end_date = datetime.strptime(parameters.end_date, "%Y-%m-%d")
-
+            
             stmt = (
                 select(
                     self.act.name.label("name"),
@@ -149,9 +119,9 @@ class SQLAlchemyRepository(AbstractRepository):
                         or self.region.id.in_(parameters.regions)
                     ),
                     (
-                        start_date is None
-                        and end_date is None
-                        or self.document.view_date.between(start_date, end_date)
+                        parameters.start_date is None
+                        and parameters.end_date is None
+                        or self.document.view_date.between(parameters.start_date, parameters.end_date)
                     ),
                 )
                 .group_by(self.act.name)
@@ -219,21 +189,7 @@ class SQLAlchemyRepository(AbstractRepository):
 
     async def get_stat_in_region(self, parameters: RequestBodySchema, id_reg):
         async with async_session_maker() as session:
-            current_date = datetime.now().strftime("%Y-%m-%d")
-            current_date = datetime.strptime(current_date, "%Y-%m-%d")
-
-            if parameters.start_date is None and parameters.end_date is None:
-                start_date = None
-                end_date = None
-            elif parameters.start_date is None and parameters.end_date is not None:
-                start_date = datetime.strptime(parameters.end_date, "%Y-%m-%d")
-                end_date = datetime.strptime(parameters.end_date, "%Y-%m-%d")
-            elif parameters.start_date is not None and parameters.end_date is None:
-                start_date = datetime.strptime(parameters.start_date, "%Y-%m-%d")
-                end_date = current_date
-            elif parameters.start_date is not None and parameters.end_date is not None:
-                start_date = datetime.strptime(parameters.start_date, "%Y-%m-%d")
-                end_date = datetime.strptime(parameters.end_date, "%Y-%m-%d")
+           
 
             stmt = (
                 select(
@@ -248,7 +204,7 @@ class SQLAlchemyRepository(AbstractRepository):
                     (
                         parameters.start_date is None
                         and parameters.end_date is None
-                        or self.document.view_date.between(start_date, end_date)
+                        or self.document.view_date.between(parameters.start_date, end_date)
                     ),
                 )
                 .group_by(self.act.name)

@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Annotated, Union, Optional, List
 from fastapi import APIRouter, Depends, Query, HTTPException
 from pydantic import ValidationError
@@ -21,6 +22,22 @@ async def get_documents_in_districts(
     endDate: Union[str, None] = None,
 ):
     try:
+        current_date = datetime.now().strftime("%Y-%m-%d")
+        current_date = datetime.strptime(current_date, "%Y-%m-%d")
+
+        if startDate is None and endDate is None:
+            startDate = None
+            endDate = None
+        elif startDate is None and endDate is not None:
+            startDate = datetime.strptime(endDate, "%Y-%m-%d")
+            endDate = datetime.strptime(endDate, "%Y-%m-%d")
+        elif startDate is not None and endDate is None:
+            startDate = datetime.strptime(startDate, "%Y-%m-%d")
+            endDate = current_date
+        elif startDate is not None and endDate is not None:
+            startDate = datetime.strptime(startDate, "%Y-%m-%d")
+            endDate = datetime.strptime(endDate, "%Y-%m-%d")
+        
         print(regions)
         print(startDate)
         print(endDate)
