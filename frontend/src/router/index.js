@@ -177,6 +177,23 @@ const routes = [
 			],
 		},
 	},
+	{
+		path: '/dashboard',
+		name: 'dashboard',
+		component: NotFound404,
+		meta: {
+			...meta,
+			breadCrumb: [
+				{
+					text: 'Главная',
+					to: { name: 'home' },
+				},
+				{
+					text: 'Информационная панель',
+				},
+			],
+		},
+	},
 
 	{
 		path: '/:pathMatch(.*)*',

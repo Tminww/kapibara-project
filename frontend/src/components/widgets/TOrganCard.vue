@@ -71,7 +71,7 @@
 		max-width: 100%; /* Ограничивает ширину заголовка */
 		text-align: left; /* По желанию, можно выровнять текст */
 		font-size: 14px;
-		height: 60px;
+		height: 80px;
 		/* font-weight: bold; */
 	}
 	.button-wrap {
