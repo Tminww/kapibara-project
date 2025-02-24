@@ -19,7 +19,7 @@
 
 		<v-card-text class="pb-0 pt-0">
 			<div v-if="isLoading" class="loader-wrap">
-				<t-icon name="dashboard" :width="200" :height="200" />
+				<t-icon name="dashboard-gray" :width="200" :height="200" />
 			</div>
 			<div v-else class="chart-wrap">
 				<slot name="chart" />
