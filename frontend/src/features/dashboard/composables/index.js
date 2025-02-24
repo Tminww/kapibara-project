@@ -1,0 +1,6 @@
+export { useFirstDashboardArea } from './useFirstDashboardArea'
+export { useSecondDashboardArea } from './useSecondDashboardArea'
+export { useThirdDashboardArea } from './useThirdDashboardArea'
+export { useFourthDashboardArea } from './useFourthDashboardArea'
+export { useFifthDashboardArea } from './useFifthDashboardArea'
+export { useSixthDashboardArea } from './useSixthDashboardArea'

@@ -1,12 +1,12 @@
 import { ref, onMounted, computed } from 'vue'
 
-import { useStatisticStore } from '@/stores'
+import { useDashboardStore } from '../store'
 import { getLastMonth } from '@/utils/utils'
 
 import { toast } from 'vue-sonner'
 
 export function useSecondDashboardArea() {
-	const statisticStore = useStatisticStore()
+	const statisticStore = useDashboardStore()
 	const secondAreaError = ref(null)
 	const secondAreaDate = ref(new Date())
 	const isSecondAreaPreviousLoading = ref(false)

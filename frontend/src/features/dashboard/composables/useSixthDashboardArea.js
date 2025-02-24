@@ -1,11 +1,11 @@
 import { ref, computed, onMounted } from 'vue'
 import { toast } from 'vue-sonner'
 
-import { useStatisticStore } from '@/stores/'
+import { useDashboardStore } from '../store'
 import { getLastQuarter } from '@/utils/utils.js'
 
 export function useSixthDashboardArea() {
-	const statisticStore = useStatisticStore()
+	const statisticStore = useDashboardStore()
 	const sixthAreaError = ref(null)
 	const sixthAreaDate = ref(new Date())
 	const isSixthAreaPreviousLoading = ref(false)

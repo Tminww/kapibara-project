@@ -2,6 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { NotFound404 } from '@/pages/errors'
 import { HomePage, LoginPage, SubjectPage } from '@/pages'
 
+import { routes as dashboardRoutes } from '@/features/dashboard/router'
+
 const meta = {
 	requiresAuth: false,
 	forAdmin: false,
@@ -10,6 +12,7 @@ const meta = {
 }
 
 const routes = [
+	...dashboardRoutes,
 	{
 		path: '/',
 		name: 'home',
@@ -39,6 +42,32 @@ const routes = [
 					text: 'Субъекты',
 				},
 			],
+		},
+	},
+	{
+		path: '/subjects/district/:label',
+		name: 'district',
+		component: NotFound404,
+		meta: {
+			...meta,
+			breadCrumb: [
+				{
+					text: 'Главная',
+					to: { name: 'home' },
+				},
+				{
+					text: 'Субъекты',
+					to: { name: 'subjects' },
+				},
+				{
+					text: '',
+				},
+			],
+		},
+		beforeEnter: (to, from, next) => {
+			// Устанавливаем значение label в meta.breadCrumb
+			to.meta.breadCrumb[2].text = to.params.label
+			next()
 		},
 	},
 	{
@@ -173,23 +202,6 @@ const routes = [
 				},
 				{
 					text: 'Совет Безопасности ООН',
-				},
-			],
-		},
-	},
-	{
-		path: '/dashboard',
-		name: 'dashboard',
-		component: NotFound404,
-		meta: {
-			...meta,
-			breadCrumb: [
-				{
-					text: 'Главная',
-					to: { name: 'home' },
-				},
-				{
-					text: 'Информационная панель',
 				},
 			],
 		},
