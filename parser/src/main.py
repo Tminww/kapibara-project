@@ -5,10 +5,7 @@ from datetime import datetime
 import database.initial as initial
 import database.query as query
 import api.parser as parser
-from log.createLogger import get_logger
-
-
-logging = get_logger()
+from log.createLogger import logger as logging
 
 
 def check_time(func):

@@ -23,3 +23,5 @@ def get_logger() -> None:
     # вызов функций, регистрирующих
     # события в коде
     return logger  # type: ignore
+
+logger = get_logger()

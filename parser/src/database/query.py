@@ -3,10 +3,7 @@ from psycopg2.errorcodes import UNIQUE_VIOLATION
 from psycopg2 import errors
 from data.subjects import get_subjects_data
 
-from log.createLogger import get_logger
-
-
-logging = get_logger()
+from log.createLogger import logger as logging
 
 INSERT_ACT = """INSERT INTO ACT (name, npa_id) VALUES """
 

@@ -2,10 +2,7 @@ from database.setup import get_sync_connection
 from data.districts import get_districts_data
 from psycopg2.errorcodes import UNIQUE_VIOLATION
 from psycopg2 import errors
-from log.createLogger import get_logger
-
-
-logging = get_logger()
+from log.createLogger import logger as logging
 
 CREATE_REGION_TABLE = """
         DROP TABLE  IF EXISTS region CASCADE;
