@@ -26,6 +26,11 @@ class StatisticsService:
     def __init__(self, statistics_repo: AbstractRepository):
         self.statistics_repo: AbstractRepository = statistics_repo()
 
+    async def get_publication_by_nomenclature(self, parameters: RequestBodySchema):
+        stat = await self.statistics_repo.get_publication_by_nomenclature(parameters)
+        
+        return stat
+    
     async def get_subjects_stat(self, parameters: RequestBodySchema):
         stat_all = await self.statistics_repo.get_stat_all(parameters)
         

@@ -119,3 +119,26 @@ async def get_districts_stat(
         startDate = startDate if startDate is not None else None 
         endDate = endDate if endDate is not None else None
         return DistrictsStatDTO( name="Статистика за ФО", startDate=startDate, endDate=endDate, districts=statistics)
+
+@router.get("/publication-by-nomenclature")
+async def get_publication_by_nomenclature(
+    statistics_service: Annotated[StatisticsService, Depends(statistics_service)],
+    startDate: Union[str, None] = None,
+    endDate: Union[str, None] = None,
+):
+    try:
+        startDate, endDate = check_dates(startDate, endDate)
+        print(startDate)
+        print(endDate)
+            
+        parameters = RequestBodySchema(
+            start_date=startDate, end_date=endDate
+        )
+        print(parameters)
+    except ValueError as e:
+        raise DateValidationError(e)
+    else:
+        statistics = await statistics_service.get_districts_stat(parameters)
+        startDate = startDate if startDate is not None else None 
+        endDate = endDate if endDate is not None else None
+        return DistrictsStatDTO( name="Статистика за ФО", startDate=startDate, endDate=endDate, districts=statistics)

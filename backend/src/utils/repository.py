@@ -8,7 +8,7 @@ from models.region import RegionEntity
 
 from schemas.subjects import RegionInfoDTO, RegionsInDistrictDTO    
 from schemas.statistics import StatRowSchema, StatBaseDTO, RequestBodySchema
-from sqlalchemy import insert, select, func
+from sqlalchemy import insert, select, func, text
 from database.setup import async_session_maker
 from errors import ResultIsEmptyError
 
@@ -40,6 +40,10 @@ class AbstractRepository(ABC):
 
     @abstractmethod
     async def get_stat_all(parameters):
+        raise NotImplementedError
+    
+    @abstractmethod
+    async def get_publication_by_nomenclature(parameters):
         raise NotImplementedError
 
 
@@ -224,3 +228,40 @@ class SQLAlchemyRepository(AbstractRepository):
             # else:
             #     raise ResultIsEmptyError("Result is empty")
             return res
+        
+    async def get_publication_by_nomenclature(self, parameters):
+        async with async_session_maker() as session:
+            start_date = datetime.strptime(parameters.start_date, "%Y-%m-%d") if parameters.start_date is not None else None
+            end_date = datetime.strptime(parameters.end_date, "%Y-%m-%d") if parameters.end_date is not None else None
+           
+
+            query = text(f"""
+                SELECT 
+                    CASE 
+                        WHEN r.code LIKE 'region%' THEN 'ОГВ Субъектов РФ' 
+                        ELSE r.name 
+                    END AS name,
+                    COUNT(*) AS count
+                FROM document AS d
+                JOIN region AS r ON d.id_reg = r.id
+                
+                WHERE (:start_date IS NULL AND :end_date IS NULL)
+                OR d.view_date BETWEEN :start_date AND :end_date
+                GROUP BY 
+                    CASE 
+                        WHEN r.code LIKE 'region%' THEN 'ОГВ Субъектов РФ' 
+                        ELSE r.name 
+                    END;
+                         """)
+            res = await session.execute(query, {
+                "start_date": start_date,
+                "end_date": end_date,
+            })
+            res = [StatBaseDTO(name=row.name, count=row.count) for row in res.all()]
+
+            # if res:
+            #     return res
+            # else:
+            #     raise ResultIsEmptyError("Result is empty")
+            return res
+
