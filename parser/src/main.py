@@ -144,7 +144,7 @@ def get_subject_api() -> list:
         names.append(subject["name"])
         codes.append(subject["code"])
     
-    other_names = [
+    other_codes = [
         "president",
         "council_1",
         "council_2",
@@ -155,7 +155,7 @@ def get_subject_api() -> list:
         "un_securitycouncil",
     ]
     
-    other_codes = [
+    other_names = [
         'Президент РФ',
         'Совет Федерации Федерального Собрания РФ',
         'Государственная Дума Федерального Собрания РФ',
