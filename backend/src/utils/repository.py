@@ -254,8 +254,8 @@ class SQLAlchemyRepository(AbstractRepository):
                     END;
                          """)
             res = await session.execute(query, {
-                "start_date": start_date,
-                "end_date": end_date,
+                "start_date":  start_date if start_date else True ,
+                "end_date": end_date if end_date else True,
             })
             res = [StatBaseDTO(name=row.name, count=row.count) for row in res.all()]
 
