@@ -6,7 +6,7 @@ from api.routers import all_routers
 from errors import DateValidationError, ResultIsEmptyError
 
 
-app = FastAPI(title="Вывод статистики по документам")
+app = FastAPI(title="Вывод статистики по документам",docs_url="/api/docs", redoc_url="/api/redoc")
 
 origins= [
     "http://localhost:5173",

@@ -138,7 +138,7 @@ async def get_publication_by_nomenclature(
     except ValueError as e:
         raise DateValidationError(e)
     else:
-        statistics = await statistics_service.get_districts_stat(parameters)
+        statistics = await statistics_service.get_publication_by_nomenclature(parameters)
         startDate = startDate if startDate is not None else None 
         endDate = endDate if endDate is not None else None
         return DistrictsStatDTO( name="Статистика за ФО", startDate=startDate, endDate=endDate, districts=statistics)
