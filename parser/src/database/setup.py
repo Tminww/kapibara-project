@@ -1,8 +1,6 @@
 import psycopg2
 from dbconfig import get_settings
-from log.createLogger import get_logger
-
-logging = get_logger()
+from log.createLogger import logger as logging
 
 
 settings = get_settings()
