@@ -50,7 +50,7 @@ CREATE_DISTRICT_TABLE = """
         id INT PRIMARY KEY,
         name VARCHAR(64),
         full_name VARCHAR(64),
-        short_name VARCHAR(64),
+        short_name VARCHAR(64)
         )
         """
 
