@@ -291,6 +291,8 @@ class SQLAlchemyRepository(AbstractRepository):
             return res.all()
     async def get_publication_by_districts(self, parameters: RequestBodySchema):
          async with async_session_maker() as session:
+            start_date = datetime.strptime(parameters.start_date, "%Y-%m-%d") if parameters.start_date is not None else None
+            end_date = datetime.strptime(parameters.end_date, "%Y-%m-%d") if parameters.end_date is not None else None
            
             query = (
                 select(
@@ -304,6 +306,14 @@ class SQLAlchemyRepository(AbstractRepository):
                 .order_by(self.district.name.asc())  # Сортируем по имени
             )
 
+            # Условия фильтрации по дате
+            date_filter = (
+                        start_date is None
+                        and end_date is None
+                        or self.document.view_date.between(start_date, end_date)
+                    )
+            query = query.filter(date_filter)
+            
             print(query)
             res = await session.execute(query)
             

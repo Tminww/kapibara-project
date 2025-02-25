@@ -17,20 +17,18 @@ export const useDashboardStore = defineStore('dashboard', () => {
 	const fifthAreaStatistics = ref([])
 	const sixthAreaStatistics = ref([])
 
-	const thirdAreaStatistics = ref({})
+	const publicationByDistricts = ref({ ...emptyResponse })
 
-	// Геттер для получения регионов в определенном округе
-	const getRegionsInDistrict = computed(districtId => {
-		return thirdAreaStatistics.value.districts[districtId]
+	const getPublicationByDistricts = computed(() => {
+		return publicationByDistricts.value.stat
 	})
 
-	// Геттер для получения всей статистики
-	const getAllStatistics = computed(() => {
-		return {
-			name: thirdAreaStatistics.value.name,
-			count: thirdAreaStatistics.value.count,
-			stat: thirdAreaStatistics.value.stat,
-		}
+	const getPublicationByDistrictsSeries = computed(() => {
+		return publicationByDistricts.value?.stat?.map(row => row.count)
+	})
+
+	const getPublicationByDistrictsLabels = computed(() => {
+		return publicationByDistricts.value?.stat?.map(row => row.name)
 	})
 
 	const getPublicationByYears = computed(() => {
@@ -66,27 +64,12 @@ export const useDashboardStore = defineStore('dashboard', () => {
 		return sixthAreaStatistics.value
 	})
 
-	// Геттер для получения всех округов
-	const getDistricts = computed(() => {
-		return thirdAreaStatistics.value.districts
-	})
-
-	// Геттер для получения всей статистики
-	const getStatistics = computed(() => {
-		return thirdAreaStatistics.value
-	})
-
-	// Установка статистики
-	const setStatistics = newValue => {
-		thirdAreaStatistics.value = newValue
-	}
-
-	// Сброс статистики
-	const dropStatistics = () => {
-		thirdAreaStatistics.value = {}
-	}
 	const dropPublicationByYears = () => {
 		publicationByYears.value = { ...emptyResponse }
+	}
+
+	const dropPublicationByDistricts = () => {
+		publicationByDistricts.value = { ...emptyResponse }
 	}
 	const dropSecondAreaDocumentsStatisticsByMonth = () => {
 		secondAreaStatistics.value = []
@@ -101,14 +84,17 @@ export const useDashboardStore = defineStore('dashboard', () => {
 		sixthAreaStatistics.value = []
 	}
 
-	// Загрузка статистики с API
-	const loadStatisticsAPI = async () => {
-		thirdAreaStatistics.value = await apiClient.statistics.readOneRegion(12)
-	}
-
 	// Обновление статистики через API
-	const updateStatisticsAPI = async parameters => {
-		thirdAreaStatistics.value = await apiClient.statistics.read(parameters)
+	const loadPublicationByDistricts = async parameters => {
+		try {
+			let response =
+				await apiClient.publicationByDistricts.read(parameters)
+
+			publicationByDistricts.value = response
+		} catch (error) {
+			console.error('Ошибка при загрузке статистики:', error)
+			dropPublicationByDistricts()
+		}
 	}
 	// Обновление статистики через API
 	const loadPublicationByYears = async parameters => {
@@ -200,38 +186,33 @@ export const useDashboardStore = defineStore('dashboard', () => {
 		}
 	}
 	return {
-		thirdAreaStatistics,
-		getRegionsInDistrict,
-		getAllStatistics,
-		getStatistics,
-		getDistricts,
 		getPublicationByYears,
 		getSecondAreaDocumentsStatisticsByMonth,
 		getPublicationByNomenclature,
 		getFifthAreaDocumentsStatisticsByQuarter,
 		getSixthAreaDocumentsStatisticsByQuarter,
+		getPublicationByDistricts,
 
 		dropPublicationByYears,
 		dropSecondAreaDocumentsStatisticsByMonth,
 		dropPublicationByNomenclature,
 		dropFifthAreaDocumentsStatisticsByQuarter,
 		dropSixthAreaDocumentsStatisticsByQuarter,
+		dropPublicationByDistricts,
 
 		loadPublicationByYears,
 		loadSecondAreaDocumentsStatisticsByMonth,
 		loadPublicationByNomenclature,
 		loadFifthAreaDocumentsStatisticsByQuarter,
 		loadSixthAreaDocumentsStatisticsByQuarter,
-
-		setStatistics,
-		dropStatistics,
-		loadStatisticsAPI,
-		updateStatisticsAPI,
+		loadPublicationByDistricts,
 
 		getPublicationByNomenclatureSeries,
-		getPublicationByNomenclatureLabels,
-
 		getPublicationByYearsSeries,
+		getPublicationByDistrictsSeries,
+
+		getPublicationByNomenclatureLabels,
 		getPublicationByYearsLabels,
+		getPublicationByDistrictsLabels,
 	}
 })

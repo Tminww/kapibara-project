@@ -10,6 +10,9 @@ const apiClient = {
 		'statistics/publication-by-nomenclature',
 	),
 	publicationByYears: new StatisticsClient('statistics/publication-by-years'),
+	publicationByDistricts: new StatisticsClient(
+		'statistics/publication-by-districts',
+	),
 }
 
 export default apiClient

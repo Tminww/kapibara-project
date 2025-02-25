@@ -96,8 +96,7 @@
 			<v-container>
 				<t-dashboard-area-card
 					:isLoading="isThirdAreaLoading"
-					title="Опубликование за Федеральные округа по кварталам"
-					subtitle="За квартал"
+					title="Опубликование по Федеральным округам по кварталам"
 					:max-width="650"
 				>
 					<template #chart>
@@ -143,8 +142,7 @@
 			<v-container>
 				<t-dashboard-area-card
 					:isLoading="isFourthAreaLoading"
-					title="Опубликование по номенклатуре"
-					subtitle="За год"
+					title="Опубликование по номенклатуре по годам"
 					:max-width="650"
 				>
 					<template #chart>
@@ -189,8 +187,7 @@
 			<v-container>
 				<t-dashboard-area-card
 					:isLoading="isFourthAreaLoading"
-					title="Опубликование по Президенту"
-					subtitle="За год"
+					title="Опубликование по Президенту по годам"
 					:max-width="650"
 				>
 					<template #chart>
@@ -385,18 +382,27 @@
 		secondAreaNextMonth,
 	} = useSecondDashboardArea()
 
+	const thirdAreaLabels = computed(
+		() => store.getPublicationByDistrictsLabels,
+	)
+	const thirdAreaSeries = computed(
+		() => store.getPublicationByDistrictsSeries,
+	)
+
 	const {
-		thirdAreaLabels,
-		thirdAreaSeries,
-		thirdAreaError,
-		thirdAreaDate,
-		thirdAreaQuarter,
-		isThirdAreaPreviousLoading,
-		isThirdAreaNextLoading,
-		isThirdAreaLoading,
-		thirdAreaPreviousQuarter,
-		thirdAreaNextQuarter,
-	} = useThirdDashboardArea()
+		error: thirdAreaError,
+		currentInterval: thirdAreaQuarter,
+		isPreviousLoading: isThirdAreaPreviousLoading,
+		isNextLoading: isThirdAreaNextLoading,
+		isDataLoading: isThirdAreaLoading,
+		previousInterval: thirdAreaPreviousQuarter,
+		nextInterval: thirdAreaNextQuarter,
+	} = useChartArea({
+		loadData: store.loadPublicationByDistricts,
+		dropData: store.dropPublicationByDistricts,
+		getInterval: getLastQuarter,
+		interval: 'quarter',
+	})
 
 	const fourthAreaLabels = computed(
 		() => store.getPublicationByNomenclatureLabels,
