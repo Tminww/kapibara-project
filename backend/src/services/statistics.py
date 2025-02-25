@@ -32,7 +32,7 @@ class StatisticsService:
 
     async def get_publication_by_years(self, limit: int):
         rows: Sequence[Row]  = await self.statistics_repo.get_publication_by_years(limit)
-        stat: list[StatBaseDTO] = [StatBaseDTO(name= row.name, count= row.count) for row in rows]
+        stat: list[StatBaseDTO] = [StatBaseDTO(name= str(int(row.name)), count= row.count) for row in rows]
         
         count = get_count_from_stat(stat)
         return ResponseStatDTO(name="Опубликование по годам", stat=stat, count = count)
