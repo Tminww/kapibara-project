@@ -8,7 +8,7 @@ from models.region import RegionEntity
 
 from schemas.subjects import RegionInfoDTO, RegionsInDistrictDTO    
 from schemas.statistics import StatRowSchema, StatBaseDTO, RequestBodySchema
-from sqlalchemy import insert, select, func, text
+from sqlalchemy import insert, select, func, text, and_, or_, case
 from database.setup import async_session_maker
 from errors import ResultIsEmptyError
 
@@ -212,8 +212,8 @@ class SQLAlchemyRepository(AbstractRepository):
                 .filter(
                     (self.region.id == id_reg),
                     (
-                        parameters.start_date is None
-                        and parameters.end_date is None
+                        start_date is None
+                        and end_date is None
                         or self.document.view_date.between(start_date, end_date)
                     ),
                 )
@@ -235,33 +235,34 @@ class SQLAlchemyRepository(AbstractRepository):
             end_date = datetime.strptime(parameters.end_date, "%Y-%m-%d") if parameters.end_date is not None else None
            
 
-            query = text(f"""
-                SELECT 
-                    CASE 
-                        WHEN r.code LIKE 'region%' THEN 'ОГВ Субъектов РФ' 
-                        ELSE r.name 
-                    END AS name,
-                    COUNT(*) AS count
-                FROM document AS d
-                JOIN region AS r ON d.id_reg = r.id
-                
-                WHERE (:start_date IS NULL AND :end_date IS NULL)
-                OR d.view_date BETWEEN :start_date AND :end_date
-                GROUP BY 
-                    CASE 
-                        WHEN r.code LIKE 'region%' THEN 'ОГВ Субъектов РФ' 
-                        ELSE r.name 
-                    END;
-                         """)
-            res = await session.execute(query, {
-                "start_date":  start_date if start_date else True ,
-                "end_date": end_date if end_date else True,
-            })
-            res = [StatBaseDTO(name=row.name, count=row.count) for row in res.all()]
+            region_case = case(
+                (self.region.code.startswith('region'), 'ОГВ Субъектов РФ'),
+                else_=self.region.name
+            ).label('name')
 
-            # if res:
-            #     return res
-            # else:
-            #     raise ResultIsEmptyError("Result is empty")
-            return res
+            # Базовый запрос
+            query = (
+                select(region_case, func.count().label('count'))
+                .select_from(self.document)
+                .join(self.region, self.document.id_reg == self.region.id)
+                
+            )
+
+            # Условия фильтрации по дате
+            date_filter = (
+                        start_date is None
+                        and end_date is None
+                        or self.document.view_date.between(start_date, end_date)
+                    )
+            query = query.filter(date_filter)
+
+            # Группировка
+            query = query.group_by(region_case)
+
+            print(query)
+            res = await session.execute(query)
+            
+            result_dict = [{'name': row.name, 'count': row.count} for row in res.all()]
+            
+            return result_dict
 

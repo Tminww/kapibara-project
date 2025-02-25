@@ -28,7 +28,7 @@ class StatisticsService:
 
     async def get_publication_by_nomenclature(self, parameters: RequestBodySchema):
         stat = await self.statistics_repo.get_publication_by_nomenclature(parameters)
-        
+        stat.
         return stat
     
     async def get_subjects_stat(self, parameters: RequestBodySchema):

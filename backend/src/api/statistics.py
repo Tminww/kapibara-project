@@ -141,4 +141,6 @@ async def get_publication_by_nomenclature(
         statistics = await statistics_service.get_publication_by_nomenclature(parameters)
         startDate = startDate if startDate is not None else None 
         endDate = endDate if endDate is not None else None
-        return DistrictsStatDTO( name="Статистика за ФО", startDate=startDate, endDate=endDate, districts=statistics)
+        print(statistics)
+        # return dict( name="Опубликование по номенклатуре", startDate=startDate, endDate=endDate, stat=statistics)
+        return statistics
