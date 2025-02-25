@@ -138,3 +138,13 @@ async def get_publication_by_nomenclature(
         statistics = await statistics_service.get_publication_by_nomenclature(parameters)
         
         return statistics
+    
+@router.get("/publication-by-years")
+async def get_publication_by_years(
+    statistics_service: Annotated[StatisticsService, Depends(statistics_service)],
+    limit: int = 20
+) -> ResponseStatDTO:
+
+    statistics = await statistics_service.get_publication_by_years(limit)
+    
+    return statistics

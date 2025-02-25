@@ -45,6 +45,10 @@ class AbstractRepository(ABC):
     @abstractmethod
     async def get_publication_by_nomenclature(parameters):
         raise NotImplementedError
+    
+    @abstractmethod
+    async def get_publication_by_years(limit: int):
+        raise NotImplementedError
 
 
 class SQLAlchemyRepository(AbstractRepository):
@@ -262,7 +266,22 @@ class SQLAlchemyRepository(AbstractRepository):
             print(query)
             res = await session.execute(query)
             
-          
+            return res.all()
+    async def get_publication_by_years(self, limit: int):
+        async with async_session_maker() as session:
+           
+
+            query = (
+                select(
+                    func.date_part('year', self.document.view_date).label('name'),
+                    func.count().label('count')
+                )
+                .where(self.document.view_date >= func.current_date() - text(f"INTERVAL '{limit} years'"))
+                .group_by(func.date_part('year', self.document.view_date))
+                .order_by('name')
+            )
+
+            print(query)
+            res = await session.execute(query)
             
             return res.all()
-

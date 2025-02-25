@@ -30,6 +30,14 @@ class StatisticsService:
     def __init__(self, statistics_repo: AbstractRepository):
         self.statistics_repo: AbstractRepository = statistics_repo()
 
+    async def get_publication_by_years(self, limit: int):
+        rows: Sequence[Row]  = await self.statistics_repo.get_publication_by_years(limit)
+        stat: list[StatBaseDTO] = [StatBaseDTO(name= row.name, count= row.count) for row in rows]
+        
+        count = get_count_from_stat(stat)
+        return ResponseStatDTO(name="Опубликование по годам", stat=stat, count = count)
+    
+        
     async def get_publication_by_nomenclature(self, parameters: RequestBodySchema):
         rows: Sequence[Row]  = await self.statistics_repo.get_publication_by_nomenclature(parameters)
         stat: list[StatBaseDTO] = [StatBaseDTO(name= row.name, count= row.count) for row in rows]

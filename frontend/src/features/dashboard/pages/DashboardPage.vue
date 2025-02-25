@@ -4,7 +4,7 @@
 			<v-container>
 				<t-dashboard-area-card
 					:isLoading="isFirstAreaLoading"
-					title="Опубликование всех нормативных правовых актов"
+					title="Опубликование всех нормативных правовых актов по годам"
 					subtitle="За год"
 				>
 					<template #chart>

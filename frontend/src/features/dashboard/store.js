@@ -6,7 +6,13 @@ import { allDocumentTypes, allOrgans } from '@/mock'
 export const useDashboardStore = defineStore('dashboard', () => {
 	const firstAreaStatistics = ref([])
 	const secondAreaStatistics = ref([])
-	const publicationByNomenclature = ref({})
+	const publicationByNomenclature = ref({
+		name: '',
+		count: 0,
+		stat: [], // Пустой массив по умолчанию
+		startDate: null,
+		endDate: null,
+	})
 	const fifthAreaStatistics = ref([])
 	const sixthAreaStatistics = ref([])
 
@@ -37,11 +43,11 @@ export const useDashboardStore = defineStore('dashboard', () => {
 	})
 
 	const getPublicationByNomenclatureSeries = computed(() => {
-		return publicationByNomenclature.value.stat.map(row => row.count)
+		return publicationByNomenclature.value?.stat?.map(row => row.count)
 	})
 
 	const getPublicationByNomenclatureLabels = computed(() => {
-		return publicationByNomenclature.value.stat.map(row => row.name)
+		return publicationByNomenclature.value?.stat?.map(row => row.name)
 	})
 
 	const getFifthAreaDocumentsStatisticsByQuarter = computed(() => {
@@ -77,7 +83,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
 		secondAreaStatistics.value = []
 	}
 	const dropPublicationByNomenclature = () => {
-		publicationByNomenclature.value = []
+		publicationByNomenclature.value = {}
 	}
 	const dropFifthAreaDocumentsStatisticsByQuarter = () => {
 		fifthAreaStatistics.value = []
