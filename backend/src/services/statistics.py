@@ -34,8 +34,8 @@ class StatisticsService:
         rows: Sequence[Row]  = await self.statistics_repo.get_publication_by_nomenclature(parameters)
         stat: list[StatBaseDTO] = [StatBaseDTO(name= row.name, count= row.count) for row in rows]
         
-        start_date = parameters.start_date if parameters.start_date is not None else None 
-        end_date = parameters.end_date if parameters.end_date is not None else None
+        start_date: str | None = parameters.start_date if parameters.start_date is not None else None 
+        end_date: str | None = parameters.end_date if parameters.end_date is not None else None
         count = get_count_from_stat(stat)
         return ResponseStatDTO(name="Опубликование по номенклатуре", startDate=start_date, endDate=end_date, stat=stat, count = count)
     

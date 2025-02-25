@@ -33,15 +33,15 @@ export const useDashboardStore = defineStore('dashboard', () => {
 		return secondAreaStatistics.value
 	})
 	const getPublicationByNomenclature = computed(() => {
-		return publicationByNomenclature.value
+		return publicationByNomenclature.value.stat
 	})
 
 	const getPublicationByNomenclatureSeries = computed(() => {
-		return publicationByNomenclature.value.map(row => row.count)
+		return publicationByNomenclature.value.stat.map(row => row.count)
 	})
 
 	const getPublicationByNomenclatureLabels = computed(() => {
-		return publicationByNomenclature.value.map(row => row.name)
+		return publicationByNomenclature.value.stat.map(row => row.name)
 	})
 
 	const getFifthAreaDocumentsStatisticsByQuarter = computed(() => {

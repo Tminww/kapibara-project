@@ -32,3 +32,8 @@ dependencies = [
     "urllib3==2.0.6",
     "uvicorn==0.23.2",
 ]
+
+[dependency-groups]
+dev = [
+    "mypy>=1.15.0",
+]
