@@ -12,6 +12,7 @@ from schemas.statistics import (
     StatBaseDTO,
     StatRegionSchema,
     StatRegionsSchema,
+    ResponseStatDTO
 )
 from utils.repository import AbstractRepository
 import time
@@ -31,9 +32,12 @@ class StatisticsService:
 
     async def get_publication_by_nomenclature(self, parameters: RequestBodySchema):
         rows: Sequence[Row]  = await self.statistics_repo.get_publication_by_nomenclature(parameters)
-        result_dict = [{'name': row.name, 'count': row.count} for row in rows]
+        stat: list[StatBaseDTO] = [StatBaseDTO(name= row.name, count= row.count) for row in rows]
         
-        return result_dict
+        start_date = parameters.start_date if parameters.start_date is not None else None 
+        end_date = parameters.end_date if parameters.end_date is not None else None
+        count = get_count_from_stat(stat)
+        return ResponseStatDTO(name="Опубликование по номенклатуре", startDate=start_date, endDate=end_date, stat=stat, count = count)
     
     async def get_subjects_stat(self, parameters: RequestBodySchema):
         stat_all = await self.statistics_repo.get_stat_all(parameters)

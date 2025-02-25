@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, Query, HTTPException
 from pydantic import ValidationError
 
 from api.dependencies import statistics_service
-from schemas.statistics import DistrictsStatDTO, RequestBodySchema
+from schemas.statistics import DistrictsStatDTO, RequestBodySchema, ResponseStatDTO
 from services.statistics import StatisticsService
 from errors import DateValidationError, ResultIsEmptyError
 
@@ -125,22 +125,16 @@ async def get_publication_by_nomenclature(
     statistics_service: Annotated[StatisticsService, Depends(statistics_service)],
     startDate: Union[str, None] = None,
     endDate: Union[str, None] = None,
-):
+) -> ResponseStatDTO:
     try:
         startDate, endDate = check_dates(startDate, endDate)
-        print(startDate)
-        print(endDate)
             
         parameters = RequestBodySchema(
             start_date=startDate, end_date=endDate
         )
-        print(parameters)
     except ValueError as e:
         raise DateValidationError(e)
     else:
         statistics = await statistics_service.get_publication_by_nomenclature(parameters)
-        startDate = startDate if startDate is not None else None 
-        endDate = endDate if endDate is not None else None
-        print(statistics)
-        # return dict( name="Опубликование по номенклатуре", startDate=startDate, endDate=endDate, stat=statistics)
+        
         return statistics

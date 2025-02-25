@@ -3,7 +3,6 @@ from pydantic import BaseModel, validator
 from typing import Optional
 from errors import DateValidationError
 
-
 class ActSchema(BaseModel):
     id_act: int
     name: str
@@ -86,7 +85,13 @@ class SubjectsStatDTO(BaseModel):
     stat: Optional[list[StatBaseDTO]] = None
     startDate: Optional[str] = None
     endDate: Optional[str] = None
-    
+
+class ResponseStatDTO(BaseModel):
+    name: Optional[str] = None
+    count: Optional[int] = None
+    stat: Optional[list[StatBaseDTO]] = None
+    startDate: Optional[str] = None
+    endDate: Optional[str] = None
 
 
 class DistrictStatDTO(BaseModel):

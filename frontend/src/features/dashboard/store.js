@@ -6,7 +6,7 @@ import { allDocumentTypes, allOrgans } from '@/mock'
 export const useDashboardStore = defineStore('dashboard', () => {
 	const firstAreaStatistics = ref([])
 	const secondAreaStatistics = ref([])
-	const publicationByNomenclature = ref([])
+	const publicationByNomenclature = ref({})
 	const fifthAreaStatistics = ref([])
 	const sixthAreaStatistics = ref([])
 
