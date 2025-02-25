@@ -21,17 +21,11 @@ export function useFirstDashboardArea() {
 		)
 	})
 	const firstAreaYear = computed(() => {
-		console.log(firstAreaDate.value)
-
 		const { startDate, endDate } = getLastYear(firstAreaDate.value)
-		console.log('FirstAreaYear', startDate, endDate)
 		const [startYear, startMonth, startDay] = startDate.split('-')
 
 		const [endYear, endMonth, endDay] = endDate.split('-')
-		console.table({
-			startDate: `${startDay}.${startMonth}.${startYear}`,
-			endDate: `${endDay}.${endMonth}.${endYear}`,
-		})
+
 		return {
 			startDate: `${startDay}.${startMonth}.${startYear}`,
 			endDate: `${endDay}.${endMonth}.${endYear}`,

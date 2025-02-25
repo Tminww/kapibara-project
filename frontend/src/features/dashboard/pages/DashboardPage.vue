@@ -341,13 +341,20 @@
 		TSkeletonColumnChart,
 	} from '../components/widgets'
 	import {
+		useChartArea,
 		useFirstDashboardArea,
 		useSecondDashboardArea,
 		useThirdDashboardArea,
-		useFourthDashboardArea,
 		useFifthDashboardArea,
 		useSixthDashboardArea,
 	} from '../composables'
+
+	import { useDashboardStore } from '../store'
+	import { getLastMonth, getLastQuarter, getLastYear } from '@/utils/utils'
+	import { computed } from 'vue'
+
+	const store = useDashboardStore()
+
 	const {
 		firstAreaLabels,
 		firstAreaSeries,
@@ -385,18 +392,28 @@
 		thirdAreaPreviousQuarter,
 		thirdAreaNextQuarter,
 	} = useThirdDashboardArea()
+
+	const fourthAreaLabels = computed(
+		() => store.getPublicationByNomenclatureLabels,
+	)
+	const fourthAreaSeries = computed(
+		() => store.getPublicationByNomenclatureSeries,
+	)
 	const {
-		fourthAreaLabels,
-		fourthAreaSeries,
-		fourthAreaError,
-		fourthAreaDate,
-		fourthAreaYear,
-		isFourthAreaPreviousLoading,
-		isFourthAreaNextLoading,
-		isFourthAreaLoading,
-		fourthAreaPreviousYear,
-		fourthAreaNextYear,
-	} = useFourthDashboardArea()
+		error: fourthAreaError,
+		currentInterval: fourthAreaYear,
+		isPreviousLoading: isFourthAreaPreviousLoading,
+		isNextLoading: isFourthAreaNextLoading,
+		isDataLoading: isFourthAreaLoading,
+		previousInterval: fourthAreaPreviousYear,
+		nextInterval: fourthAreaNextYear,
+	} = useChartArea({
+		loadData: store.loadPublicationByNomenclature,
+		dropData: store.dropPublicationByNomenclature,
+		getInterval: getLastYear,
+		interval: 'year',
+	})
+	console.log(fourthAreaError)
 
 	const {
 		fifthAreaLabels,

@@ -21,7 +21,6 @@ export function useSixthDashboardArea() {
 	})
 	const sixthAreaQuarter = computed(() => {
 		const { startDate, endDate } = getLastQuarter(sixthAreaDate.value)
-		console.log('SixthAreaQuarter', startDate, endDate)
 		const [startYear, startMonth, startDay] = startDate.split('-')
 
 		const [endYear, endMonth, endDay] = endDate.split('-')

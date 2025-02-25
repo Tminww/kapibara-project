@@ -21,7 +21,6 @@ export function useThirdDashboardArea() {
 	})
 	const thirdAreaQuarter = computed(() => {
 		const { startDate, endDate } = getLastQuarter(thirdAreaDate.value)
-		console.log('ThirdAreaQuarter', startDate, endDate)
 		const [startYear, startMonth, startDay] = startDate.split('-')
 
 		const [endYear, endMonth, endDay] = endDate.split('-')

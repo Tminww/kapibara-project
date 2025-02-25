@@ -10,6 +10,7 @@ CREATE_REGION_TABLE = """
         id SERIAL NOT NULL, 
         id_dist INTEGER, 
         name VARCHAR(128) NOT NULL, 
+        short_name VARCHAR(128),
         code VARCHAR(64) NOT NULL, 
         PRIMARY KEY (id), 
         UNIQUE (name, code),

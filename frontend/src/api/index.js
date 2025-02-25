@@ -6,7 +6,9 @@ const apiClient = {
 	auth: new AuthClient('/auth'),
 	statistics: new StatisticsClient('/statistics'),
 	subjects: new SubjectsClient('/subjects'),
-	
+	publicationByNomenclature: new StatisticsClient(
+		'statistics/publication-by-nomenclature',
+	),
 }
 
 export default apiClient
