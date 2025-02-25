@@ -30,6 +30,16 @@ class StatisticsService:
     def __init__(self, statistics_repo: AbstractRepository):
         self.statistics_repo: AbstractRepository = statistics_repo()
 
+    async def get_publication_by_districts(self, parameters: RequestBodySchema):
+        rows: Sequence[Row]  = await self.statistics_repo.get_publication_by_districts(parameters)
+        stat: list[StatBaseDTO] = [StatBaseDTO(name= row.name, count= row.count) for row in rows]
+        
+        start_date: str | None = parameters.start_date if parameters.start_date is not None else None 
+        end_date: str | None = parameters.end_date if parameters.end_date is not None else None
+        count = get_count_from_stat(stat)
+        return ResponseStatDTO(name="Опубликование по федеральным округам", startDate=start_date, endDate=end_date, stat=stat, count = count)
+    
+        
     async def get_publication_by_years(self, limit: int):
         rows: Sequence[Row]  = await self.statistics_repo.get_publication_by_years(limit)
         stat: list[StatBaseDTO] = [StatBaseDTO(name= str(int(row.name)), count= row.count) for row in rows]

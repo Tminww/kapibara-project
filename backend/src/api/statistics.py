@@ -142,9 +142,28 @@ async def get_publication_by_nomenclature(
 @router.get("/publication-by-years")
 async def get_publication_by_years(
     statistics_service: Annotated[StatisticsService, Depends(statistics_service)],
-    limit: int = 20
+    limit: int = 30
 ) -> ResponseStatDTO:
 
     statistics = await statistics_service.get_publication_by_years(limit)
     
     return statistics
+
+@router.get("/publication-by-districts")
+async def get_publication_by_districts(
+    statistics_service: Annotated[StatisticsService, Depends(statistics_service)],
+    startDate: Union[str, None] = None,
+    endDate: Union[str, None] = None,
+) -> ResponseStatDTO:
+    try:
+        startDate, endDate = check_dates(startDate, endDate)
+            
+        parameters = RequestBodySchema(
+            start_date=startDate, end_date=endDate
+        )
+    except ValueError as e:
+        raise DateValidationError(e)
+    else:
+        statistics = await statistics_service.get_publication_by_districts(parameters)
+        
+        return statistics

@@ -45,13 +45,16 @@ CREATE_DOCUMENT_TABLE = """
         """
 
 CREATE_DISTRICT_TABLE = """
+        DROP TABLE  IF EXISTS district CASCADE;
         CREATE TABLE IF NOT EXISTS district (
         id INT PRIMARY KEY,
-        name VARCHAR(50)
+        name VARCHAR(64),
+        full_name VARCHAR(64),
+        short_name VARCHAR(64),
         )
         """
 
-INSERT_DISTRICTS = """INSERT INTO DISTRICT (id, name) VALUES """
+INSERT_DISTRICTS = """INSERT INTO DISTRICT (id, full_name, name, short_name) VALUES """
 
 CREATE_ALL_INDEX = """CREATE INDEX IF NOT EXISTS document_id_idx ON document (id);
                     CREATE INDEX IF NOT EXISTS document_id_reg_idx ON document (id_reg);
@@ -85,7 +88,7 @@ def insert_district_table():
             try:
                 values = get_districts_data()
                 args = ",".join(
-                    cursor.mogrify("(%s, %s)", (row["id"], row["name"])).decode("utf-8")
+                    cursor.mogrify("(%s, %s, %s, %s)", (row["id"], row["full_name"], row["name"], row["short_name"])).decode("utf-8")
                     for row in values
                 )
                 cursor.execute(

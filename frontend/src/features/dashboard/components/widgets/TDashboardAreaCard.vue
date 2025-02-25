@@ -81,8 +81,6 @@
 		justify-content: center;
 		align-items: center;
 		font-size: 20px;
-		margin-top: 10px;
-		margin-bottom: 10px;
 	}
 	.chart-wrap {
 		height: 350px;

@@ -49,6 +49,10 @@ class AbstractRepository(ABC):
     @abstractmethod
     async def get_publication_by_years(limit: int):
         raise NotImplementedError
+    
+    @abstractmethod
+    async def get_publication_by_districts(parameters: RequestBodySchema):
+        raise NotImplementedError
 
 
 class SQLAlchemyRepository(AbstractRepository):
@@ -279,6 +283,25 @@ class SQLAlchemyRepository(AbstractRepository):
                 .where(self.document.view_date >= func.current_date() - text(f"INTERVAL '{limit} years'"))
                 .group_by(year_expr)
                 .order_by('name')
+            )
+
+            print(query)
+            res = await session.execute(query)
+            
+            return res.all()
+    async def get_publication_by_districts(self, parameters: RequestBodySchema):
+         async with async_session_maker() as session:
+           
+            query = (
+                select(
+                    self.district.name.label('name'),
+                    func.count(self.document.id).label('count')
+                )
+                .select_from(self.document)  # Указываем начальную таблицу
+                .join(self.region, self.document.id_reg == self.region.id)  # Присоединяем Region
+                .join(self.district, self.region.id_dist == self.district.id)  # Присоединяем District
+                .group_by(self.district.name)  # Группируем по имени округа
+                .order_by(self.district.name.asc())  # Сортируем по имени
             )
 
             print(query)

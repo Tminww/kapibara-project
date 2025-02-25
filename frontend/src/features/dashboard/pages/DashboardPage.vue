@@ -5,7 +5,6 @@
 				<t-dashboard-area-card
 					:isLoading="isFirstAreaLoading"
 					title="Опубликование всех нормативных правовых актов по годам"
-					subtitle="За год"
 				>
 					<template #chart>
 						<t-icon
@@ -19,9 +18,11 @@
 							:labels="firstAreaLabels"
 							:series="firstAreaSeries"
 							:height="350"
+							:enable-logarithmic="false"
+							:y-start-value="0"
 						/>
 					</template>
-					<template #previous>
+					<!-- <template #previous>
 						<v-btn
 							color="primary"
 							:loading="isFirstAreaPreviousLoading"
@@ -42,8 +43,8 @@
 					<template #interval v-if="!isThirdAreaLoading">
 						{{ firstAreaYear.startDate }} -
 						{{ firstAreaYear.endDate }}
-					</template>
-					<template #error> {{ thirdAreaError }}</template>
+					</template> -->
+					<template #error> {{ firstAreaError }}</template>
 				</t-dashboard-area-card>
 			</v-container>
 		</v-col>
@@ -51,8 +52,7 @@
 			<v-container>
 				<t-dashboard-area-card
 					:isLoading="isSecondAreaLoading"
-					title="Статистика опубликования всех нормативных правовых актов"
-					subtitle="За месяц"
+					title="Опубликование всех типов нормативных правовых актов по месяцам"
 				>
 					<template #chart>
 						<t-skeleton-column-chart
@@ -96,9 +96,9 @@
 			<v-container>
 				<t-dashboard-area-card
 					:isLoading="isThirdAreaLoading"
-					title="Опубликование по Федеральным округам"
+					title="Опубликование за Федеральные округа по кварталам"
 					subtitle="За квартал"
-					:max-width="460"
+					:max-width="650"
 				>
 					<template #chart>
 						<t-skeleton-donut-chart
@@ -355,17 +355,22 @@
 
 	const store = useDashboardStore()
 
+	const firstAreaLabels = computed(() => store.getPublicationByYearsLabels)
+	const firstAreaSeries = computed(() => store.getPublicationByYearsSeries)
 	const {
-		firstAreaLabels,
-		firstAreaSeries,
-		firstAreaError,
-		firstAreaYear,
-		isFirstAreaPreviousLoading,
-		isFirstAreaNextLoading,
-		isFirstAreaLoading,
-		firstAreaPreviousYear,
-		firstAreaNextYear,
-	} = useFirstDashboardArea()
+		error: firstAreaError,
+		currentInterval: firstAreaYear,
+		isPreviousLoading: isFirstAreaPreviousLoading,
+		isNextLoading: isFirstAreaNextLoading,
+		isDataLoading: isFirstAreaLoading,
+		previousInterval: firstAreaPreviousYear,
+		nextInterval: firstAreaNextYear,
+	} = useChartArea({
+		loadData: store.loadPublicationByYears,
+		dropData: store.dropPublicationByYears,
+		getInterval: getLastYear,
+		interval: 'year',
+	})
 
 	const {
 		secondAreaLabels,
@@ -413,7 +418,6 @@
 		getInterval: getLastYear,
 		interval: 'year',
 	})
-	console.log(fourthAreaError)
 
 	const {
 		fifthAreaLabels,

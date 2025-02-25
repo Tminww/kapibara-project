@@ -4,15 +4,16 @@ import { ref, computed } from 'vue'
 import { allDocumentTypes, allOrgans } from '@/mock'
 
 export const useDashboardStore = defineStore('dashboard', () => {
-	const firstAreaStatistics = ref([])
-	const secondAreaStatistics = ref([])
-	const publicationByNomenclature = ref({
+	const emptyResponse = {
 		name: '',
 		count: 0,
 		stat: [], // Пустой массив по умолчанию
 		startDate: null,
 		endDate: null,
-	})
+	}
+	const publicationByYears = ref({ ...emptyResponse })
+	const secondAreaStatistics = ref([])
+	const publicationByNomenclature = ref({ ...emptyResponse })
 	const fifthAreaStatistics = ref([])
 	const sixthAreaStatistics = ref([])
 
@@ -32,8 +33,16 @@ export const useDashboardStore = defineStore('dashboard', () => {
 		}
 	})
 
-	const getFirstAreaDocumentsStatisticsByYear = computed(() => {
-		return firstAreaStatistics.value
+	const getPublicationByYears = computed(() => {
+		return publicationByYears.value.stat
+	})
+
+	const getPublicationByYearsSeries = computed(() => {
+		return publicationByYears.value?.stat?.map(row => row.count)
+	})
+
+	const getPublicationByYearsLabels = computed(() => {
+		return publicationByYears.value?.stat?.map(row => row.name)
 	})
 	const getSecondAreaDocumentsStatisticsByMonth = computed(() => {
 		return secondAreaStatistics.value
@@ -76,14 +85,14 @@ export const useDashboardStore = defineStore('dashboard', () => {
 	const dropStatistics = () => {
 		thirdAreaStatistics.value = {}
 	}
-	const dropFirstAreaDocumentsStatisticsByYear = () => {
-		firstAreaStatistics.value = []
+	const dropPublicationByYears = () => {
+		publicationByYears.value = { ...emptyResponse }
 	}
 	const dropSecondAreaDocumentsStatisticsByMonth = () => {
 		secondAreaStatistics.value = []
 	}
 	const dropPublicationByNomenclature = () => {
-		publicationByNomenclature.value = {}
+		publicationByNomenclature.value = { ...emptyResponse }
 	}
 	const dropFifthAreaDocumentsStatisticsByQuarter = () => {
 		fifthAreaStatistics.value = []
@@ -102,27 +111,14 @@ export const useDashboardStore = defineStore('dashboard', () => {
 		thirdAreaStatistics.value = await apiClient.statistics.read(parameters)
 	}
 	// Обновление статистики через API
-	const loadFirstAreaDocumentsStatisticsByYear = async parameters => {
+	const loadPublicationByYears = async parameters => {
 		try {
-			let allData = await apiClient.statistics.read(parameters)
-			console.log('loadFirstAreaDocumentsStatisticsByYear', allData.stat)
+			let response = await apiClient.publicationByYears.read(parameters)
 
-			allData = allData.stat || [] // Проверяем, что `stat` существует
-
-			let newData = [...allData] // Копируем данные вместо `join`
-
-			// Проверяем и добавляем отсутствующие объекты
-			// allDocumentTypes.forEach(docType => {
-			// 	const exists = newData.some(data => data.name === docType.name)
-			// 	if (!exists) {
-			// 		newData.push({ name: docType.name, count: 0 })
-			// 	}
-			// })
-
-			firstAreaStatistics.value = newData
+			publicationByYears.value = response
 		} catch (error) {
 			console.error('Ошибка при загрузке статистики:', error)
-			dropFirstAreaDocumentsStatisticsByYear()
+			dropPublicationByYears()
 		}
 	}
 	const loadSecondAreaDocumentsStatisticsByMonth = async parameters => {
@@ -209,19 +205,19 @@ export const useDashboardStore = defineStore('dashboard', () => {
 		getAllStatistics,
 		getStatistics,
 		getDistricts,
-		getFirstAreaDocumentsStatisticsByYear,
+		getPublicationByYears,
 		getSecondAreaDocumentsStatisticsByMonth,
 		getPublicationByNomenclature,
 		getFifthAreaDocumentsStatisticsByQuarter,
 		getSixthAreaDocumentsStatisticsByQuarter,
 
-		dropFirstAreaDocumentsStatisticsByYear,
+		dropPublicationByYears,
 		dropSecondAreaDocumentsStatisticsByMonth,
 		dropPublicationByNomenclature,
 		dropFifthAreaDocumentsStatisticsByQuarter,
 		dropSixthAreaDocumentsStatisticsByQuarter,
 
-		loadFirstAreaDocumentsStatisticsByYear,
+		loadPublicationByYears,
 		loadSecondAreaDocumentsStatisticsByMonth,
 		loadPublicationByNomenclature,
 		loadFifthAreaDocumentsStatisticsByQuarter,
@@ -234,5 +230,8 @@ export const useDashboardStore = defineStore('dashboard', () => {
 
 		getPublicationByNomenclatureSeries,
 		getPublicationByNomenclatureLabels,
+
+		getPublicationByYearsSeries,
+		getPublicationByYearsLabels,
 	}
 })
