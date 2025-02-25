@@ -1,3 +1,6 @@
+from sqlalchemy import Row
+from typing import Sequence
+
 from schemas.statistics import (
     RequestBodySchema,
     StatAllDTO,
@@ -27,9 +30,10 @@ class StatisticsService:
         self.statistics_repo: AbstractRepository = statistics_repo()
 
     async def get_publication_by_nomenclature(self, parameters: RequestBodySchema):
-        stat = await self.statistics_repo.get_publication_by_nomenclature(parameters)
-        stat.
-        return stat
+        rows: Sequence[Row]  = await self.statistics_repo.get_publication_by_nomenclature(parameters)
+        result_dict = [{'name': row.name, 'count': row.count} for row in rows]
+        
+        return result_dict
     
     async def get_subjects_stat(self, parameters: RequestBodySchema):
         stat_all = await self.statistics_repo.get_stat_all(parameters)

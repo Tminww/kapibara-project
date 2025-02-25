@@ -262,7 +262,7 @@ class SQLAlchemyRepository(AbstractRepository):
             print(query)
             res = await session.execute(query)
             
-            result_dict = [{'name': row.name, 'count': row.count} for row in res.all()]
+          
             
-            return result_dict
+            return res.all()
 
