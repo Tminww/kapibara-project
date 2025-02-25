@@ -273,11 +273,11 @@ class SQLAlchemyRepository(AbstractRepository):
 
             query = (
                 select(
-                    func.date_part('year', 'view_date').label('name'),
+                    func.date_part('year', self.document.view_date).label('name'),
                     func.count().label('count')
                 )
                 .where(self.document.view_date >= func.current_date() - text(f"INTERVAL '{limit} years'"))
-                .group_by(func.date_part('year', 'view_date'))
+                .group_by(func.date_part('year', self.document.view_date))
                 .order_by('name')
             )
 
