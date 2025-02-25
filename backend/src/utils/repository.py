@@ -270,14 +270,14 @@ class SQLAlchemyRepository(AbstractRepository):
     async def get_publication_by_years(self, limit: int):
         async with async_session_maker() as session:
            
-
+            year_expr = func.date_part('year', self.document.view_date).label('name')
             query = (
                 select(
-                    func.date_part('year', self.document.view_date).label('name'),
+                    year_expr,
                     func.count().label('count')
                 )
                 .where(self.document.view_date >= func.current_date() - text(f"INTERVAL '{limit} years'"))
-                .group_by(func.date_part('year', self.document.view_date))
+                .group_by(year_expr)
                 .order_by('name')
             )
 
