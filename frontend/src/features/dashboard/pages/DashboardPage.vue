@@ -234,58 +234,11 @@
 				</t-dashboard-area-card>
 			</v-container>
 		</v-col>
-
-		<v-col cols="6">
-			<v-container>
-				<t-dashboard-area-card
-					:isLoading="isSixthAreaLoading"
-					title="Опубликование по ОГВ субъектов РФ минимальное за квартал"
-				>
-					<template #chart>
-						<t-skeleton-column-chart
-							v-if="isSixthAreaLoading"
-						></t-skeleton-column-chart>
-
-						<t-horizontal-bar-chart
-							:labels="sixthAreaLabels"
-							:series="sixthAreaSeries"
-							:log-base="10"
-							:enable-logarithmic="false"
-							:y-start-value="0"
-							:height="350"
-						/>
-					</template>
-					<template #previous>
-						<v-btn
-							color="primary"
-							:loading="isSixthAreaPreviousLoading"
-							@click="sixthAreaPreviousQuarter"
-						>
-							<v-icon>mdi-arrow-left</v-icon>
-						</v-btn>
-					</template>
-					<template #next
-						><v-btn
-							color="primary"
-							:loading="isSixthAreaNextLoading"
-							@click="sixthAreaNextQuarter"
-						>
-							<v-icon>mdi-arrow-right</v-icon>
-						</v-btn>
-					</template>
-					<template #interval v-if="!isSixthAreaLoading">
-						{{ sixthAreaQuarter.startDate }} -
-						{{ sixthAreaQuarter.endDate }}
-					</template>
-					<template #error> {{ sixthAreaError }}</template>
-				</t-dashboard-area-card>
-			</v-container>
-		</v-col>
 		<v-col cols="6">
 			<v-container>
 				<t-dashboard-area-card
 					:isLoading="isFifthAreaLoading"
-					title="Опубликование по ОГВ субъектов РФ максимальное за квартал"
+					title="Опубликование по ОГВ субъектов РФ минимальное за квартал"
 				>
 					<template #chart>
 						<!-- <t-column-chart
@@ -328,6 +281,52 @@
 						{{ fifthAreaQuarter.endDate }}
 					</template>
 					<template #error> {{ fifthAreaError }}</template>
+				</t-dashboard-area-card>
+			</v-container>
+		</v-col>
+		<v-col cols="6">
+			<v-container>
+				<t-dashboard-area-card
+					:isLoading="isSixthAreaLoading"
+					title="Опубликование по ОГВ субъектов РФ максимальное за квартал"
+				>
+					<template #chart>
+						<t-skeleton-column-chart
+							v-if="isSixthAreaLoading"
+						></t-skeleton-column-chart>
+
+						<t-horizontal-bar-chart
+							:labels="sixthAreaLabels"
+							:series="sixthAreaSeries"
+							:log-base="10"
+							:enable-logarithmic="false"
+							:y-start-value="0"
+							:height="350"
+						/>
+					</template>
+					<template #previous>
+						<v-btn
+							color="primary"
+							:loading="isSixthAreaPreviousLoading"
+							@click="sixthAreaPreviousQuarter"
+						>
+							<v-icon>mdi-arrow-left</v-icon>
+						</v-btn>
+					</template>
+					<template #next
+						><v-btn
+							color="primary"
+							:loading="isSixthAreaNextLoading"
+							@click="sixthAreaNextQuarter"
+						>
+							<v-icon>mdi-arrow-right</v-icon>
+						</v-btn>
+					</template>
+					<template #interval v-if="!isSixthAreaLoading">
+						{{ sixthAreaQuarter.startDate }} -
+						{{ sixthAreaQuarter.endDate }}
+					</template>
+					<template #error> {{ sixthAreaError }}</template>
 				</t-dashboard-area-card>
 			</v-container>
 		</v-col>
@@ -432,30 +431,46 @@
 		interval: 'year',
 	})
 
+	const fifthAreaLabels = computed(
+		() => store.getPublicationByRegionsMinLabels,
+	)
+	const fifthAreaSeries = computed(
+		() => store.getPublicationByRegionsMinSeries,
+	)
 	const {
-		fifthAreaLabels,
-		fifthAreaSeries,
-		fifthAreaError,
-		fifthAreaDate,
-		fifthAreaQuarter,
-		isFifthAreaPreviousLoading,
-		isFifthAreaNextLoading,
-		isFifthAreaLoading,
-		fifthAreaPreviousQuarter,
-		fifthAreaNextQuarter,
-	} = useFifthDashboardArea()
+		error: fifthAreaError,
+		currentInterval: fifthAreaQuarter,
+		isPreviousLoading: isFifthAreaPreviousLoading,
+		isNextLoading: isFifthAreaNextLoading,
+		isDataLoading: isFifthAreaLoading,
+		previousInterval: fifthAreaPreviousQuarter,
+		nextInterval: fifthAreaNextQuarter,
+	} = useChartArea({
+		loadData: store.loadPublicationByRegionsMin,
+		dropData: store.dropPublicationByRegionsMin,
+		getInterval: getLastQuarter,
+		interval: 'quarter',
+	})
+	const sixthAreaLabels = computed(
+		() => store.getPublicationByRegionsMaxLabels,
+	)
+	const sixthAreaSeries = computed(
+		() => store.getPublicationByRegionsMaxSeries,
+	)
 	const {
-		sixthAreaLabels,
-		sixthAreaSeries,
-		sixthAreaError,
-		sixthAreaDate,
-		sixthAreaQuarter,
-		isSixthAreaPreviousLoading,
-		isSixthAreaNextLoading,
-		isSixthAreaLoading,
-		sixthAreaPreviousQuarter,
-		sixthAreaNextQuarter,
-	} = useSixthDashboardArea()
+		error: sixthAreaError,
+		currentInterval: sixthAreaQuarter,
+		isPreviousLoading: isSixthAreaPreviousLoading,
+		isNextLoading: isSixthAreaNextLoading,
+		isDataLoading: isSixthAreaLoading,
+		previousInterval: sixthAreaPreviousQuarter,
+		nextInterval: sixthAreaNextQuarter,
+	} = useChartArea({
+		loadData: store.loadPublicationByRegionsMax,
+		dropData: store.dropPublicationByRegionsMax,
+		getInterval: getLastQuarter,
+		interval: 'quarter',
+	})
 </script>
 
 <style scoped></style>

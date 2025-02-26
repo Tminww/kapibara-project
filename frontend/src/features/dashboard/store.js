@@ -14,8 +14,8 @@ export const useDashboardStore = defineStore('dashboard', () => {
 	const publicationByYears = ref({ ...emptyResponse })
 	const secondAreaStatistics = ref([])
 	const publicationByNomenclature = ref({ ...emptyResponse })
-	const fifthAreaStatistics = ref([])
-	const sixthAreaStatistics = ref([])
+	const publicationByRegionsMin = ref({ ...emptyResponse })
+	const publicationByRegionsMax = ref({ ...emptyResponse })
 
 	const publicationByDistricts = ref({ ...emptyResponse })
 
@@ -57,11 +57,27 @@ export const useDashboardStore = defineStore('dashboard', () => {
 		return publicationByNomenclature.value?.stat?.map(row => row.name)
 	})
 
-	const getFifthAreaDocumentsStatisticsByQuarter = computed(() => {
-		return fifthAreaStatistics.value
+	const getPublicationByRegionsMin = computed(() => {
+		return publicationByRegionsMin.value.stat
 	})
-	const getSixthAreaDocumentsStatisticsByQuarter = computed(() => {
-		return sixthAreaStatistics.value
+
+	const getPublicationByRegionsMinSeries = computed(() => {
+		return publicationByRegionsMin.value?.stat?.map(row => row.count)
+	})
+
+	const getPublicationByRegionsMinLabels = computed(() => {
+		return publicationByRegionsMin.value?.stat?.map(row => row.name)
+	})
+	const getPublicationByRegionsMax = computed(() => {
+		return publicationByRegionsMax.value.stat
+	})
+
+	const getPublicationByRegionsMaxSeries = computed(() => {
+		return publicationByRegionsMax.value?.stat?.map(row => row.count)
+	})
+
+	const getPublicationByRegionsMaxLabels = computed(() => {
+		return publicationByRegionsMax.value?.stat?.map(row => row.name)
 	})
 
 	const dropPublicationByYears = () => {
@@ -77,11 +93,11 @@ export const useDashboardStore = defineStore('dashboard', () => {
 	const dropPublicationByNomenclature = () => {
 		publicationByNomenclature.value = { ...emptyResponse }
 	}
-	const dropFifthAreaDocumentsStatisticsByQuarter = () => {
-		fifthAreaStatistics.value = []
+	const dropPublicationByRegionsMin = () => {
+		publicationByRegionsMin.value = { ...emptyResponse }
 	}
-	const dropSixthAreaDocumentsStatisticsByQuarter = () => {
-		sixthAreaStatistics.value = []
+	const dropPublicationByRegionsMax = () => {
+		publicationByRegionsMax.value = { ...emptyResponse }
 	}
 
 	// Обновление статистики через API
@@ -144,75 +160,64 @@ export const useDashboardStore = defineStore('dashboard', () => {
 			dropPublicationByNomenclature()
 		}
 	}
-	const loadFifthAreaDocumentsStatisticsByQuarter = async parameters => {
+	const loadPublicationByRegionsMin = async parameters => {
 		try {
-			const { districts } = await apiClient.statistics.read(parameters)
-			console.log('loadFifthAreaDocumentsStatisticsByQuarter', districts)
+			parameters.sort = 'min'
+			parameters.limit = 10
 
-			// Используем flatMap для упрощения сбора данных
-			fifthAreaStatistics.value = districts
-				.flatMap(district =>
-					district.regions.map(region => ({
-						name: region.name,
-						count: region.count,
-					})),
-				)
-				.sort((a, b) => b.count - a.count) // Сортировка по убыванию
-				.slice(0, 10)
-				.sort((a, b) => a.count - b.count) // Обрезаем до 10 элементов
+			let response = await apiClient.publicationByRegions.read(parameters)
+
+			publicationByRegionsMin.value = response
 		} catch (error) {
 			console.error('Ошибка при загрузке статистики:', error)
-			dropFifthAreaDocumentsStatisticsByQuarter()
+			dropPublicationByRegionsMin()
 		}
 	}
-	const loadSixthAreaDocumentsStatisticsByQuarter = async parameters => {
+	const loadPublicationByRegionsMax = async parameters => {
 		try {
-			const { districts } = await apiClient.statistics.read(parameters)
-			console.log('loadSixthAreaDocumentsStatisticsByQuarter', districts)
+			parameters.sort = 'max'
+			parameters.limit = 10
 
-			// Используем flatMap для упрощения сбора данных
-			sixthAreaStatistics.value = districts
-				.flatMap(district =>
-					district.regions.map(region => ({
-						name: region.name,
-						count: region.count,
-					})),
-				)
-				.sort((a, b) => a.count - b.count) // Сортировка по убыванию
-				.slice(0, 10) // Обрезаем до 10 элементов
+			let response = await apiClient.publicationByRegions.read(parameters)
+
+			publicationByRegionsMax.value = response
 		} catch (error) {
 			console.error('Ошибка при загрузке статистики:', error)
-			dropSixthAreaDocumentsStatisticsByQuarter()
+			dropPublicationByRegionsMax()
 		}
 	}
 	return {
 		getPublicationByYears,
 		getSecondAreaDocumentsStatisticsByMonth,
 		getPublicationByNomenclature,
-		getFifthAreaDocumentsStatisticsByQuarter,
-		getSixthAreaDocumentsStatisticsByQuarter,
+		getPublicationByRegionsMin,
+		getPublicationByRegionsMax,
 		getPublicationByDistricts,
 
 		dropPublicationByYears,
 		dropSecondAreaDocumentsStatisticsByMonth,
 		dropPublicationByNomenclature,
-		dropFifthAreaDocumentsStatisticsByQuarter,
-		dropSixthAreaDocumentsStatisticsByQuarter,
+		dropPublicationByRegionsMin,
+		dropPublicationByRegionsMax,
 		dropPublicationByDistricts,
 
 		loadPublicationByYears,
 		loadSecondAreaDocumentsStatisticsByMonth,
 		loadPublicationByNomenclature,
-		loadFifthAreaDocumentsStatisticsByQuarter,
-		loadSixthAreaDocumentsStatisticsByQuarter,
+		loadPublicationByRegionsMin,
+		loadPublicationByRegionsMax,
 		loadPublicationByDistricts,
 
 		getPublicationByNomenclatureSeries,
 		getPublicationByYearsSeries,
 		getPublicationByDistrictsSeries,
+		getPublicationByRegionsMinSeries,
+		getPublicationByRegionsMaxSeries,
 
 		getPublicationByNomenclatureLabels,
 		getPublicationByYearsLabels,
 		getPublicationByDistrictsLabels,
+		getPublicationByRegionsMinLabels,
+		getPublicationByRegionsMaxLabels,
 	}
 })
