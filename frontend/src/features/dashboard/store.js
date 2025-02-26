@@ -158,7 +158,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
 					})),
 				)
 				.sort((a, b) => b.count - a.count) // Сортировка по убыванию
-				.slice(0, 15)
+				.slice(0, 10)
 				.sort((a, b) => a.count - b.count) // Обрезаем до 10 элементов
 		} catch (error) {
 			console.error('Ошибка при загрузке статистики:', error)
@@ -179,7 +179,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
 					})),
 				)
 				.sort((a, b) => a.count - b.count) // Сортировка по убыванию
-				.slice(0, 15) // Обрезаем до 10 элементов
+				.slice(0, 10) // Обрезаем до 10 элементов
 		} catch (error) {
 			console.error('Ошибка при загрузке статистики:', error)
 			dropSixthAreaDocumentsStatisticsByQuarter()

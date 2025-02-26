@@ -7,8 +7,8 @@ from models.document import DocumentEntity
 from models.region import RegionEntity
 
 from schemas.subjects import RegionInfoDTO, RegionsInDistrictDTO    
-from schemas.statistics import StatRowSchema, StatBaseDTO, RequestBodySchema
-from sqlalchemy import insert, select, func, text, and_, or_, case
+from schemas.statistics import RequestMaxMinBodySchema, StatRowSchema, StatBaseDTO, RequestBodySchema
+from sqlalchemy import asc, desc, insert, select, func, text, and_, or_, case
 from database.setup import async_session_maker
 from errors import ResultIsEmptyError
 
@@ -54,7 +54,10 @@ class AbstractRepository(ABC):
     async def get_publication_by_districts(parameters: RequestBodySchema):
         raise NotImplementedError
 
-
+    @abstractmethod
+    async def get_publication_by_regions(parameters: RequestBodySchema):
+        raise NotImplementedError
+    
 class SQLAlchemyRepository(AbstractRepository):
     document: DocumentEntity = None
     region: RegionEntity = None
@@ -290,10 +293,10 @@ class SQLAlchemyRepository(AbstractRepository):
             
             return res.all()
     async def get_publication_by_districts(self, parameters: RequestBodySchema):
-         async with async_session_maker() as session:
+        async with async_session_maker() as session:
             start_date = datetime.strptime(parameters.start_date, "%Y-%m-%d") if parameters.start_date is not None else None
             end_date = datetime.strptime(parameters.end_date, "%Y-%m-%d") if parameters.end_date is not None else None
-           
+            
             query = (
                 select(
                     self.district.name.label('name'),
@@ -314,6 +317,40 @@ class SQLAlchemyRepository(AbstractRepository):
                     )
             query = query.filter(date_filter)
             
+            print(query)
+            res = await session.execute(query)
+            
+            return res.all()
+    
+    async def get_publication_by_regions(self, parameters: RequestMaxMinBodySchema):
+        async with async_session_maker() as session:
+            start_date = datetime.strptime(parameters.start_date, "%Y-%m-%d") if parameters.start_date is not None else None
+            end_date = datetime.strptime(parameters.end_date, "%Y-%m-%d") if parameters.end_date is not None else None
+           
+            order_func = asc if parameters.sort == 'max' else desc
+
+            query = (
+                select(
+                    self.region.name.label('name'),  # Выбираем имя региона
+                    func.count(self.document.id).label('count')  # Подсчитываем документы
+                )
+                .select_from(self.region)  # Начинаем с таблицы region
+                .outerjoin(
+                    self.document, 
+                    (self.document.id_reg == self.region.id)  
+             
+                )
+                .where(self.region.code.like('region%'))  # Фильтр по code
+                .group_by(self.region.name)  # Группировка по имени региона
+                .order_by(order_func(func.count(self.document.id)))  # Сортировка по количеству документов
+                .limit(parameters.limit)  # Ограничение до 10 строк
+            )
+            date_filter = (
+                        start_date is None
+                        and end_date is None
+                        or self.document.view_date.between(start_date, end_date)
+                    )
+            query = query.filter(date_filter)         
             print(query)
             res = await session.execute(query)
             

@@ -92,7 +92,7 @@ export const createDonutChartConfig = ({
 							show: true,
 							name: {
 								show: true,
-								fontSize: '20px',
+								fontSize: '10px',
 								fontWeight: 600,
 								color: '#000',
 								offsetY: 0,
@@ -114,7 +114,7 @@ export const createDonutChartConfig = ({
 								show: true,
 								showAlways: false,
 								label: 'ВСЕГО',
-								fontSize: '20px',
+								fontSize: '14px',
 								fontWeight: 600,
 								color: '#373d3f',
 								formatter: function (w) {

@@ -19,6 +19,7 @@
 							:series="firstAreaSeries"
 							:height="350"
 							:enable-logarithmic="false"
+							:log-base="10"
 							:y-start-value="0"
 						/>
 					</template>
@@ -149,13 +150,18 @@
 						<t-skeleton-donut-chart
 							v-if="isFourthAreaLoading"
 						></t-skeleton-donut-chart>
-
-						<t-donut-chart
+						<t-column-chart
 							v-else
 							:labels="fourthAreaLabels"
 							:series="fourthAreaSeries"
 							:height="350"
 						/>
+						<!-- <t-donut-chart
+							v-else
+							:labels="fourthAreaLabels"
+							:series="fourthAreaSeries"
+							:height="350"
+						/> -->
 					</template>
 					<template #previous>
 						<v-btn
@@ -233,22 +239,20 @@
 			<v-container>
 				<t-dashboard-area-card
 					:isLoading="isSixthAreaLoading"
-					title="Статистика субъектов РФ"
-					subtitle="Минимальное за квартал"
+					title="Опубликование по ОГВ субъектов РФ минимальное за квартал"
 				>
 					<template #chart>
 						<t-skeleton-column-chart
 							v-if="isSixthAreaLoading"
 						></t-skeleton-column-chart>
 
-						<t-column-chart
-							v-else
+						<t-horizontal-bar-chart
 							:labels="sixthAreaLabels"
 							:series="sixthAreaSeries"
 							:log-base="10"
 							:enable-logarithmic="false"
 							:y-start-value="0"
-							:height="400"
+							:height="350"
 						/>
 					</template>
 					<template #previous>
@@ -281,22 +285,24 @@
 			<v-container>
 				<t-dashboard-area-card
 					:isLoading="isFifthAreaLoading"
-					title="Статистика субъектов РФ"
-					subtitle="Максимальное за квартал"
+					title="Опубликование по ОГВ субъектов РФ максимальное за квартал"
 				>
 					<template #chart>
-						<t-skeleton-column-chart
-							v-if="isFifthAreaLoading"
-						></t-skeleton-column-chart>
-
-						<t-column-chart
-							v-else
+						<!-- <t-column-chart
 							:labels="fifthAreaLabels"
 							:series="fifthAreaSeries"
 							:log-base="10"
 							:enable-logarithmic="false"
 							:y-start-value="0"
 							:height="400"
+						/> -->
+						<t-horizontal-bar-chart
+							:labels="fifthAreaLabels"
+							:series="fifthAreaSeries"
+							:log-base="10"
+							:enable-logarithmic="false"
+							:y-start-value="0"
+							:height="350"
 						/>
 					</template>
 					<template #previous>
@@ -333,6 +339,7 @@
 	import {
 		TDashboardAreaCard,
 		TDonutChart,
+		THorizontalBarChart,
 		TSkeletonDonutChart,
 		TColumnChart,
 		TSkeletonColumnChart,

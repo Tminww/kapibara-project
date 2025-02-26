@@ -1,10 +1,10 @@
 from datetime import datetime
-from typing import Annotated, Union, Optional, List
+from typing import Annotated, Literal, Union, Optional, List
 from fastapi import APIRouter, Depends, Query, HTTPException
 from pydantic import ValidationError
 
 from api.dependencies import statistics_service
-from schemas.statistics import DistrictsStatDTO, RequestBodySchema, ResponseStatDTO
+from schemas.statistics import DistrictsStatDTO, RequestBodySchema, RequestMaxMinBodySchema, ResponseStatDTO
 from services.statistics import StatisticsService
 from errors import DateValidationError, ResultIsEmptyError
 
@@ -165,5 +165,26 @@ async def get_publication_by_districts(
         raise DateValidationError(e)
     else:
         statistics = await statistics_service.get_publication_by_districts(parameters)
+        
+        return statistics
+    
+@router.get("/publication-by-regions")
+async def get_publication_by_regions(
+    statistics_service: Annotated[StatisticsService, Depends(statistics_service)],
+    startDate: Union[str, None] = None,
+    endDate: Union[str, None] = None,
+    limit: int = 10,
+    sort: Literal['max', 'min'] = 'max'  
+) -> ResponseStatDTO:
+    try:
+        startDate, endDate = check_dates(startDate, endDate)
+            
+        parameters = RequestMaxMinBodySchema(
+            start_date=startDate, end_date=endDate, limit=limit, sort=sort
+        )
+    except ValueError as e:
+        raise DateValidationError(e)
+    else:
+        statistics = await statistics_service.get_publication_by_regions(parameters)
         
         return statistics

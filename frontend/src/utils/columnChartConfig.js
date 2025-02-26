@@ -111,6 +111,7 @@ export const createColumnChartConfig = ({
 				},
 				labels: {
 					show: true,
+					hideOverlappingLabels: true,
 					trim: true,
 					style: {
 						fontSize: 12,

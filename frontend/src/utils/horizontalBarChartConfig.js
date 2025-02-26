@@ -1,137 +1,214 @@
-export const createHorizontalBarChartConfig = ({ series, labels }) => {
-	const data = series.map((item, index) => {
-		return {
-			y: labels[index],
-			x: item,
-		}
-	})
-	console.log(data)
+export const createHorizontalBarChartConfig = ({
+	series,
+	labels,
+	logBase,
+	enableLogarithmic,
+	yStartValue,
+	tickAmount,
+}) => {
 	return {
-		series: [{ name: 'Документов', data: series }],
+		series: [
+			{
+				name: 'Количество',
+				data: series,
+			},
+		],
 		chartOptions: {
 			chart: {
 				animations: {
 					enabled: true,
+					speed: 1000,
+					animateGradually: {
+						enabled: true,
+						delay: 1000,
+					},
+					dynamicAnimation: {
+						enabled: true,
+						speed: 1000,
+					},
 				},
-				background: '#fff',
-				height: '100%',
-				id: 'Колличество_нормативных_правовых_актов_в_каждомокруге',
-				stacked: true,
-				toolbar: {
-					show: true,
-				},
+				id: 'column',
 				type: 'bar',
 				width: '100%',
-			},
-			plotOptions: {
-				xaxis: {
-					categories: labels,
-				},
-
-				bar: {
-					horizontal: true,
-					borderRadius: 10,
-					borderRadiusApplication: 'end',
-					borderRadiusWhenStacked: 'last',
-					// hideZeroBarsWhenGrouped: false,
-					isDumbbell: false,
-					isFunnel: false,
-					isFunnel3d: true,
-					dataLabels: {
-						total: {
-							enabled: true,
-							offsetX: -50,
-							offsetY: 0,
-							style: {
-								color: '#ffffff',
-								fontSize: '12px',
-								fontWeight: 600,
-							},
+				background: '#fff',
+				height: 150,
+				redrawOnParentResize: false,
+				zoom: {
+					enabled: false,
+					type: 'x',
+					autoScaleYaxis: true,
+					allowMouseWheelZoom: false,
+					zoomedArea: {
+						fill: {
+							color: '#90CAF9',
+							opacity: 0.4,
+						},
+						stroke: {
+							color: '#0D47A1',
+							opacity: 0.4,
+							width: 1,
 						},
 					},
 				},
 			},
-			dataLabels: {
-				enabled: false,
-			},
-			fill: {
-				opacity: 1,
-			},
-			grid: {
-				padding: {
-					right: 25,
-					left: 15,
-				},
-			},
-			legend: {
-				enabled: true,
-				fontSize: 14,
-				offsetY: 0,
-				clusterGroupedSeries: true,
-				clusterGroupedSeriesOrientation: 'vertical',
-				markers: {
-					size: 7,
-					shape: 'square',
-				},
-				itemMargin: {
-					vertical: 0,
-				},
-			},
-			markers: {},
-
-			states: {
-				hover: {
-					filter: {},
-				},
-				active: {
-					filter: {},
-				},
-			},
-			stroke: {
-				width: 1,
-				fill: {
-					type: 'solid',
-					opacity: 0.85,
-					gradient: {
-						shade: 'dark',
-						type: 'horizontal',
-						shadeIntensity: 0.5,
-						inverseColors: true,
-						opacityFrom: 1,
-						opacityTo: 1,
-						stops: [0, 50, 100],
-						colorStops: [],
+			plotOptions: {
+				bar: {
+					borderRadius: 10,
+					horizontal: true,
+					columnWidth: '85%',
+					barHeight: '10%', // Столбцы станут ниже
+					dataLabels: {
+						position: 'top', // top, center, bottom
+					},
+					// distributed: true,
+					borderRadiusApplication: 'around',
+					columnWidth: '90%',
+					barHeight: '90%',
+					distributed: false,
+					hideZeroBarsWhenGrouped: false,
+					isDumbbell: false,
+					dumbbellColors: undefined,
+					isFunnel: false,
+					isFunnel3d: false,
+					colors: {
+						ranges: [
+							{
+								from: 0,
+								to: 0,
+								color: undefined,
+							},
+						],
+						backgroundBarColors: [],
+						backgroundBarOpacity: 1,
+						backgroundBarRadius: 0,
 					},
 				},
 			},
-			tooltip: {
-				shared: false,
-				hideEmptySeries: false,
-				intersect: true,
+
+			dataLabels: {
+				enabled: true,
+				formatter: function (val) {
+					return val
+				},
+				offsetX: -20,
+				style: {
+					fontSize: '12px',
+					colors: ['#30475'],
+				},
 			},
+			stroke: {
+				width: 0,
+			},
+
 			xaxis: {
 				categories: labels,
-				labels: {
-					trim: true,
-					style: {},
+				tickAmount: 10,
+				position: 'bottom',
+				axisBorder: {
+					show: false,
 				},
-				group: {
-					groups: [],
+				axisTicks: {
+					show: true,
+				},
+
+				tooltip: {
+					enabled: false,
+				},
+			},
+			yaxis: {
+				show: true,
+				showAlways: false,
+				showForNullSeries: true,
+				seriesName: undefined,
+				opposite: false,
+				reversed: false,
+
+				logarithmic: enableLogarithmic,
+				logBase: logBase,
+				tickAmount: tickAmount,
+				min: yStartValue,
+				max: undefined,
+				stepSize: undefined,
+				forceNiceScale: true,
+				floating: false,
+				decimalsInFloat: undefined,
+				labels: {
+					show: true,
+					showDuplicates: false,
+
 					style: {
 						colors: [],
 						fontSize: '12px',
 						fontWeight: 400,
-						cssClass: '',
+						cssClass: 'apexcharts-yaxis-label',
+					},
+					offsetX: 0,
+					offsetY: 0,
+					rotate: 0,
+					formatter: function (val, index) {
+						return val
 					},
 				},
-				tickPlacement: 'between',
-				title: {
-					style: {
-						fontWeight: 700,
-					},
+				axisBorder: {
+					show: true,
 				},
+
+				axisTicks: {
+					show: true,
+					borderType: 'solid',
+					// color: '#78909C',
+					width: 10,
+					offsetX: 0,
+					offsetY: 0,
+				},
+
 				tooltip: {
 					enabled: false,
+					offsetX: 0,
+				},
+			},
+			legend: {
+				show: false,
+			},
+			grid: {
+				show: true,
+				borderColor: '#e0e0e0',
+				xaxis: {
+					lines: {
+						show: true,
+					},
+				},
+				yaxis: {
+					lines: {
+						show: true,
+					},
+				},
+				row: {
+					opacity: 0.5,
+				},
+				column: {
+					opacity: 0.5,
+				},
+
+				padding: {
+					top: 10,
+					bottom: 0,
+					right: 0,
+					left: 14,
+				},
+			},
+
+			fill: {
+				type: 'gradient',
+				gradient: {
+					shade: 'light',
+					type: 'vertical',
+					shadeIntensity: 0.25,
+					gradientToColors: undefined,
+					inverseColors: true,
+					opacityFrom: 0.85,
+					opacityTo: 0.85,
+					stops: [50, 0, 100],
 				},
 			},
 		},

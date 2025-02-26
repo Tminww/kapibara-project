@@ -1,6 +1,6 @@
 from datetime import date, datetime
 from pydantic import BaseModel, validator
-from typing import Optional
+from typing import Literal, Optional
 from errors import DateValidationError
 
 class ActSchema(BaseModel):
@@ -134,6 +134,7 @@ class StatAllDTO(BaseModel):
         validate_assignment = True
 
 
+
 class RequestBodySchema(BaseModel):
     regions: Optional[list[int]] = None
     start_date: Optional[str] = None
@@ -166,3 +167,7 @@ class RequestBodySchema(BaseModel):
     class Config:
         # from_attributes = True
         validate_assignment = True
+        
+class RequestMaxMinBodySchema(RequestBodySchema):
+    limit: Optional[int] = None
+    sort: Literal['max', 'min'] = 'max'
