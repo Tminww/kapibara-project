@@ -327,7 +327,7 @@ class SQLAlchemyRepository(AbstractRepository):
             start_date = datetime.strptime(parameters.start_date, "%Y-%m-%d") if parameters.start_date is not None else None
             end_date = datetime.strptime(parameters.end_date, "%Y-%m-%d") if parameters.end_date is not None else None
            
-            order_func = asc if parameters.sort == 'max' else desc
+            order_func = desc if parameters.sort == 'max' else asc
 
             query = (
                 select(
@@ -336,21 +336,18 @@ class SQLAlchemyRepository(AbstractRepository):
                 )
                 .select_from(self.region)  # Начинаем с таблицы region
                 .outerjoin(
-                    self.document, 
-                    (self.document.id_reg == self.region.id)  
-             
+                    self.document,
+                    (self.document.id_reg == self.region.id) &
+                    (self.document.view_date.between(start_date, end_date)
+                    if parameters.start_date is not None and parameters.end_date is not None
+                    else True)  # Условие по дате только внутри JOIN
                 )
                 .where(self.region.code.like('region%'))  # Фильтр по code
                 .group_by(self.region.name)  # Группировка по имени региона
                 .order_by(order_func(func.count(self.document.id)))  # Сортировка по количеству документов
                 .limit(parameters.limit)  # Ограничение до 10 строк
             )
-            date_filter = (
-                        start_date is None
-                        and end_date is None
-                        or self.document.view_date.between(start_date, end_date)
-                    )
-            query = query.filter(date_filter)         
+          
             print(query)
             res = await session.execute(query)
             
