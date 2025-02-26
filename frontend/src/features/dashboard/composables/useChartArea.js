@@ -21,15 +21,10 @@ export function useChartArea({
 		)
 	})
 	const currentInterval = computed(() => {
-		console.log('Start')
 		const { startDate, endDate } = getInterval(date.value)
 		const [startYear, startMonth, startDay] = startDate.split('-')
-		console.log('middle', startDate, endDate)
 		const [endYear, endMonth, endDay] = endDate.split('-')
-		console.log('Четвертый', {
-			startDate: `${startDay}.${startMonth}.${startYear}`,
-			endDate: `${endDay}.${endMonth}.${endYear}`,
-		})
+
 		return {
 			startDate: `${startDay}.${startMonth}.${startYear}`,
 			endDate: `${endDay}.${endMonth}.${endYear}`,
@@ -41,7 +36,11 @@ export function useChartArea({
 			error.value = null
 			isPreviousLoading.value = true
 
-			if (interval === 'quarter') {
+			if (interval === 'week') {
+				date.value = new Date(
+					date.value.setDate(date.value.getDate() - 7),
+				)
+			} else if (interval === 'quarter') {
 				date.value.setDate(1)
 				date.value = new Date(
 					date.value.setMonth(date.value.getMonth() - 3),
@@ -76,11 +75,17 @@ export function useChartArea({
 		try {
 			error.value = null
 			isNextLoading.value = true
+
 			if (date.value >= new Date()) {
 				toast.warning('Нельзя переходить в будущее')
 				return
 			}
-			if (interval === 'quarter') {
+
+			if (interval === 'week') {
+				date.value = new Date(
+					date.value.setDate(date.value.getDate() + 7),
+				)
+			} else if (interval === 'quarter') {
 				date.value.setDate(1)
 				date.value = new Date(
 					date.value.setMonth(date.value.getMonth() + 3),
@@ -128,7 +133,6 @@ export function useChartArea({
 	}
 
 	onMounted(async () => {
-		console.log('WORK')
 		await loadStatistics()
 	})
 

@@ -9,7 +9,7 @@ const meta = {
 
 export const routes = [
 	{
-		path: '/dashboard',
+		path: '/',
 		name: 'dashboard',
 		component: DashboardPage,
 		meta: {

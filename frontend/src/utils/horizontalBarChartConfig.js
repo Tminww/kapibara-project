@@ -93,7 +93,7 @@ export const createHorizontalBarChartConfig = ({
 				offsetX: -20,
 				style: {
 					fontSize: '12px',
-					colors: ['#30475'],
+					colors: ['#304758'],
 				},
 			},
 			stroke: {

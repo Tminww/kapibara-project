@@ -583,3 +583,41 @@ class SQLAlchemyRepository:
             result = await session.execute(combined_query)
 
             return result.all()
+
+    async def get_publication_by_acts(self, parameters: RequestBodySchema):
+        async with async_session_maker() as session:
+            start_date = (
+                datetime.strptime(parameters.start_date, "%Y-%m-%d")
+                if parameters.start_date is not None
+                else None
+            )
+            end_date = (
+                datetime.strptime(parameters.end_date, "%Y-%m-%d")
+                if parameters.end_date is not None
+                else None
+            )
+
+            query = (
+                select(
+                    ActEntity.name.label("name"),
+                    func.count(DocumentEntity.id).label("count"),
+                )
+                .select_from(ActEntity)
+                .join(
+                    DocumentEntity,
+                    and_(
+                        ActEntity.id == DocumentEntity.id_act,
+                        (
+                            DocumentEntity.view_date.between(start_date, end_date)
+                            if start_date is not None and end_date is not None
+                            else True
+                        ),
+                    ),
+                )
+                .group_by(ActEntity.name)
+            )
+
+            print(query)
+            res = await session.execute(query)
+
+            return res.all()

@@ -9,6 +9,9 @@ const apiClient = {
 	publicationByNomenclature: new StatisticsClient(
 		'statistics/publication-by-nomenclature',
 	),
+	publicationByNomenclatureDetail: new StatisticsClient(
+		'statistics/publication-by-nomenclature-detail',
+	),
 	publicationByYears: new StatisticsClient('statistics/publication-by-years'),
 	publicationByDistricts: new StatisticsClient(
 		'statistics/publication-by-districts',

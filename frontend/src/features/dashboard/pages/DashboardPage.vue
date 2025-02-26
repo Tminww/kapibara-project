@@ -2,7 +2,7 @@
 	<v-row no-gutters
 		><v-col cols="6">
 			<v-container>
-				<t-dashboard-area-card
+				<t-area-card
 					:isLoading="isFirstAreaLoading"
 					title="Опубликование всех нормативных правовых актов по годам"
 				>
@@ -46,22 +46,17 @@
 						{{ firstAreaYear.endDate }}
 					</template> -->
 					<template #error> {{ firstAreaError }}</template>
-				</t-dashboard-area-card>
+				</t-area-card>
 			</v-container>
 		</v-col>
 		<v-col cols="6">
 			<v-container>
-				<t-dashboard-area-card
+				<t-area-card
 					:isLoading="isSecondAreaLoading"
-					title="Опубликование всех типов нормативных правовых актов по месяцам"
+					title="Опубликование всех типов нормативных правовых актов за месяц"
 				>
 					<template #chart>
-						<t-skeleton-column-chart
-							v-if="isSecondAreaLoading"
-						></t-skeleton-column-chart>
-
 						<t-column-chart
-							v-else
 							:labels="secondAreaLabels"
 							:series="secondAreaSeries"
 							:height="350"
@@ -90,23 +85,18 @@
 						{{ secondAreaMonth.endDate }}
 					</template>
 					<template #error> {{ secondAreaError }}</template>
-				</t-dashboard-area-card>
+				</t-area-card>
 			</v-container>
 		</v-col>
 		<v-col cols="4">
 			<v-container>
-				<t-dashboard-area-card
+				<t-area-card
 					:isLoading="isThirdAreaLoading"
-					title="Опубликование по Федеральным округам по кварталам"
+					title="Опубликование по Федеральным округам за квартал"
 					:max-width="650"
 				>
 					<template #chart>
-						<t-skeleton-donut-chart
-							v-if="isThirdAreaLoading"
-						></t-skeleton-donut-chart>
-
 						<t-donut-chart
-							v-else
 							:labels="thirdAreaLabels"
 							:series="thirdAreaSeries"
 							:is-legend-clickable="true"
@@ -136,22 +126,18 @@
 						{{ thirdAreaQuarter.endDate }}
 					</template>
 					<template #error> {{ thirdAreaError }}</template>
-				</t-dashboard-area-card>
+				</t-area-card>
 			</v-container>
 		</v-col>
 		<v-col cols="4">
 			<v-container>
-				<t-dashboard-area-card
+				<t-area-card
 					:isLoading="isFourthAreaLoading"
-					title="Опубликование по номенклатуре по годам"
+					title="Опубликование по номенклатуре за год"
 					:max-width="650"
 				>
 					<template #chart>
-						<t-skeleton-donut-chart
-							v-if="isFourthAreaLoading"
-						></t-skeleton-donut-chart>
 						<t-column-chart
-							v-else
 							:labels="fourthAreaLabels"
 							:series="fourthAreaSeries"
 							:height="350"
@@ -186,33 +172,28 @@
 						{{ fourthAreaYear.endDate }}
 					</template>
 					<template #error> {{ fourthAreaError }}</template>
-				</t-dashboard-area-card>
+				</t-area-card>
 			</v-container>
 		</v-col>
 		<v-col cols="4">
 			<v-container>
-				<t-dashboard-area-card
-					:isLoading="isFourthAreaLoading"
-					title="Опубликование по Президенту по годам"
+				<t-area-card
+					:isLoading="isNomenclatureDetailLoading"
+					title="Детальное опубликование по номенклатуре за неделю"
 					:max-width="650"
 				>
 					<template #chart>
-						<t-skeleton-donut-chart
-							v-if="isFourthAreaLoading"
-						></t-skeleton-donut-chart>
-
-						<t-donut-chart
-							v-else
-							:labels="fourthAreaLabels"
-							:series="fourthAreaSeries"
+						<t-column-chart
+							:labels="nomenclatureDetailLabels"
+							:series="nomenclatureDetailSeries"
 							:height="350"
 						/>
 					</template>
 					<template #previous>
 						<v-btn
 							color="primary"
-							:loading="isFourthAreaPreviousLoading"
-							@click="fourthAreaPreviousYear"
+							:loading="isNomenclatureDetailPreviousLoading"
+							@click="nomenclatureDetailPrevious"
 						>
 							<v-icon>mdi-arrow-left</v-icon>
 						</v-btn>
@@ -220,23 +201,29 @@
 					<template #next
 						><v-btn
 							color="primary"
-							:loading="isFourthAreaNextLoading"
-							@click="fourthAreaNextYear"
+							:loading="isNomenclatureDetailNextLoading"
+							@click="nomenclatureDetailNext"
 						>
 							<v-icon>mdi-arrow-right</v-icon>
 						</v-btn>
 					</template>
-					<template #interval v-if="!isFourthAreaLoading">
-						{{ fourthAreaYear.startDate }} -
-						{{ fourthAreaYear.endDate }}
+					<template #interval v-if="!isNomenclatureDetailLoading">
+						{{ nomenclatureDetailInterval.startDate }} -
+						{{ nomenclatureDetailInterval.endDate }}
+						<v-btn
+							:loading="isNomenclatureDetailLoading"
+							@click="copyNomenclatureDetail"
+						>
+							<v-icon>mdi-content-copy</v-icon></v-btn
+						>
 					</template>
-					<template #error> {{ fourthAreaError }}</template>
-				</t-dashboard-area-card>
+					<template #error> {{ nomenclatureDetailError }}</template>
+				</t-area-card>
 			</v-container>
 		</v-col>
 		<v-col cols="6">
 			<v-container>
-				<t-dashboard-area-card
+				<t-area-card
 					:isLoading="isFifthAreaLoading"
 					title="Опубликование по ОГВ субъектов РФ минимальное за квартал"
 				>
@@ -281,20 +268,16 @@
 						{{ fifthAreaQuarter.endDate }}
 					</template>
 					<template #error> {{ fifthAreaError }}</template>
-				</t-dashboard-area-card>
+				</t-area-card>
 			</v-container>
 		</v-col>
 		<v-col cols="6">
 			<v-container>
-				<t-dashboard-area-card
+				<t-area-card
 					:isLoading="isSixthAreaLoading"
 					title="Опубликование по ОГВ субъектов РФ максимальное за квартал"
 				>
 					<template #chart>
-						<t-skeleton-column-chart
-							v-if="isSixthAreaLoading"
-						></t-skeleton-column-chart>
-
 						<t-horizontal-bar-chart
 							:labels="sixthAreaLabels"
 							:series="sixthAreaSeries"
@@ -327,7 +310,7 @@
 						{{ sixthAreaQuarter.endDate }}
 					</template>
 					<template #error> {{ sixthAreaError }}</template>
-				</t-dashboard-area-card>
+				</t-area-card>
 			</v-container>
 		</v-col>
 	</v-row>
@@ -336,28 +319,67 @@
 <script setup>
 	import { TIcon } from '@/components/ui'
 	import {
-		TDashboardAreaCard,
+		TAreaCard,
 		TDonutChart,
 		THorizontalBarChart,
-		TSkeletonDonutChart,
 		TColumnChart,
-		TSkeletonColumnChart,
 	} from '../components/widgets'
-	import {
-		useChartArea,
-		useFirstDashboardArea,
-		useSecondDashboardArea,
-		useThirdDashboardArea,
-		useFifthDashboardArea,
-		useSixthDashboardArea,
-	} from '../composables'
+	import { useChartArea, useSecondDashboardArea } from '../composables'
 
 	import { useDashboardStore } from '../store'
-	import { getLastMonth, getLastQuarter, getLastYear } from '@/utils/utils'
+	import {
+		getLastMonth,
+		getLastQuarter,
+		getLastYear,
+		getLastWeek,
+	} from '@/utils/utils'
 	import { computed } from 'vue'
+	import { toast } from 'vue-sonner'
 
 	const store = useDashboardStore()
+	const copyNomenclatureDetail = () => {
+		try {
+			// Начало с общего количества
+			let result = `Всего - ${store.getPublicationByNomenclatureDetailTotal}\n`
 
+			// Маппинг имен из response к требуемым в образце
+			const nameMapping = {
+				'Федеральный конституционный закон':
+					'Федеральные конституционные законы',
+				'Федеральный закон': 'Федеральные законы',
+				'Указ Президента Российской Федерации':
+					'Указы президента Российской Федерации',
+				'Распоряжение Президента Российской Федерации':
+					'Распоряжения президента Российской Федерации',
+				'Постановление Правительства Российской Федерации':
+					'Постановления правительства',
+				'Распоряжение Правительства Российской Федерации':
+					'Распоряжения Правительства',
+				'Конституционный Суд РФ': 'Постановления Конституционного суда',
+				'Международные договоры РФ':
+					'Международные договоры Российской Федерации',
+				'ФОИВ и ФГО РФ':
+					'Нормативные правовые акты федеральных органов исполнительной власти',
+				'ОГВ Субъектов РФ':
+					'Правовые акты субъектов Российской Федерации',
+			}
+
+			// Фильтруем и форматируем строки
+			const formattedStats = store.getPublicationByNomenclatureDetail
+				.filter(item => item.count > 0) // Пропускаем нулевые значения
+				.map(item => {
+					const formattedName = nameMapping[item.name] || item.name // Используем маппинг или оригинальное имя
+					return `${formattedName} – ${item.count}`
+				})
+
+			// Добавляем отфильтрованные строки к результату
+			result += formattedStats.join('\n')
+			navigator.clipboard.writeText(result)
+			toast.success('Успешно скопировано!')
+		} catch (err) {
+			toast.error('Ошибка при копировании!')
+		}
+	}
 	const firstAreaLabels = computed(() => store.getPublicationByYearsLabels)
 	const firstAreaSeries = computed(() => store.getPublicationByYearsSeries)
 	const {
@@ -429,6 +451,27 @@
 		dropData: store.dropPublicationByNomenclature,
 		getInterval: getLastYear,
 		interval: 'year',
+	})
+
+	const nomenclatureDetailLabels = computed(
+		() => store.getPublicationByNomenclatureDetailLabels,
+	)
+	const nomenclatureDetailSeries = computed(
+		() => store.getPublicationByNomenclatureDetailSeries,
+	)
+	const {
+		error: nomenclatureDetailError,
+		currentInterval: nomenclatureDetailInterval,
+		isPreviousLoading: isNomenclatureDetailPreviousLoading,
+		isNextLoading: isNomenclatureDetailNextLoading,
+		isDataLoading: isNomenclatureDetailLoading,
+		previousInterval: nomenclatureDetailPrevious,
+		nextInterval: nomenclatureDetailNext,
+	} = useChartArea({
+		loadData: store.loadPublicationByNomenclatureDetail,
+		dropData: store.dropPublicationByNomenclatureDetail,
+		getInterval: getLastWeek,
+		interval: 'week',
 	})
 
 	const fifthAreaLabels = computed(

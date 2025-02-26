@@ -14,7 +14,7 @@ const meta = {
 const routes = [
 	...dashboardRoutes,
 	{
-		path: '/',
+		path: '/root',
 		name: 'home',
 		component: HomePage,
 		meta: {

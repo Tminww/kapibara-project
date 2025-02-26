@@ -14,6 +14,8 @@ export const useDashboardStore = defineStore('dashboard', () => {
 	const publicationByYears = ref({ ...emptyResponse })
 	const secondAreaStatistics = ref([])
 	const publicationByNomenclature = ref({ ...emptyResponse })
+	const publicationByNomenclatureDetail = ref({ ...emptyResponse })
+
 	const publicationByRegionsMin = ref({ ...emptyResponse })
 	const publicationByRegionsMax = ref({ ...emptyResponse })
 
@@ -57,6 +59,26 @@ export const useDashboardStore = defineStore('dashboard', () => {
 		return publicationByNomenclature.value?.stat?.map(row => row.name)
 	})
 
+	const getPublicationByNomenclatureDetail = computed(() => {
+		return publicationByNomenclatureDetail.value.stat
+	})
+
+	const getPublicationByNomenclatureDetailSeries = computed(() => {
+		return publicationByNomenclatureDetail.value?.stat
+			?.filter(row => row.count !== 0) // Пропускаем строки с count == 0
+			?.map(row => row.count) // Извлекаем только count
+	})
+
+	const getPublicationByNomenclatureDetailLabels = computed(() => {
+		return publicationByNomenclatureDetail.value?.stat
+			?.filter(row => row.count !== 0) // Пропускаем строки с count == 0
+			?.map(row => row.name) // Извлекаем только count
+	})
+
+	const getPublicationByNomenclatureDetailTotal = computed(() => {
+		return publicationByNomenclatureDetail.value?.count
+	})
+
 	const getPublicationByRegionsMin = computed(() => {
 		return publicationByRegionsMin.value.stat
 	})
@@ -93,6 +115,9 @@ export const useDashboardStore = defineStore('dashboard', () => {
 	const dropPublicationByNomenclature = () => {
 		publicationByNomenclature.value = { ...emptyResponse }
 	}
+	const dropPublicationByNomenclatureDetail = () => {
+		publicationByNomenclatureDetail.value = { ...emptyResponse }
+	}
 	const dropPublicationByRegionsMin = () => {
 		publicationByRegionsMin.value = { ...emptyResponse }
 	}
@@ -126,10 +151,6 @@ export const useDashboardStore = defineStore('dashboard', () => {
 	const loadSecondAreaDocumentsStatisticsByMonth = async parameters => {
 		try {
 			let allData = await apiClient.statistics.read(parameters)
-			console.log(
-				'loadSecondAreaDocumentsStatisticsByMonth',
-				allData.stat,
-			)
 
 			allData = allData.stat || [] // Проверяем, что `stat` существует
 
@@ -158,6 +179,17 @@ export const useDashboardStore = defineStore('dashboard', () => {
 		} catch (error) {
 			console.error('Ошибка при загрузке статистики:', error)
 			dropPublicationByNomenclature()
+		}
+	}
+	const loadPublicationByNomenclatureDetail = async parameters => {
+		try {
+			let response =
+				await apiClient.publicationByNomenclatureDetail.read(parameters)
+
+			publicationByNomenclatureDetail.value = response
+		} catch (error) {
+			console.error('Ошибка при загрузке статистики:', error)
+			dropPublicationByNomenclatureDetail()
 		}
 	}
 	const loadPublicationByRegionsMin = async parameters => {
@@ -190,6 +222,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
 		getPublicationByYears,
 		getSecondAreaDocumentsStatisticsByMonth,
 		getPublicationByNomenclature,
+		getPublicationByNomenclatureDetail,
 		getPublicationByRegionsMin,
 		getPublicationByRegionsMax,
 		getPublicationByDistricts,
@@ -197,6 +230,8 @@ export const useDashboardStore = defineStore('dashboard', () => {
 		dropPublicationByYears,
 		dropSecondAreaDocumentsStatisticsByMonth,
 		dropPublicationByNomenclature,
+		dropPublicationByNomenclatureDetail,
+
 		dropPublicationByRegionsMin,
 		dropPublicationByRegionsMax,
 		dropPublicationByDistricts,
@@ -204,20 +239,26 @@ export const useDashboardStore = defineStore('dashboard', () => {
 		loadPublicationByYears,
 		loadSecondAreaDocumentsStatisticsByMonth,
 		loadPublicationByNomenclature,
+		loadPublicationByNomenclatureDetail,
+
 		loadPublicationByRegionsMin,
 		loadPublicationByRegionsMax,
 		loadPublicationByDistricts,
 
 		getPublicationByNomenclatureSeries,
+		getPublicationByNomenclatureDetailSeries,
 		getPublicationByYearsSeries,
 		getPublicationByDistrictsSeries,
 		getPublicationByRegionsMinSeries,
 		getPublicationByRegionsMaxSeries,
 
 		getPublicationByNomenclatureLabels,
+		getPublicationByNomenclatureDetailLabels,
 		getPublicationByYearsLabels,
 		getPublicationByDistrictsLabels,
 		getPublicationByRegionsMinLabels,
 		getPublicationByRegionsMaxLabels,
+
+		getPublicationByNomenclatureDetailTotal,
 	}
 })

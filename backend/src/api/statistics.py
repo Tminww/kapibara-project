@@ -225,3 +225,21 @@ async def get_publication_by_nomenclature_detail(
         )
 
         return statistics
+
+
+@router.get("/publication-by-acts")
+async def get_publication_by_acts(
+    statistics_service: Annotated[StatisticsService, Depends(statistics_service)],
+    startDate: Union[str, None] = None,
+    endDate: Union[str, None] = None,
+) -> ResponseStatDTO:
+    try:
+        startDate, endDate = check_dates(startDate, endDate)
+
+        parameters = RequestBodySchema(start_date=startDate, end_date=endDate)
+    except ValueError as e:
+        raise DateValidationError(e)
+    else:
+        statistics = await statistics_service.get_publication_by_acts(parameters)
+
+        return statistics
