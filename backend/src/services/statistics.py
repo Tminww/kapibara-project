@@ -1,6 +1,7 @@
 from sqlalchemy import Row
 from typing import Sequence
 
+from schemas.subjects import RegionsInDistrictDTO
 from schemas.statistics import (
     RequestBodySchema,
     StatAllDTO,
@@ -12,9 +13,9 @@ from schemas.statistics import (
     StatBaseDTO,
     StatRegionSchema,
     StatRegionsSchema,
-    ResponseStatDTO
+    ResponseStatDTO,
 )
-from utils.repository import AbstractRepository
+from repositories.statistics import SQLAlchemyRepository
 import time
 
 
@@ -27,57 +28,137 @@ def get_count_from_stat(stat: list) -> int:
 
 
 class StatisticsService:
-    def __init__(self, statistics_repo: AbstractRepository):
-        self.statistics_repo: AbstractRepository = statistics_repo()
+    def __init__(self, statistics_repo: SQLAlchemyRepository):
+        self.statistics_repo: SQLAlchemyRepository = statistics_repo()
 
-    
+    async def get_subjects(self):
+        response = []
+        districts = await self.statistics_repo.get_districts()
+        for district in districts:
+            regions = await self.statistics_repo.get_regions_in_district(district.id)
+            response.append(
+                RegionsInDistrictDTO(
+                    name=district.name, id=district.id, regions=regions
+                )
+            )
+
+        print(response)
+        return response
+
+    async def get_publication_by_nomenclature_detail(
+        self, parameters: RequestBodySchema
+    ):
+        rows: Sequence[Row] = (
+            await self.statistics_repo.get_publication_by_nomenclature_detail_president_and_government(
+                parameters
+            )
+        )
+        stat: list[StatBaseDTO] = [
+            StatBaseDTO(name=row.name, count=row.count) for row in rows
+        ]
+
+        start_date: str | None = (
+            parameters.start_date if parameters.start_date is not None else None
+        )
+        end_date: str | None = (
+            parameters.end_date if parameters.end_date is not None else None
+        )
+        count = get_count_from_stat(stat)
+        return ResponseStatDTO(
+            name="Детальное опубликование по номенклатуре",
+            startDate=start_date,
+            endDate=end_date,
+            stat=stat,
+            count=count,
+        )
+
     async def get_publication_by_regions(self, parameters: RequestBodySchema):
-        rows: Sequence[Row]  = await self.statistics_repo.get_publication_by_regions(parameters)
-        stat: list[StatBaseDTO] = [StatBaseDTO(name= row.name, count= row.count) for row in rows]
-        
-        start_date: str | None = parameters.start_date if parameters.start_date is not None else None 
-        end_date: str | None = parameters.end_date if parameters.end_date is not None else None
+        rows: Sequence[Row] = await self.statistics_repo.get_publication_by_regions(
+            parameters
+        )
+        stat: list[StatBaseDTO] = [
+            StatBaseDTO(name=row.name, count=row.count) for row in rows
+        ]
+
+        start_date: str | None = (
+            parameters.start_date if parameters.start_date is not None else None
+        )
+        end_date: str | None = (
+            parameters.end_date if parameters.end_date is not None else None
+        )
         count = get_count_from_stat(stat)
-        return ResponseStatDTO(name="Опубликование по субъектам", startDate=start_date, endDate=end_date, stat=stat, count = count)
-    
-        
+        return ResponseStatDTO(
+            name="Опубликование по субъектам",
+            startDate=start_date,
+            endDate=end_date,
+            stat=stat,
+            count=count,
+        )
+
     async def get_publication_by_districts(self, parameters: RequestBodySchema):
-        rows: Sequence[Row]  = await self.statistics_repo.get_publication_by_districts(parameters)
-        stat: list[StatBaseDTO] = [StatBaseDTO(name= row.name, count= row.count) for row in rows]
-        
-        start_date: str | None = parameters.start_date if parameters.start_date is not None else None 
-        end_date: str | None = parameters.end_date if parameters.end_date is not None else None
+        rows: Sequence[Row] = await self.statistics_repo.get_publication_by_districts(
+            parameters
+        )
+        stat: list[StatBaseDTO] = [
+            StatBaseDTO(name=row.name, count=row.count) for row in rows
+        ]
+
+        start_date: str | None = (
+            parameters.start_date if parameters.start_date is not None else None
+        )
+        end_date: str | None = (
+            parameters.end_date if parameters.end_date is not None else None
+        )
         count = get_count_from_stat(stat)
-        return ResponseStatDTO(name="Опубликование по федеральным округам", startDate=start_date, endDate=end_date, stat=stat, count = count)
-    
-        
+        return ResponseStatDTO(
+            name="Опубликование по федеральным округам",
+            startDate=start_date,
+            endDate=end_date,
+            stat=stat,
+            count=count,
+        )
+
     async def get_publication_by_years(self, limit: int):
-        rows: Sequence[Row]  = await self.statistics_repo.get_publication_by_years(limit)
-        stat: list[StatBaseDTO] = [StatBaseDTO(name= str(int(row.name)), count= row.count) for row in rows]
-        
+        rows: Sequence[Row] = await self.statistics_repo.get_publication_by_years(limit)
+        stat: list[StatBaseDTO] = [
+            StatBaseDTO(name=str(int(row.name)), count=row.count) for row in rows
+        ]
+
         count = get_count_from_stat(stat)
-        return ResponseStatDTO(name="Опубликование по годам", stat=stat, count = count)
-    
-        
+        return ResponseStatDTO(name="Опубликование по годам", stat=stat, count=count)
+
     async def get_publication_by_nomenclature(self, parameters: RequestBodySchema):
-        rows: Sequence[Row]  = await self.statistics_repo.get_publication_by_nomenclature(parameters)
-        stat: list[StatBaseDTO] = [StatBaseDTO(name= row.name, count= row.count) for row in rows]
-        
-        start_date: str | None = parameters.start_date if parameters.start_date is not None else None 
-        end_date: str | None = parameters.end_date if parameters.end_date is not None else None
+        rows: Sequence[Row] = (
+            await self.statistics_repo.get_publication_by_nomenclature(parameters)
+        )
+        stat: list[StatBaseDTO] = [
+            StatBaseDTO(name=row.name, count=row.count) for row in rows
+        ]
+
+        start_date: str | None = (
+            parameters.start_date if parameters.start_date is not None else None
+        )
+        end_date: str | None = (
+            parameters.end_date if parameters.end_date is not None else None
+        )
         count = get_count_from_stat(stat)
-        return ResponseStatDTO(name="Опубликование по номенклатуре", startDate=start_date, endDate=end_date, stat=stat, count = count)
-    
+        return ResponseStatDTO(
+            name="Опубликование по номенклатуре",
+            startDate=start_date,
+            endDate=end_date,
+            stat=stat,
+            count=count,
+        )
+
     async def get_subjects_stat(self, parameters: RequestBodySchema):
         stat_all = await self.statistics_repo.get_stat_all(parameters)
-        
+
         return SubjectsStatDTO(
             name="Вся статистика по субъектам",
             count=get_count_from_stat(stat_all),
             stat=stat_all,
-            
         )
-    
+
     async def get_districts_stat(self, parameters: RequestBodySchema):
         districts = []
 
@@ -91,7 +172,6 @@ class StatisticsService:
                 parameters, district.id
             )
             print(stat_in_district)
-            
 
             districts.append(
                 DistrictStatDTO(
@@ -101,9 +181,9 @@ class StatisticsService:
                     stat=stat_in_district,
                 )
             )
-        
+
         return districts
-    
+
     # async def get_stat_in_region(self, parameters: RequestBodySchema, id_reg):
     #     regions = []
     #     regions_info = await self.statistics_repo.get_definite_regions_in_district(
@@ -123,7 +203,7 @@ class StatisticsService:
     #                 stat=stat_in_region,
     #             )
     #         )
-    
+
     async def get_stat_in_districts(self, parameters: RequestBodySchema):
         start_time = time.time()
         districts = []
@@ -168,13 +248,12 @@ class StatisticsService:
                 )
             )
 
-        
         end_time = time.time()
         print(end_time - start_time)
-        
+
         return StatAllDTO(
-                name="Вся статистика",
-                count=get_count_from_stat(stat_all),
-                stat=stat_all,
-                districts=districts,
-            )
+            name="Вся статистика",
+            count=get_count_from_stat(stat_all),
+            stat=stat_all,
+            districts=districts,
+        )
