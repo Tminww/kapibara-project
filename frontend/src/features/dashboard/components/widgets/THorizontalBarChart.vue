@@ -5,7 +5,7 @@
 <script setup>
 	import { computed } from 'vue'
 	import { TBaseChart } from '.'
-	import { createHorizontalBarChartConfig } from '@/utils/horizontalBarChartConfig'
+	import { createHorizontalBarChartConfig } from '../../utils/horizontalBarChartConfig'
 
 	const props = defineProps({
 		labels: { type: Array, required: true },

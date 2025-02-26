@@ -5,7 +5,7 @@
 <script setup>
 	import { computed } from 'vue'
 	import { TBaseChart } from './'
-	import { createColumnChartConfig } from '@/utils/columnChartConfig'
+	import { createColumnChartConfig } from '../../utils/columnChartConfig'
 
 	const props = defineProps({
 		labels: { type: Array, required: true },

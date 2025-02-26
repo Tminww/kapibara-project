@@ -2,7 +2,7 @@
 	<v-navigation-drawer
 		location="left"
 		temporary
-		:width="450"
+		:width="500"
 		elevation="10"
 		v-model="internalLeftMenu"
 		permanent

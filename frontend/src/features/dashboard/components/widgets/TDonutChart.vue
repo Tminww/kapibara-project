@@ -5,7 +5,7 @@
 <script setup>
 	import { computed } from 'vue'
 	import { TBaseChart } from './'
-	import { createDonutChartConfig } from '@/utils/donutChartConfig'
+	import { createDonutChartConfig } from '../../utils/donutChartConfig'
 	import { useRouter } from 'vue-router'
 
 	const router = useRouter()
