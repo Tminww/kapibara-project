@@ -397,18 +397,22 @@
 		interval: 'year',
 	})
 
+	const secondAreaLabels = computed(() => store.getPublicationByActsLabels)
+	const secondAreaSeries = computed(() => store.getPublicationByActsSeries)
 	const {
-		secondAreaLabels,
-		secondAreaSeries,
-		secondAreaError,
-		secondAreaDate,
-		secondAreaMonth,
-		isSecondAreaPreviousLoading,
-		isSecondAreaNextLoading,
-		isSecondAreaLoading,
-		secondAreaPreviousMonth,
-		secondAreaNextMonth,
-	} = useSecondDashboardArea()
+		error: secondAreaError,
+		currentInterval: secondAreaMonth,
+		isPreviousLoading: isSecondAreaPreviousLoading,
+		isNextLoading: isSecondAreaNextLoading,
+		isDataLoading: isSecondAreaLoading,
+		previousInterval: secondAreaPreviousMonth,
+		nextInterval: secondAreaNextMonth,
+	} = useChartArea({
+		loadData: store.loadPublicationByActs,
+		dropData: store.dropPublicationByActs,
+		getInterval: getLastMonth,
+		interval: 'month',
+	})
 
 	const thirdAreaLabels = computed(
 		() => store.getPublicationByDistrictsLabels,

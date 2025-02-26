@@ -19,6 +19,7 @@ const apiClient = {
 	publicationByRegions: new StatisticsClient(
 		'statistics/publication-by-regions',
 	),
+	publicationByActs: new StatisticsClient('statistics/publication-by-acts')
 }
 
 export default apiClient

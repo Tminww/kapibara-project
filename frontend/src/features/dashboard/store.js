@@ -12,7 +12,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
 		endDate: null,
 	}
 	const publicationByYears = ref({ ...emptyResponse })
-	const secondAreaStatistics = ref([])
+	const publicationByActs = ref({...emptyResponse})
 	const publicationByNomenclature = ref({ ...emptyResponse })
 	const publicationByNomenclatureDetail = ref({ ...emptyResponse })
 
@@ -44,8 +44,16 @@ export const useDashboardStore = defineStore('dashboard', () => {
 	const getPublicationByYearsLabels = computed(() => {
 		return publicationByYears.value?.stat?.map(row => row.name)
 	})
-	const getSecondAreaDocumentsStatisticsByMonth = computed(() => {
-		return secondAreaStatistics.value
+	const getPublicationByActs = computed(() => {
+		return publicationByActs.value.stat
+	})
+
+    const getPublicationByActsSeries = computed(() => {
+		return publicationByActs.value?.stat?.map(row => row.count)
+	})
+
+    const getPublicationByActsLabels = computed(() => {
+		return publicationByActs.value?.stat?.map(row => row.name)
 	})
 	const getPublicationByNomenclature = computed(() => {
 		return publicationByNomenclature.value.stat
@@ -109,8 +117,8 @@ export const useDashboardStore = defineStore('dashboard', () => {
 	const dropPublicationByDistricts = () => {
 		publicationByDistricts.value = { ...emptyResponse }
 	}
-	const dropSecondAreaDocumentsStatisticsByMonth = () => {
-		secondAreaStatistics.value = []
+	const dropPublicationByActs = () => {
+		publicationByActs.value = { ...emptyResponse }
 	}
 	const dropPublicationByNomenclature = () => {
 		publicationByNomenclature.value = { ...emptyResponse }
@@ -148,26 +156,14 @@ export const useDashboardStore = defineStore('dashboard', () => {
 			dropPublicationByYears()
 		}
 	}
-	const loadSecondAreaDocumentsStatisticsByMonth = async parameters => {
+	const loadPublicationByActs = async parameters => {
 		try {
-			let allData = await apiClient.statistics.read(parameters)
+			let response = await apiClient.publicationByActs.read(parameters)
 
-			allData = allData.stat || [] // Проверяем, что `stat` существует
-
-			let newData = [...allData] // Копируем данные вместо `join`
-
-			// Проверяем и добавляем отсутствующие объекты
-			// allDocumentTypes.forEach(docType => {
-			// 	const exists = newData.some(data => data.name === docType.name)
-			// 	if (!exists) {
-			// 		newData.push({ name: docType.name, count: 0 })
-			// 	}
-			// })
-
-			secondAreaStatistics.value = newData
+			publicationByActs.value = response
 		} catch (error) {
 			console.error('Ошибка при загрузке статистики:', error)
-			dropSecondAreaDocumentsStatisticsByMonth()
+			dropPublicationByActs()
 		}
 	}
 	const loadPublicationByNomenclature = async parameters => {
@@ -220,7 +216,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
 	}
 	return {
 		getPublicationByYears,
-		getSecondAreaDocumentsStatisticsByMonth,
+		getPublicationByActs,
 		getPublicationByNomenclature,
 		getPublicationByNomenclatureDetail,
 		getPublicationByRegionsMin,
@@ -228,19 +224,17 @@ export const useDashboardStore = defineStore('dashboard', () => {
 		getPublicationByDistricts,
 
 		dropPublicationByYears,
-		dropSecondAreaDocumentsStatisticsByMonth,
+		dropPublicationByActs,
 		dropPublicationByNomenclature,
 		dropPublicationByNomenclatureDetail,
-
 		dropPublicationByRegionsMin,
 		dropPublicationByRegionsMax,
 		dropPublicationByDistricts,
 
 		loadPublicationByYears,
-		loadSecondAreaDocumentsStatisticsByMonth,
+		loadPublicationByActs,
 		loadPublicationByNomenclature,
 		loadPublicationByNomenclatureDetail,
-
 		loadPublicationByRegionsMin,
 		loadPublicationByRegionsMax,
 		loadPublicationByDistricts,
@@ -251,6 +245,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
 		getPublicationByDistrictsSeries,
 		getPublicationByRegionsMinSeries,
 		getPublicationByRegionsMaxSeries,
+        getPublicationByActsSeries,
 
 		getPublicationByNomenclatureLabels,
 		getPublicationByNomenclatureDetailLabels,
@@ -258,6 +253,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
 		getPublicationByDistrictsLabels,
 		getPublicationByRegionsMinLabels,
 		getPublicationByRegionsMaxLabels,
+        getPublicationByActsLabels,
 
 		getPublicationByNomenclatureDetailTotal,
 	}
