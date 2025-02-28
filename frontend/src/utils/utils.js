@@ -1,34 +1,27 @@
 function dateFormat(date) {
-	const year = date.getFullYear()
-	const month =
-		date.getMonth() >= 9 ? date.getMonth() + 1 : '0' + (date.getMonth() + 1)
-	const day = date.getDate() >= 9 ? date.getDate() : '0' + date.getDate()
-	return `${year}-${month}-${day}`
+    const year = date.getFullYear();
+    const month = date.getMonth() >= 9 ? date.getMonth() + 1 : '0' + (date.getMonth() + 1);
+    const day = date.getDate() > 9 ? date.getDate() : '0' + date.getDate();
+    return `${year}-${month}-${day}`;
 }
 
 export function getLastWeek(currentDate = new Date()) {
-	// Создаем копию текущей даты
-	const date = new Date(currentDate)
 
-	// Получаем текущий день недели (0 - воскресенье, 1 - понедельник, ..., 6 - суббота)
-	const currentDayOfWeek = date.getDay()
 
-	// Вычисляем количество дней до предыдущего понедельника
-	const daysToLastMonday = currentDayOfWeek === 0 ? 6 : currentDayOfWeek - 1
+	let currentDay = (currentDate.getDay() + 6) % 7
+	let daysForLastFriday = 3
+	let daysForCurrentThursday = 3
+    
+    const endOfPeriod = new Date(currentDate);
+    endOfPeriod.setDate(currentDate.getDate() - currentDay + daysForCurrentThursday);
 
-	// Устанавливаем дату на предыдущий понедельник
-	const startOfLastWeek = new Date(date)
-	startOfLastWeek.setDate(date.getDate() - daysToLastMonday - 7) // Сдвиг на неделю назад
+    const startOfPeriod = new Date(currentDate);
+    startOfPeriod.setDate(currentDate.getDate() - currentDay - daysForLastFriday);
 
-	// Устанавливаем дату на предыдущее воскресенье
-	const endOfLastWeek = new Date(startOfLastWeek)
-	endOfLastWeek.setDate(startOfLastWeek.getDate() + 6) // Добавляем 6 дней до воскресенья
+    const startDate = dateFormat(startOfPeriod);
+    const endDate = dateFormat(endOfPeriod);
 
-	// Форматируем даты
-	const startDate = dateFormat(startOfLastWeek)
-	const endDate = dateFormat(endOfLastWeek)
-
-	return { startDate, endDate }
+    return { startDate, endDate };
 }
 
 export function getLastQuarter(currentDate = new Date()) {
