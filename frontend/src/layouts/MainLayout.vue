@@ -28,11 +28,15 @@
 	</t-header-widget>
 
 	<v-main>
-		<v-container v-if="route.name !== 'home'" class="pb-0 mb-0">
-			<t-breadcrumbs divider="/" class="pb-0 mb-0"></t-breadcrumbs>
+		<v-container fluid class="pb-0 mb-0">
+			<t-breadcrumbs
+				v-if="route.name !== 'home'"
+				divider="/"
+				class="pb-0 mb-0"
+			></t-breadcrumbs>
+			<slot></slot>
 		</v-container>
-		<slot></slot
-	></v-main>
+	</v-main>
 
 	<Toaster richColors :expand="true" position="bottom-right" />
 </template>

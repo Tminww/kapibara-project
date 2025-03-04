@@ -9,87 +9,80 @@
 		@update:rail="rail = $event"
 	/>
 
-	<v-container>
-		<v-btn
-			color="primary"
-			variant="tonal"
-			rounded
-			@click="leftMenu = !leftMenu"
-		>
-			Фильтры
-		</v-btn>
-	</v-container>
-	<v-container>
-		<v-row class="mt-2 justify-space-around">
-			<v-col cols="auto">
-				<t-area-card
-					:title="store.getDistrictName"
-					:is-loading="isLoading"
-					:min-width="370"
-					:max-width="370"
-				>
-					<template #chart>
-						<t-icon
-							v-if="isLoading"
-							name="dashboard"
-							:width="80"
-							:height="80"
-						/>
-						<t-donut-chart
-							v-else
-							:labels="
-								store.getDistrictStat.map(item => item.name)
-							"
-							:series="
-								store.getDistrictStat.map(item => item.count)
-							"
-							:height="350"
-							:enable-logarithmic="false"
-							:log-base="10"
-							:y-start-value="0"
-							legend-position="bottom"
-						/>
-					</template>
-					<template #interval v-if="!isLoading">
-						{{ dateFormat(store.getStartDate, 'DD.MM.YYYY') }}
-						-
-						{{ dateFormat(store.getEndDate, 'DD.MM.YYYY') }}
-					</template>
-				</t-area-card>
-			</v-col>
-			<v-col cols="auto" v-for="region of store.getRegions" :key="region">
-				<t-area-card
-					:title="region.name"
-					:is-loading="isLoading"
-					:min-width="370"
-					:max-width="370"
-				>
-					<template #chart>
-						<t-icon
-							v-if="isLoading"
-							name="dashboard"
-							:width="80"
-							:height="80"
-						/>
-						<t-donut-chart
-							v-else
-							:labels="region?.stat?.map(item => item.name)"
-							:series="region?.stat?.map(item => item.count)"
-							:height="350"
-							:enable-logarithmic="false"
-							:log-base="10"
-							:y-start-value="0"
-							legend-position="bottom"
-						/>
-					</template>
-					<template #interval v-if="!isLoading">
-						{{ dateFormat(store.getStartDate, 'DD.MM.YYYY') }} -
-						{{ dateFormat(store.getEndDate, 'DD.MM.YYYY') }}
-					</template>
-				</t-area-card>
-			</v-col>
-		</v-row>
-	</v-container>
+	<v-btn
+		class="my-4 ml-4"
+		color="primary"
+		variant="tonal"
+		rounded
+		@click="leftMenu = !leftMenu"
+	>
+		Фильтры
+	</v-btn>
+	<v-row class="justify-space-around">
+		<v-col cols="auto">
+			<t-area-card
+				:title="store.getDistrictName"
+				:is-loading="isLoading"
+				:min-width="400"
+				:max-width="400"
+			>
+				<template #chart>
+					<t-icon
+						v-if="isLoading"
+						name="dashboard"
+						:width="80"
+						:height="80"
+					/>
+					<t-donut-chart
+						v-else
+						:labels="store.getDistrictStat.map(item => item.name)"
+						:series="store.getDistrictStat.map(item => item.count)"
+						:height="350"
+						:enable-logarithmic="false"
+						:log-base="10"
+						:y-start-value="0"
+						legend-position="bottom"
+					/>
+				</template>
+				<template #interval v-if="!isLoading">
+					{{ dateFormat(store.getStartDate, 'DD.MM.YYYY') }}
+					-
+					{{ dateFormat(store.getEndDate, 'DD.MM.YYYY') }}
+				</template>
+			</t-area-card>
+		</v-col>
+		<v-col cols="auto" v-for="region of store.getRegions" :key="region">
+			<t-area-card
+				:title="region.name"
+				:is-loading="isLoading"
+				:min-width="400"
+				:max-width="400"
+			>
+				<template #chart>
+					<t-icon
+						v-if="isLoading"
+						name="dashboard"
+						:width="80"
+						:height="80"
+					/>
+					<t-donut-chart
+						v-else
+						:labels="region?.stat?.map(item => item.name)"
+						:series="region?.stat?.map(item => item.count)"
+						:height="350"
+						:enable-logarithmic="false"
+						:log-base="10"
+						:y-start-value="0"
+						legend-position="bottom"
+					/>
+				</template>
+				<template #interval v-if="!isLoading">
+					{{ dateFormat(store.getStartDate, 'DD.MM.YYYY') }} -
+					{{ dateFormat(store.getEndDate, 'DD.MM.YYYY') }}
+				</template>
+			</t-area-card>
+		</v-col>
+	</v-row>
 </template>
 
 <script setup>
