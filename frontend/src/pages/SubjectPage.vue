@@ -29,19 +29,6 @@
 						:max-width="700"
 						title="Опубликование по Федеральным округам"
 					>
-						<!-- <template #filter>
-							<div class="button-group-wrap">
-								<v-btn color="primary" variant="tonal" rounded
-									>Прошлый месяц</v-btn
-								>
-								<v-btn color="primary" variant="tonal" rounded
-									>Прошлый квартал</v-btn
-								>
-								<v-btn color="primary" variant="tonal" rounded
-									>Прошлый год</v-btn
-								>
-							</div></template
-						> -->
 						<template #chart>
 							<t-skeleton-donut-chart v-if="isThirdAreaLoading" />
 							<t-donut-chart

@@ -50,3 +50,16 @@ h1 {
 h2 {
 	font-weight: bold;
 }
+
+.custom-tooltip {
+	padding: 10px;
+	background: rgba(230, 229, 229, 0.2);
+	z-index: 99999;
+	word-break: break-word;
+	max-width: 250px;
+	white-space: normal;
+}
+
+.custom-tooltip__count {
+	font-weight: bold;
+}

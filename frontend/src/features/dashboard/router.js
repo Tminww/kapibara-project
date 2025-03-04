@@ -1,4 +1,5 @@
 import { DashboardPage } from './pages/'
+import { DistrictPage } from './pages/'
 
 const meta = {
 	requiresAuth: false,
@@ -23,6 +24,32 @@ export const routes = [
 					text: 'Информационная панель',
 				},
 			],
+		},
+	},
+	{
+		path: '/dashboard/:label',
+		name: 'district',
+		component: DistrictPage,
+		meta: {
+			...meta,
+			breadCrumb: [
+				{
+					text: 'Главная',
+					to: { name: 'home' },
+				},
+				{
+					text: 'Информационная панель',
+					to: { name: 'dashboard' },
+				},
+				{
+					text: '',
+				},
+			],
+		},
+		beforeEnter: (to, from, next) => {
+			// Устанавливаем значение label в meta.breadCrumb
+			to.meta.breadCrumb[2].text = to.params.label
+			next()
 		},
 	},
 ]

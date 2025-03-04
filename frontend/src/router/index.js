@@ -45,32 +45,6 @@ const routes = [
 		},
 	},
 	{
-		path: '/subjects/district/:label',
-		name: 'district',
-		component: NotFound404,
-		meta: {
-			...meta,
-			breadCrumb: [
-				{
-					text: 'Главная',
-					to: { name: 'home' },
-				},
-				{
-					text: 'Субъекты',
-					to: { name: 'subjects' },
-				},
-				{
-					text: '',
-				},
-			],
-		},
-		beforeEnter: (to, from, next) => {
-			// Устанавливаем значение label в meta.breadCrumb
-			to.meta.breadCrumb[2].text = to.params.label
-			next()
-		},
-	},
-	{
 		path: '/president',
 		name: 'president',
 		component: NotFound404,

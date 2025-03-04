@@ -37,36 +37,9 @@ export const createDonutChartConfig = ({
 						zoomin: true,
 						zoomout: true,
 						pan: true,
-						reset:
-							true |
-							'<img src="/static/icons/reset.png" width="20">',
 					},
 					customIcons: [],
 
-					export: {
-						scale: undefined,
-						width: undefined,
-						include: [
-							{
-								title: 'Chart Title',
-								filename: 'chart-export',
-								type: 'png',
-							},
-						],
-						csv: {
-							filename: undefined,
-							columnDelimiter: ',',
-							headerCategory: 'category',
-							headerValue: 'value',
-						},
-						svg: {
-							filename: undefined,
-						},
-						png: {
-							filename: undefined,
-						},
-						jpg: {},
-					},
 					autoSelected: 'zoom',
 				},
 				events: {
@@ -107,7 +80,15 @@ export const createDonutChartConfig = ({
 								color: undefined,
 								offsetY: 16,
 								formatter: function (val) {
-									return val
+									function numberWithCommas(x) {
+										return x
+											.toString()
+											.replace(
+												/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g,
+												'.',
+											)
+									}
+									return numberWithCommas(val)
 								},
 							},
 							total: {
@@ -117,12 +98,33 @@ export const createDonutChartConfig = ({
 								fontSize: '14px',
 								fontWeight: 600,
 								color: '#373d3f',
+								formatter: function (val) {
+									function numberWithCommas(x) {
+										return x
+											.toString()
+											.replace(
+												/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g,
+												'.',
+											)
+									}
+									return numberWithCommas(val)
+								},
 								formatter: function (w) {
-									return w.globals.seriesTotals.reduce(
-										(a, b) => {
-											return a + b
-										},
-										0,
+									function numberWithCommas(x) {
+										return x
+											.toString()
+											.replace(
+												/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g,
+												'.',
+											)
+									}
+									return numberWithCommas(
+										w.globals.seriesTotals.reduce(
+											(a, b) => {
+												return a + b
+											},
+											0,
+										),
 									)
 								},
 							},
@@ -181,7 +183,12 @@ export const createDonutChartConfig = ({
 				fontSize: '14px',
 				fontWeight: 400,
 				formatter: (seriesName, opts) => {
-					return `${seriesName}: ${opts.w.globals.series[opts.seriesIndex]}`
+					function numberWithCommas(x) {
+						return x
+							.toString()
+							.replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, '.')
+					}
+					return `${seriesName}: ${numberWithCommas(opts.w.globals.series[opts.seriesIndex])}`
 				},
 				inverseOrder: false,
 				tooltipHoverFormatter: undefined,
@@ -191,6 +198,8 @@ export const createDonutChartConfig = ({
 				offsetX: 0,
 				offsetY: 0,
 				labels: {
+					hideOverlappingLabels: true,
+					trim: true,
 					colors: undefined,
 					useSeriesColors: false,
 				},
@@ -208,11 +217,13 @@ export const createDonutChartConfig = ({
 					horizontal: 5,
 					vertical: 6,
 				},
-				onItemClick: {
-					toggleDataSeries: true,
-				},
-				onItemHover: {
-					highlightDataSeries: true,
+			},
+			noData: {
+				text: 'Нет данных',
+				style: {
+					color: undefined,
+					fontSize: '20px',
+					fontFamily: 'Nunito',
 				},
 			},
 

@@ -1,6 +1,6 @@
 import { ref, onMounted, computed } from 'vue'
 
-import { useDashboardStore } from '../store'
+import { useDashboardStore } from '../stores/dashboard'
 import { getLastMonth } from '@/utils/utils'
 
 import { toast } from 'vue-sonner'

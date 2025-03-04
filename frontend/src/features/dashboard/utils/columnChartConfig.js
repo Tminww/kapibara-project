@@ -87,7 +87,12 @@ export const createColumnChartConfig = ({
 			dataLabels: {
 				enabled: true,
 				formatter: function (val) {
-					return val
+					function numberWithCommas(x) {
+						return x
+							.toString()
+							.replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, '.')
+					}
+					return numberWithCommas(val)
 				},
 				offsetY: -20,
 				style: {
@@ -165,7 +170,12 @@ export const createColumnChartConfig = ({
 					offsetY: 0,
 					rotate: 0,
 					formatter: function (val, index) {
-						return val.toFixed(0)
+						function numberWithCommas(x) {
+							return x
+								.toString()
+								.replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, '.')
+						}
+						return numberWithCommas(val.toFixed(0))
 					},
 				},
 				axisBorder: {
@@ -228,6 +238,97 @@ export const createColumnChartConfig = ({
 					opacityFrom: 0.85,
 					opacityTo: 0.85,
 					stops: [50, 0, 100],
+				},
+			},
+			noData: {
+				text: 'Нет данных',
+			},
+			tooltip: {
+				enabled: true,
+				enabledOnSeries: undefined,
+				shared: true,
+				followCursor: false,
+				intersect: false,
+				inverseOrder: false,
+				// custom: function ({
+				// 	series,
+				// 	seriesIndex,
+				// 	dataPointIndex,
+				// 	w,
+				// }) {
+				// 	console.log(
+				// 		w.globals.labels[dataPointIndex],
+				// 		series,
+				// 		dataPointIndex,
+				// 	)
+				// 	function numberWithCommas(x) {
+				// 		return x
+				// 			.toString()
+				// 			.replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, '.')
+				// 	}
+				// 	// Создание элемента
+				// 	const customElement = document.createElement('div')
+				// 	customElement.className = 'custom-tooltip'
+				// 	customElement.innerHTML = `
+				// 		${w.globals.labels[dataPointIndex]}:
+				// 		<span class="custom-tooltip__count">${numberWithCommas(series[seriesIndex][dataPointIndex])}</span>
+				// 	`
+				// 	return customElement
+				// },
+				hideEmptySeries: true,
+				fillSeriesColor: false,
+				theme: 'light',
+				style: {
+					fontSize: '12px',
+					fontFamily: undefined,
+				},
+				onDatasetHover: {
+					highlightDataSeries: true,
+				},
+				x: {
+					show: true,
+					format: 'dd MMM',
+					formatter: undefined,
+				},
+				y: {
+					formatter: function (
+						value,
+						{ series, seriesIndex, dataPointIndex, w },
+					) {
+						function numberWithCommas(x) {
+							return x
+								.toString()
+								.replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, '.')
+						}
+						return numberWithCommas(value)
+					},
+				},
+				// y: {
+				// 	formatter: undefined,
+				// 	title: {
+				// 		formatter: function (val) {
+				// 			function numberWithCommas(x) {
+				// 				return x
+				// 					.toString()
+				// 					.replace(
+				// 						/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g,
+				// 						',',
+				// 					)
+				// 			}
+				// 			return numberWithCommas(val)
+				// 		},
+				// 	},
+				// },
+
+				marker: {
+					show: true,
+				},
+
+				fixed: {
+					enabled: false,
+					position: 'topRight',
+					offsetX: 0,
+					offsetY: 0,
 				},
 			},
 		},

@@ -1,27 +1,36 @@
-function dateFormat(date) {
-    const year = date.getFullYear();
-    const month = date.getMonth() >= 9 ? date.getMonth() + 1 : '0' + (date.getMonth() + 1);
-    const day = date.getDate() > 9 ? date.getDate() : '0' + date.getDate();
-    return `${year}-${month}-${day}`;
+export function dateFormat(date, format = 'YYYY-MM-DD') {
+	date = new Date(date)
+	const year = date.getFullYear()
+	const month =
+		date.getMonth() >= 9 ? date.getMonth() + 1 : '0' + (date.getMonth() + 1)
+	const day = date.getDate() > 9 ? date.getDate() : '0' + date.getDate()
+
+	format = format.replace('YYYY', year)
+	format = format.replace('MM', month)
+	format = format.replace('DD', day)
+
+	return format
 }
 
 export function getLastWeek(currentDate = new Date()) {
-
-
 	let currentDay = (currentDate.getDay() + 6) % 7
 	let daysForLastFriday = 3
 	let daysForCurrentThursday = 3
-    
-    const endOfPeriod = new Date(currentDate);
-    endOfPeriod.setDate(currentDate.getDate() - currentDay + daysForCurrentThursday);
 
-    const startOfPeriod = new Date(currentDate);
-    startOfPeriod.setDate(currentDate.getDate() - currentDay - daysForLastFriday);
+	const endOfPeriod = new Date(currentDate)
+	endOfPeriod.setDate(
+		currentDate.getDate() - currentDay + daysForCurrentThursday,
+	)
 
-    const startDate = dateFormat(startOfPeriod);
-    const endDate = dateFormat(endOfPeriod);
+	const startOfPeriod = new Date(currentDate)
+	startOfPeriod.setDate(
+		currentDate.getDate() - currentDay - daysForLastFriday,
+	)
 
-    return { startDate, endDate };
+	const startDate = dateFormat(startOfPeriod)
+	const endDate = dateFormat(endOfPeriod)
+
+	return { startDate, endDate }
 }
 
 export function getLastQuarter(currentDate = new Date()) {

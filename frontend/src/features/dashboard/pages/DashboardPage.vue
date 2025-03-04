@@ -324,9 +324,9 @@
 		THorizontalBarChart,
 		TColumnChart,
 	} from '../components/widgets'
-	import { useChartArea, useSecondDashboardArea } from '../composables'
+	import { useChartArea } from '../composables'
 
-	import { useDashboardStore } from '../store'
+	import { useDashboardStore } from '../stores/dashboard'
 	import {
 		getLastMonth,
 		getLastQuarter,
@@ -337,6 +337,7 @@
 	import { toast } from 'vue-sonner'
 
 	const store = useDashboardStore()
+
 	const copyNomenclatureDetail = () => {
 		try {
 			// Начало с общего количества
