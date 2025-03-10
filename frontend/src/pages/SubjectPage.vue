@@ -10,12 +10,7 @@
 	/>
 
 	<v-container>
-		<v-btn
-			color="primary"
-			variant="tonal"
-			rounded
-			@click="leftMenu = !leftMenu"
-		>
+		<v-btn color="primary" variant="tonal" @click="leftMenu = !leftMenu">
 			Фильтры
 		</v-btn>
 
@@ -61,13 +56,13 @@
 					>
 						<template #filter>
 							<div class="button-group-wrap">
-								<v-btn color="primary" variant="tonal" rounded
+								<v-btn color="primary" variant="tonal"
 									>Прошлый месяц</v-btn
 								>
-								<v-btn color="primary" variant="tonal" rounded
+								<v-btn color="primary" variant="tonal"
 									>Прошлый квартал</v-btn
 								>
-								<v-btn color="primary" variant="tonal" rounded
+								<v-btn color="primary" variant="tonal"
 									>Прошлый год</v-btn
 								>
 							</div></template

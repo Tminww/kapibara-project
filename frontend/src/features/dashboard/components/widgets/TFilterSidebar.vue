@@ -3,7 +3,7 @@
 		location="left"
 		temporary
 		:width="500"
-		elevation="10"
+		elevation="3"
 		v-model="internalLeftMenu"
 		permanent
 		:rail="rail"

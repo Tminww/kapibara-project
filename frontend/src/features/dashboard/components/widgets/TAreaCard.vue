@@ -4,10 +4,9 @@
 		:max-width="maxWidth"
 		:min-width="minWidth"
 		:max-height="maxHeight"
-		:width
-		:height
-		rounded="xl"
-		elevation="10"
+		:width="width"
+		:height="height"
+		elevation="3"
 	>
 		<v-card-title class="title-wrap mt-2">
 			{{ title }}
@@ -17,7 +16,7 @@
 			{{ subtitle }}
 		</v-card-subtitle>
 
-		<v-card-text class="pb-0 pt-0">
+		<v-card-text class="scrollable pb-0 pt-0">
 			<div v-if="isLoading" class="loader-wrap">
 				<t-icon name="dashboard-gray" :width="200" :height="200" />
 			</div>
@@ -28,7 +27,7 @@
 
 		<v-card-actions class="justify-space-between">
 			<slot name="previous"></slot>
-			<div class="time-wrap">
+			<div class="text-h7 time-wrap">
 				<slot name="interval"></slot>
 			</div>
 			<slot name="next"></slot>
@@ -55,13 +54,9 @@
 
 <style scoped>
 	.title-wrap {
-		white-space: normal; /* Позволяет перенос строк */
-		word-wrap: break-word; /* Переносит слова, если они длинные */
-		overflow-wrap: break-word;
-		max-width: 100%; /* Ограничивает ширину заголовка */
-		text-align: left; /* По желанию, можно выровнять текст */
-		font-size: 20px;
-		font-weight: bold;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 	.subtitle-wrap {
 		white-space: normal; /* Позволяет перенос строк */
@@ -80,10 +75,13 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		font-size: 20px;
 	}
 	.chart-wrap {
 		height: 350px;
+	}
+
+	.scrollable {
+		overflow-x: none; /* Горизонтальная прокрутка при необходимости */
 	}
 	.loader-wrap {
 		display: flex;

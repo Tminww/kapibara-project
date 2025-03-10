@@ -28,14 +28,9 @@
 	</t-header-widget>
 
 	<v-main>
-		<v-container fluid class="pb-0 mb-0">
-			<t-breadcrumbs
-				v-if="route.name !== 'home'"
-				divider="/"
-				class="pb-0 mb-0"
-			></t-breadcrumbs>
-			<slot></slot>
-		</v-container>
+		<t-breadcrumbs v-if="route.name !== 'home'" divider="/"></t-breadcrumbs>
+
+		<slot></slot>
 	</v-main>
 
 	<Toaster richColors :expand="true" position="bottom-right" />
@@ -89,3 +84,5 @@
 		})
 	}
 </script>
+
+<style scoped></style>

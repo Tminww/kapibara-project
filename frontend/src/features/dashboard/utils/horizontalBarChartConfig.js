@@ -16,7 +16,7 @@ export const createHorizontalBarChartConfig = ({
 		chartOptions: {
 			chart: {
 				animations: {
-					enabled: true,
+					enabled: false,
 					speed: 1000,
 					animateGradually: {
 						enabled: true,
@@ -29,9 +29,7 @@ export const createHorizontalBarChartConfig = ({
 				},
 				id: 'column',
 				type: 'bar',
-				width: '100%',
 				background: '#fff',
-				height: 150,
 				redrawOnParentResize: false,
 				zoom: {
 					enabled: false,
@@ -48,6 +46,20 @@ export const createHorizontalBarChartConfig = ({
 							opacity: 0.4,
 							width: 1,
 						},
+					},
+				},
+				toolbar: {
+					show: false,
+					offsetX: 0,
+					offsetY: 0,
+					tools: {
+						download: true,
+						selection: true,
+						zoom: true,
+						zoomin: true,
+						zoomout: true,
+						pan: true,
+						customIcons: [],
 					},
 				},
 			},
@@ -162,7 +174,6 @@ export const createHorizontalBarChartConfig = ({
 					show: true,
 					borderType: 'solid',
 					// color: '#78909C',
-					width: 10,
 					offsetX: 0,
 					offsetY: 0,
 				},
@@ -196,10 +207,10 @@ export const createHorizontalBarChartConfig = ({
 				},
 
 				padding: {
-					top: 10,
+					top: -20,
 					bottom: 0,
 					right: 0,
-					left: 14,
+					left: 0,
 				},
 			},
 
@@ -251,6 +262,28 @@ export const createHorizontalBarChartConfig = ({
 					},
 				},
 			},
+			// responsive: [
+			// 	{
+			// 		breakpoint: 800,
+			// 		options: {
+			// 			dataLabels: {
+			// 				enabled: true,
+			// 			},
+			// 			yaxis: {
+			// 				show: true,
+			// 				logarithmic: enableLogarithmic,
+			// 				logBase: logBase,
+			// 				tickAmount: tickAmount,
+			// 				min: yStartValue,
+			// 			},
+			// 			xaxis: {
+			// 				labels: {
+			// 					show: false,
+			// 				},
+			// 			},
+			// 		},
+			// 	},
+			// ],
 		},
 	}
 }

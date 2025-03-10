@@ -1,5 +1,5 @@
 <template>
-	<t-base-chart :data :height> </t-base-chart>
+	<t-base-chart :data :height > </t-base-chart>
 </template>
 
 <script setup>

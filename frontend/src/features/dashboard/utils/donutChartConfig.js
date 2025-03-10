@@ -1,3 +1,5 @@
+import { he } from 'vuetify/lib/locale/index.mjs'
+
 export const createDonutChartConfig = ({
 	series,
 	labels,
@@ -10,7 +12,7 @@ export const createDonutChartConfig = ({
 		chartOptions: {
 			chart: {
 				animations: {
-					enabled: true,
+					enabled: false,
 					speed: 1000,
 					animateGradually: {
 						enabled: true,
@@ -27,7 +29,7 @@ export const createDonutChartConfig = ({
 				id: 'Колличество_нормативных_правовых_актов_в_каждом_округе',
 				type: 'donut',
 				toolbar: {
-					show: true,
+					show: false,
 					offsetX: 0,
 					offsetY: 0,
 					tools: {
@@ -53,9 +55,7 @@ export const createDonutChartConfig = ({
 					},
 				},
 			},
-			stroke: {
-				width: 2,
-			},
+
 			plotOptions: {
 				pie: {
 					donut: {
@@ -292,6 +292,21 @@ export const createDonutChartConfig = ({
 					offsetY: 0,
 				},
 			},
+			// responsive: [
+			// 	{
+			// 		breakpoint: 800,
+			// 		options: {
+			// 			dataLabels: {
+			// 				enabled: true,
+			// 			},
+			// 			legend: {
+			// 				show: true,
+			// 				position: 'bottom',
+			// 				height: 100,
+			// 			},
+			// 		},
+			// 	},
+			// ],
 		},
 	}
 }

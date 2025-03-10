@@ -9,7 +9,6 @@
 				v-if="page.role == userRole"
 				:color="isSelected ? color : 'dark'"
 				class="ma-1"
-				rounded
 				:ripple="false"
 				variant="flat"
 				@click="
@@ -27,39 +26,37 @@
 
 <script setup>
 	import { getAuthDataFromLocalStorage } from '@/utils/auth'
-	import { computed, defineProps } from 'vue';
-	import { useI18n } from 'vue-i18n';
-	import { useRouter } from 'vue-router';
+	import { computed, defineProps } from 'vue'
+	import { useI18n } from 'vue-i18n'
+	import { useRouter } from 'vue-router'
 
-	const router = useRouter();
-	const { t } = useI18n();
-	
-	const props = defineProps ({
+	const router = useRouter()
+	const { t } = useI18n()
+
+	const props = defineProps({
 		color: {
 			type: String,
 			default: 'light',
-		}
+		},
 	})
-	
+
 	const authData = computed(() => {
 		console.log(getAuthDataFromLocalStorage())
 		return getAuthDataFromLocalStorage()
 	})
-	const userRole = computed(()=>  {
+	const userRole = computed(() => {
 		const currentRole =
-			authData.value.role === 'администратор'
-				? 'admin'
-				: 'operator'
+			authData.value.role === 'администратор' ? 'admin' : 'operator'
 		console.log(currentRole)
 		return currentRole
 	})
 
-	const switchPage = (routeName) => {
+	const switchPage = routeName => {
 		router.push({
 			name: routeName,
 		})
 	}
-		
+
 	const pages = [
 		{
 			name: 'naprs',
@@ -98,7 +95,7 @@
 		},
 		{
 			name: 'obr-types',
-			title:t('layouts.obr-types'),
+			title: t('layouts.obr-types'),
 			role: 'operator',
 		},
 		{
@@ -127,7 +124,6 @@
 			role: 'admin',
 		},
 	]
-
 </script>
 
 <style scoped></style>

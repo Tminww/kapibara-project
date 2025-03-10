@@ -26,3 +26,9 @@
 		return route.meta.breadCrumb
 	})
 </script>
+
+<style scoped>
+	.v-breadcrumbs {
+		white-space: normal; /* Позволяет перенос строк */
+	}
+</style>

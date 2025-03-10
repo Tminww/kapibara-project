@@ -17,7 +17,6 @@
 		<v-select
 			density="comfortable"
 			variant="outlined"
-			rounded
 			label="Выбрать период"
 			v-model="form.selectedPeriod"
 			:items="[
@@ -36,7 +35,6 @@
 				density="compact"
 				variant="outlined"
 				type="date"
-				rounded
 			/>
 			<v-text-field
 				class="items"
@@ -45,7 +43,6 @@
 				density="compact"
 				variant="outlined"
 				type="date"
-				rounded
 			/>
 		</div>
 
@@ -56,14 +53,12 @@
 				:loading="loadingStatistics"
 				color="primary"
 				variant="tonal"
-				rounded
 				text="Применить"
 			/>
 			<v-btn
 				class="items"
 				text="Отменить"
 				color="red"
-				rounded
 				variant="tonal"
 				@click="setDefaultValue"
 			/>

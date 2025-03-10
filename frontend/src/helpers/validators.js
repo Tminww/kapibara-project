@@ -9,4 +9,6 @@ export const iconValidator = name =>
 		'court',
 		'international',
 		'un_securitycouncil',
+		'dashboard',
+		'dashboard-gray',
 	].includes(name)

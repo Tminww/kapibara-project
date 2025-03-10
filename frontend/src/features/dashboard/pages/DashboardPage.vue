@@ -1,18 +1,13 @@
 <template>
 	<v-row no-gutters
-		><v-col cols="6">
+		><v-col cols="12" sm="12" md="12" lg="6" xl="6" xxl="6">
 			<v-container>
 				<t-area-card
 					:isLoading="isFirstAreaLoading"
-					title="Опубликование всех нормативных правовых актов по годам"
+					title="Опубликование всех НПА"
+					subtitle="По годам"
 				>
 					<template #chart>
-						<t-icon
-							v-if="isFirstAreaLoading"
-							name="dashboard"
-							:width="80"
-							:height="80"
-						/>
 						<t-column-chart
 							v-if="!isFirstAreaLoading"
 							:labels="firstAreaLabels"
@@ -49,11 +44,12 @@
 				</t-area-card>
 			</v-container>
 		</v-col>
-		<v-col cols="6">
+		<v-col cols="12" sm="12" md="12" lg="6" xl="6" xxl="6">
 			<v-container>
 				<t-area-card
 					:isLoading="isSecondAreaLoading"
-					title="Опубликование всех типов нормативных правовых актов за месяц"
+					title="Опубликование всех типов НПА"
+					subtitle="За месяц"
 				>
 					<template #chart>
 						<t-column-chart
@@ -88,18 +84,19 @@
 				</t-area-card>
 			</v-container>
 		</v-col>
-		<v-col cols="4">
+		<v-col cols="12" sm="12" md="12" lg="4" xl="4" xxl="4">
 			<v-container>
 				<t-area-card
 					:isLoading="isThirdAreaLoading"
-					title="Опубликование по Федеральным округам за квартал"
-					:max-width="650"
+					title="Опубликование по всем ФО"
+					subtitle="За квартал"
 				>
 					<template #chart>
 						<t-donut-chart
 							:labels="thirdAreaLabels"
 							:series="thirdAreaSeries"
 							:is-legend-clickable="true"
+							legend-position="bottom"
 							:height="350"
 						/>
 					</template>
@@ -129,12 +126,12 @@
 				</t-area-card>
 			</v-container>
 		</v-col>
-		<v-col cols="4">
+		<v-col cols="12" sm="12" md="12" lg="4" xl="4" xxl="4">
 			<v-container>
 				<t-area-card
 					:isLoading="isFourthAreaLoading"
-					title="Опубликование по номенклатуре за год"
-					:max-width="650"
+					title="Опубликование по номенклатуре"
+					subtitle="За год"
 				>
 					<template #chart>
 						<t-column-chart
@@ -175,14 +172,21 @@
 				</t-area-card>
 			</v-container>
 		</v-col>
-		<v-col cols="4">
+		<v-col cols="12" sm="12" md="12" lg="4" xl="4" xxl="4">
 			<v-container>
 				<t-area-card
 					:isLoading="isNomenclatureDetailLoading"
-					title="Детальное опубликование по номенклатуре за неделю"
-					:max-width="650"
+					title="Детальное опубликование по номенклатуре"
+					subtitle="За неделю"
 				>
 					<template #chart>
+						<!-- <v-icon
+							:loading="isNomenclatureDetailLoading"
+							@click="copyNomenclatureDetail"
+							size="16"
+							>mdi-content-copy</v-icon
+						> -->
+
 						<t-column-chart
 							:labels="nomenclatureDetailLabels"
 							:series="nomenclatureDetailSeries"
@@ -210,22 +214,17 @@
 					<template #interval v-if="!isNomenclatureDetailLoading">
 						{{ nomenclatureDetailInterval.startDate }} -
 						{{ nomenclatureDetailInterval.endDate }}
-						<v-btn
-							:loading="isNomenclatureDetailLoading"
-							@click="copyNomenclatureDetail"
-						>
-							<v-icon>mdi-content-copy</v-icon></v-btn
-						>
 					</template>
 					<template #error> {{ nomenclatureDetailError }}</template>
 				</t-area-card>
 			</v-container>
 		</v-col>
-		<v-col cols="6">
+		<v-col cols="12" sm="12" md="12" lg="6" xl="6" xxl="6">
 			<v-container>
 				<t-area-card
 					:isLoading="isFifthAreaLoading"
-					title="Опубликование по ОГВ субъектов РФ минимальное за квартал"
+					title="Опубликование по ОГВ субъектов РФ"
+					subtitle="Минимальное за квартал"
 				>
 					<template #chart>
 						<!-- <t-column-chart
@@ -271,11 +270,12 @@
 				</t-area-card>
 			</v-container>
 		</v-col>
-		<v-col cols="6">
+		<v-col cols="12" sm="12" md="12" lg="6" xl="6" xxl="6">
 			<v-container>
 				<t-area-card
 					:isLoading="isSixthAreaLoading"
-					title="Опубликование по ОГВ субъектов РФ максимальное за квартал"
+					title="Опубликование по ОГВ субъектов РФ"
+					subtitle="Максимальное за квартал"
 				>
 					<template #chart>
 						<t-horizontal-bar-chart
@@ -317,7 +317,6 @@
 </template>
 
 <script setup>
-	import { TIcon } from '@/components/ui'
 	import {
 		TAreaCard,
 		TDonutChart,

@@ -6,8 +6,7 @@
 		:max-height="maxHeight"
 		:width
 		:height
-		rounded="xl"
-		elevation="10"
+		elevation="3"
 	>
 		<v-card-title class="title-wrap mt-2">
 			{{ title }}

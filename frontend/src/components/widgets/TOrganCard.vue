@@ -4,8 +4,7 @@
 		:max-width="props.maxWidth"
 		:min-width="props.minWidth"
 		width="100%"
-		rounded="xl"
-		elevation="10"
+		elevation="3"
 	>
 		<v-card-title>
 			<div class="container">
@@ -26,7 +25,7 @@
 
 		<v-card-actions>
 			<div class="button-wrap">
-				<v-btn color="primary" rounded @click="goToNamedRouter">
+				<v-btn color="primary" @click="goToNamedRouter">
 					Перейти
 				</v-btn>
 			</div>

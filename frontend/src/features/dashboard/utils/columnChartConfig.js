@@ -16,7 +16,7 @@ export const createColumnChartConfig = ({
 		chartOptions: {
 			chart: {
 				animations: {
-					enabled: true,
+					enabled: false,
 					speed: 1000,
 					animateGradually: {
 						enabled: true,
@@ -29,38 +29,23 @@ export const createColumnChartConfig = ({
 				},
 				id: 'column',
 				type: 'bar',
-				width: '100%',
 				background: '#fff',
-				height: 150,
 				redrawOnParentResize: false,
 				zoom: {
 					enabled: false,
-					type: 'x',
-					autoScaleYaxis: true,
-					allowMouseWheelZoom: false,
-					zoomedArea: {
-						fill: {
-							color: '#90CAF9',
-							opacity: 0.4,
-						},
-						stroke: {
-							color: '#0D47A1',
-							opacity: 0.4,
-							width: 1,
-						},
-					},
+				},
+				toolbar: {
+					show: false,
 				},
 			},
 			plotOptions: {
 				bar: {
-					borderRadius: 10,
+					borderRadius: 5,
 					columnWidth: '85%',
-					barHeight: '10%', // Столбцы станут ниже
 					dataLabels: {
 						position: 'top', // top, center, bottom
 					},
 					// distributed: true,
-					borderRadiusApplication: 'around',
 					columnWidth: '90%',
 					barHeight: '50%',
 					distributed: false,
@@ -100,20 +85,12 @@ export const createColumnChartConfig = ({
 					colors: ['#304758'],
 				},
 			},
-			stroke: {
-				width: 0,
-			},
 
 			xaxis: {
 				categories: labels,
 				tickAmount: 30,
 				position: 'bottom',
-				axisBorder: {
-					show: false,
-				},
-				axisTicks: {
-					show: true,
-				},
+
 				labels: {
 					show: true,
 					hideOverlappingLabels: true,
@@ -179,7 +156,7 @@ export const createColumnChartConfig = ({
 					},
 				},
 				axisBorder: {
-					show: true,
+					show: false,
 				},
 
 				axisTicks: {
@@ -220,10 +197,10 @@ export const createColumnChartConfig = ({
 				},
 
 				padding: {
-					top: 10,
+					top: -20,
 					bottom: 0,
 					right: 0,
-					left: 14,
+					left: 15,
 				},
 			},
 
@@ -331,6 +308,28 @@ export const createColumnChartConfig = ({
 					offsetY: 0,
 				},
 			},
+			responsive: [
+				{
+					breakpoint: 800,
+					options: {
+						dataLabels: {
+							enabled: false,
+						},
+						yaxis: {
+							show: false,
+							logarithmic: enableLogarithmic,
+							logBase: logBase,
+							tickAmount: tickAmount,
+							min: yStartValue,
+						},
+						xaxis: {
+							labels: {
+								show: true,
+							},
+						},
+					},
+				},
+			],
 		},
 	}
 }
