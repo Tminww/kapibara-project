@@ -10,6 +10,7 @@ __pycache__/
 # C extensions
 *.so
 
+.vscode
 # Distribution / packaging
 .Python
 build/
@@ -181,3 +182,4 @@ npm-debug.log
 yarn-error.log
 
 # End of https://www.toptal.com/developers/gitignore/api/vuejs,python
+.qodo

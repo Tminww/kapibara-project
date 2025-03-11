@@ -4,6 +4,7 @@ import { toast } from 'vue-sonner'
 export function useChartArea({
 	loadData,
 	dropData,
+	regions = undefined,
 	getInterval,
 	interval = 'quarter',
 }) {
@@ -63,6 +64,7 @@ export function useChartArea({
 
 			const parameters = getInterval(date.value)
 
+			if (regions) parameters.regions = regions
 			await loadData(parameters)
 		} catch (e) {
 			error.value = e.message
@@ -107,7 +109,7 @@ export function useChartArea({
 			}
 
 			const parameters = getInterval(date.value)
-
+			if (regions) parameters.regions = regions
 			await loadData(parameters)
 		} catch (e) {
 			error.value = e.message
@@ -122,7 +124,7 @@ export function useChartArea({
 			isStatisticsLoading.value = true
 
 			const parameters = getInterval()
-
+			if (regions) parameters.regions = regions
 			await loadData(parameters)
 		} catch (e) {
 			error.value = e.message

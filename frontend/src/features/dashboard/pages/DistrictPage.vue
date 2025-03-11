@@ -9,14 +9,33 @@
 		@update:rail="rail = $event"
 	/>
 
-	<v-btn
-		class="my-4 ml-4"
-		color="primary"
-		variant="tonal"
-		@click="leftMenu = !leftMenu"
-	>
-		Фильтры
-	</v-btn>
+	<div class="flex justify-end">
+		<v-btn
+			class="my-4 ml-4 mr-4"
+			color="primary"
+			variant="tonal"
+			@click="leftMenu = !leftMenu"
+		>
+			Фильтры
+		</v-btn>
+		<v-btn
+			color="primary"
+			variant="tonal"
+			:loading="isPreviousLoading"
+			@click="previousInterval"
+		>
+			<v-icon>mdi-arrow-left</v-icon>
+		</v-btn>
+		<v-btn
+			color="primary"
+			variant="tonal"
+			:loading="isNextLoading"
+			@click="nextInterval"
+		>
+			<v-icon>mdi-arrow-right</v-icon>
+		</v-btn>
+	</div>
+
 	<v-row no-gutters class="justify-space-around">
 		<v-col cols="auto">
 			<v-container>
@@ -41,9 +60,26 @@
 							legend-position="bottom"
 						/>
 					</template>
+					<template #previous>
+						<v-btn
+							color="primary"
+							:loading="isPreviousLoading"
+							@click="previousInterval"
+						>
+							<v-icon>mdi-arrow-left</v-icon>
+						</v-btn>
+					</template>
+					<template #next>
+						<v-btn
+							color="primary"
+							:loading="isNextLoading"
+							@click="nextInterval"
+						>
+							<v-icon>mdi-arrow-right</v-icon>
+						</v-btn>
+					</template>
 					<template #interval v-if="!isLoading">
-						{{ dateFormat(store.getStartDate, 'DD.MM.YYYY') }}
-						-
+						{{ dateFormat(store.getStartDate, 'DD.MM.YYYY') }} -
 						{{ dateFormat(store.getEndDate, 'DD.MM.YYYY') }}
 					</template>
 				</t-area-card>
@@ -68,6 +104,24 @@
 							legend-position="bottom"
 						/>
 					</template>
+					<template #previous>
+						<v-btn
+							color="primary"
+							:loading="isPreviousLoading"
+							@click="previousInterval"
+						>
+							<v-icon>mdi-arrow-left</v-icon>
+						</v-btn>
+					</template>
+					<template #next>
+						<v-btn
+							color="primary"
+							:loading="isNextLoading"
+							@click="nextInterval"
+						>
+							<v-icon>mdi-arrow-right</v-icon>
+						</v-btn>
+					</template>
 					<template #interval v-if="!isLoading">
 						{{ dateFormat(store.getStartDate, 'DD.MM.YYYY') }} -
 						{{ dateFormat(store.getEndDate, 'DD.MM.YYYY') }}
@@ -83,74 +137,119 @@
 	import {
 		TAreaCard,
 		TDonutChart,
-		THorizontalBarChart,
-		TColumnChart,
 		TFilterSidebar,
 	} from '../components/widgets'
-
 	import { useDistrictStore } from '../stores/district'
-	import {
-		getLastMonth,
-		getLastQuarter,
-		getLastYear,
-		getLastWeek,
-		dateFormat,
-	} from '@/utils/utils'
-	import { computed, ref, onMounted } from 'vue'
-	import { toast } from 'vue-sonner'
-	import { useRoute, useRouter } from 'vue-router'
+	import { dateFormat, getLastMonth } from '@/utils/utils'
+	import { ref, computed, onMounted } from 'vue'
+	import { useRoute } from 'vue-router'
+
 	const route = useRoute()
+	const store = useDistrictStore()
 
 	const leftMenu = ref(false)
 	const rail = ref(false)
-
-	const store = useDistrictStore()
-
+	const isPreviousLoading = ref(false)
+	const isNextLoading = ref(false)
 	const loadingSubjects = ref(false)
 	const errorSubjects = ref(null)
 	const loadingStatistics = ref(false)
 	const errorStatistics = ref(null)
 
+	// Вычисляемое свойство для общего состояния загрузки
 	const isLoading = computed(() => {
 		return store.isLoading || loadingStatistics.value
 	})
 
-	const loadStatistics = async () => {
+	// Формирование параметров запроса
+	const getParams = () => {
+		const params = {
+			startDate: store.startDate,
+			endDate: store.endDate,
+		}
+		if (store.selectedRegions.length > 0) {
+			params.regions = store.selectedRegions.toString()
+		}
+		return params
+	}
+
+	// Переход к предыдущему интервалу
+	const previousInterval = async () => {
 		try {
+			isPreviousLoading.value = true
 			loadingStatistics.value = true
 			errorStatistics.value = null
-			console.log('FUNC', getLastMonth())
 
-			const parameters = getLastMonth()
-			parameters.regions = store.getSubjects.map(s => s.id).toString()
+			// Сдвигаем дату на месяц назад относительно текущего startDate
+			const currentStart = new Date(store.startDate)
+			console.log(currentStart)
+			currentStart.setMonth(currentStart.getMonth() - 1)
+			const newInterval = getLastMonth(currentStart)
+			store.startDate = newInterval.startDate
+			store.endDate = newInterval.endDate
+
+			console.log('newInterval', newInterval)
+
+			const parameters = getParams()
 			await store.loadStatisticsAPI(route.params.label, parameters)
 		} catch (e) {
 			errorStatistics.value = e.message
 			store.dropStatistics()
 		} finally {
+			isPreviousLoading.value = false
 			loadingStatistics.value = false
 		}
 	}
 
-	const loadSubjects = async () => {
+	// Переход к следующему интервалу
+	const nextInterval = async () => {
+		try {
+			isNextLoading.value = true
+			loadingStatistics.value = true
+			errorStatistics.value = null
+
+			// Сдвигаем дату на месяц вперёд относительно текущего endDate
+			const currentEnd = new Date(store.endDate)
+			currentEnd.setMonth(currentEnd.getMonth() + 1)
+			const newInterval = getLastMonth(currentEnd)
+			store.startDate = newInterval.startDate
+			store.endDate = newInterval.endDate
+
+			const parameters = getParams()
+			await store.loadStatisticsAPI(route.params.label, parameters)
+		} catch (e) {
+			errorStatistics.value = e.message
+			store.dropStatistics()
+		} finally {
+			isNextLoading.value = false
+			loadingStatistics.value = false
+		}
+	}
+
+	// Загрузка начальных данных
+	const loadInitialData = async () => {
 		try {
 			loadingSubjects.value = true
 			errorSubjects.value = null
 			await store.loadSubjectsAPI(route.params.label)
+
+			loadingStatistics.value = true
+			errorStatistics.value = null
+			store.initializeForm() // Инициализируем форму из стора
+			const parameters = getParams()
+			await store.loadStatisticsAPI(route.params.label, parameters)
 		} catch (e) {
 			errorSubjects.value = e.message
-			store.dropRegionsToRequest()
+			errorStatistics.value = e.message
+			store.dropStatistics()
 		} finally {
 			loadingSubjects.value = false
+			loadingStatistics.value = false
 		}
 	}
 
 	onMounted(async () => {
-		loadingStatistics.value = true
-		await loadSubjects()
-
-		await loadStatistics()
-		loadingStatistics.value = false
+		await loadInitialData()
 	})
 </script>
 

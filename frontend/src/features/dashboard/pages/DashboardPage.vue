@@ -4,8 +4,7 @@
 			<v-container>
 				<t-area-card
 					:isLoading="isFirstAreaLoading"
-					title="Опубликование всех НПА"
-					subtitle="По годам"
+					title="Опубликование всех НПА по годам"
 				>
 					<template #chart>
 						<t-column-chart
@@ -48,8 +47,12 @@
 			<v-container>
 				<t-area-card
 					:isLoading="isSecondAreaLoading"
-					title="Опубликование всех типов НПА"
-					subtitle="За месяц"
+					:title="
+						'Опубликование всех типов НПА за ' +
+						getMonthAndYearFromRuFormattedDate(
+							secondAreaMonth.startDate,
+						)
+					"
 				>
 					<template #chart>
 						<t-column-chart
@@ -88,8 +91,7 @@
 			<v-container>
 				<t-area-card
 					:isLoading="isThirdAreaLoading"
-					title="Опубликование по всем ФО"
-					subtitle="За квартал"
+					title="Опубликование по всем ФО за квартал"
 				>
 					<template #chart>
 						<t-donut-chart
@@ -130,8 +132,11 @@
 			<v-container>
 				<t-area-card
 					:isLoading="isFourthAreaLoading"
-					title="Опубликование по номенклатуре"
-					subtitle="За год"
+					:title="
+						'Опубликование по номенклатуре за ' +
+						fourthAreaYear.startDate.split('.')[2] +
+						' г.'
+					"
 				>
 					<template #chart>
 						<t-column-chart
@@ -176,8 +181,7 @@
 			<v-container>
 				<t-area-card
 					:isLoading="isNomenclatureDetailLoading"
-					title="Детальное опубликование по номенклатуре"
-					subtitle="За неделю"
+					title="Детальное опубликование по номенклатуре за неделю"
 				>
 					<template #chart>
 						<!-- <v-icon
@@ -223,8 +227,7 @@
 			<v-container>
 				<t-area-card
 					:isLoading="isFifthAreaLoading"
-					title="Опубликование по ОГВ субъектов РФ"
-					subtitle="Минимальное за квартал"
+					title="Минимальное опубликование по ОГВ субъектов РФ за квартал"
 				>
 					<template #chart>
 						<!-- <t-column-chart
@@ -274,8 +277,7 @@
 			<v-container>
 				<t-area-card
 					:isLoading="isSixthAreaLoading"
-					title="Опубликование по ОГВ субъектов РФ"
-					subtitle="Максимальное за квартал"
+					title="Максимальное опубликование по ОГВ субъектов РФ за квартал"
 				>
 					<template #chart>
 						<t-horizontal-bar-chart
@@ -332,8 +334,16 @@
 		getLastYear,
 		getLastWeek,
 	} from '@/utils/utils'
-	import { computed } from 'vue'
+	import { computed, watchEffect } from 'vue'
 	import { toast } from 'vue-sonner'
+	import { useDate } from 'vuetify'
+
+	const getMonthAndYearFromRuFormattedDate = currentDate => {
+		currentDate = currentDate.split('.').reverse().join('-')
+		const date = useDate()
+		console.log('currentDate', currentDate)
+		return date.format(currentDate, 'monthAndYear')
+	}
 
 	const store = useDashboardStore()
 
