@@ -18,22 +18,6 @@
 		>
 			Фильтры
 		</v-btn>
-		<v-btn
-			color="primary"
-			variant="tonal"
-			:loading="isPreviousLoading"
-			@click="previousInterval"
-		>
-			<v-icon>mdi-arrow-left</v-icon>
-		</v-btn>
-		<v-btn
-			color="primary"
-			variant="tonal"
-			:loading="isNextLoading"
-			@click="nextInterval"
-		>
-			<v-icon>mdi-arrow-right</v-icon>
-		</v-btn>
 	</div>
 
 	<v-row no-gutters class="justify-space-around">
@@ -133,7 +117,6 @@
 </template>
 
 <script setup>
-	import { TIcon } from '@/components/ui'
 	import {
 		TAreaCard,
 		TDonutChart,
@@ -143,6 +126,7 @@
 	import { dateFormat, getLastMonth } from '@/utils/utils'
 	import { ref, computed, onMounted } from 'vue'
 	import { useRoute } from 'vue-router'
+	import { toast } from 'vue-sonner'
 
 	const route = useRoute()
 	const store = useDistrictStore()
@@ -183,12 +167,10 @@
 			// Сдвигаем дату на месяц назад относительно текущего startDate
 			const currentStart = new Date(store.startDate)
 			console.log(currentStart)
-			currentStart.setMonth(currentStart.getMonth() - 1)
+
 			const newInterval = getLastMonth(currentStart)
 			store.startDate = newInterval.startDate
 			store.endDate = newInterval.endDate
-
-			console.log('newInterval', newInterval)
 
 			const parameters = getParams()
 			await store.loadStatisticsAPI(route.params.label, parameters)
@@ -204,14 +186,22 @@
 	// Переход к следующему интервалу
 	const nextInterval = async () => {
 		try {
+			// Сдвигаем дату на месяц вперёд относительно текущего endDate
+			const currentStart = new Date(store.startDate)
+			currentStart.setMonth(currentStart.getMonth() + 1)
+
+			if (currentStart > new Date()) {
+				toast.warning('Нельзя переходить в будущее')
+				return
+			}
+
+			currentStart.setMonth(currentStart.getMonth() + 1)
+
 			isNextLoading.value = true
 			loadingStatistics.value = true
 			errorStatistics.value = null
 
-			// Сдвигаем дату на месяц вперёд относительно текущего endDate
-			const currentEnd = new Date(store.endDate)
-			currentEnd.setMonth(currentEnd.getMonth() + 1)
-			const newInterval = getLastMonth(currentEnd)
+			const newInterval = getLastMonth(currentStart)
 			store.startDate = newInterval.startDate
 			store.endDate = newInterval.endDate
 

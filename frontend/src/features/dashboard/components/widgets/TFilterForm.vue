@@ -67,7 +67,7 @@
 </template>
 
 <script setup>
-	import { onMounted, reactive } from 'vue'
+	import { onMounted, reactive, watchEffect } from 'vue'
 	import { useDistrictStore } from '../../stores/district'
 	import { getLastMonth, getLastQuarter, getLastYear } from '@/utils/utils.js'
 	import { VDateInput } from 'vuetify/labs/VDateInput'
@@ -84,6 +84,11 @@
 		selectedPeriod: 'За прошлый месяц',
 		startDate: null, // Ожидаем строку в формате yyyy-mm-dd или null
 		endDate: null, // Ожидаем строку в формате yyyy-mm-dd или null
+	})
+
+	watchEffect(() => {
+		form.startDate = new Date(store.startDate)
+		form.endDate = new Date(store.endDate)
 	})
 
 	// Убеждаемся, что хотя бы один регион остаётся выбранным
@@ -134,9 +139,8 @@
 	// Формирование параметров запроса
 	const paramsProcessing = (selected, startDate, endDate) => {
 		const params = {}
-		console.log('startDate', convertDateToYYYYMMDDString(startDate))
-		if (startDate) params.startDate = convertDateToYYYYMMDDString(startDate)
-		if (endDate) params.endDate = convertDateToYYYYMMDDString(endDate)
+		if (startDate) params.startDate = startDate
+		if (endDate) params.endDate = endDate
 		if (selected.length > 0) params.regions = selected.toString()
 		return params
 	}
@@ -149,9 +153,10 @@
 			// Синхронизируем локальные данные с Pinia Store
 			store.selectedRegions = [...form.selectedRegions]
 			store.selectedPeriod = form.selectedPeriod
-			store.startDate = form.startDate // Передаём строку
-			store.endDate = form.endDate // Передаём строку
+			store.startDate = convertDateToYYYYMMDDString(form.startDate) // Передаём строку
+			store.endDate = convertDateToYYYYMMDDString(form.endDate) // Передаём строку
 
+			console.log(store.selectedRegions, store.startDate, store.endDate)
 			const parameters = paramsProcessing(
 				store.selectedRegions,
 				store.startDate,
