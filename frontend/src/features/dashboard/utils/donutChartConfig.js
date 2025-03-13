@@ -46,7 +46,7 @@ export const createDonutChartConfig = ({
 				},
 				events: {
 					legendClick: (chart, seriesIndex, config) => {
-						console.log('Clicked legend item', seriesIndex)
+						console.log('Clicked legend item', seriesIndex, config)
 						// Используем Vue Router
 						const label = config.globals.labels[seriesIndex]
 						if (isLegendClickable) {
@@ -197,26 +197,23 @@ export const createDonutChartConfig = ({
 				clusterGroupedSeriesOrientation: 'vertical',
 				offsetX: 0,
 				offsetY: 0,
+
+				itemMargin: { horizontal: 7, vertical: 5 },
+				height: 80, // Позволяет легенде адаптироваться по высоте
+				width: 'auto', // Позволяет легенде адаптироваться по ширине
 				labels: {
-					hideOverlappingLabels: true,
-					trim: true,
-					colors: undefined,
-					useSeriesColors: false,
+					hideOverlappingLabels: false, // Убеждаемся, что метки не скрываются
+					trim: false,
 				},
-				markers: {
-					size: 7,
-					shape: undefined,
-					strokeWidth: 1,
-					fillColors: undefined,
-					customHTML: undefined,
-					onClick: undefined,
-					offsetX: 0,
-					offsetY: 0,
-				},
-				itemMargin: {
-					horizontal: 5,
-					vertical: 6,
-				},
+				// customHTML: function (seriesName, opts) {
+				// 	const value = opts.w.globals.series[opts.seriesIndex] || 0
+				// 	return `
+				// 	  <div class="legend-item" style="display: flex; align-items: center; padding: 2px 0;">
+				// 		<span style="display: inline-block; width: 10px; height: 10px; background-color: ${opts.w.config.colors[opts.seriesIndex % opts.w.config.colors.length]}; margin-right: 5px;"></span>
+				// 		<span>${seriesName}: ${value.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, '.') || '0'}</span>
+				// 	  </div>
+				// 	`
+				// },
 			},
 			noData: {
 				text: 'Нет данных',

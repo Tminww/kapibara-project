@@ -9,21 +9,23 @@
 		@update:rail="rail = $event"
 	/>
 
-	<div class="flex justify-end">
-		<v-btn
-			class="my-4 ml-4 mr-4"
-			color="primary"
-			variant="tonal"
-			@click="leftMenu = !leftMenu"
-		>
-			Фильтры
-		</v-btn>
-	</div>
+	<v-row>
+		<v-col cols="auto">
+			<v-btn
+				class="my-4 ml-4 mr-4"
+				color="primary"
+				variant="tonal"
+				@click="leftMenu = !leftMenu"
+			>
+				Фильтры
+			</v-btn>
+		</v-col>
+	</v-row>
 
 	<v-row no-gutters class="justify-space-around">
 		<v-col cols="auto">
 			<v-container>
-				<t-area-card
+				<t-region-card
 					:title="store.getDistrictName"
 					:is-loading="isLoading"
 					:min-width="400"
@@ -66,12 +68,12 @@
 						{{ dateFormat(store.getStartDate, 'DD.MM.YYYY') }} -
 						{{ dateFormat(store.getEndDate, 'DD.MM.YYYY') }}
 					</template>
-				</t-area-card>
+				</t-region-card>
 			</v-container>
 		</v-col>
 		<v-col cols="auto" v-for="region of store.getRegions" :key="region">
 			<v-container>
-				<t-area-card
+				<t-region-card
 					:title="region.name"
 					:is-loading="isLoading"
 					:min-width="400"
@@ -110,7 +112,7 @@
 						{{ dateFormat(store.getStartDate, 'DD.MM.YYYY') }} -
 						{{ dateFormat(store.getEndDate, 'DD.MM.YYYY') }}
 					</template>
-				</t-area-card>
+				</t-region-card>
 			</v-container>
 		</v-col>
 	</v-row>
@@ -118,7 +120,7 @@
 
 <script setup>
 	import {
-		TAreaCard,
+		TRegionCard,
 		TDonutChart,
 		TFilterSidebar,
 	} from '../components/widgets'
@@ -237,7 +239,6 @@
 			loadingStatistics.value = false
 		}
 	}
-
 	onMounted(async () => {
 		await loadInitialData()
 	})

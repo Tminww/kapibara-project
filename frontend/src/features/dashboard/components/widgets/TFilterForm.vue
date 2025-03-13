@@ -34,7 +34,6 @@
 				prepend-inner-icon="$calendar"
 				variant="outlined"
 				v-model="form.startDate"
-				@update:model-value="val => console.log(val)"
 			></v-date-input>
 			<v-date-input
 				label="Дата окончания"
@@ -156,7 +155,6 @@
 			store.startDate = convertDateToYYYYMMDDString(form.startDate) // Передаём строку
 			store.endDate = convertDateToYYYYMMDDString(form.endDate) // Передаём строку
 
-			console.log(store.selectedRegions, store.startDate, store.endDate)
 			const parameters = paramsProcessing(
 				store.selectedRegions,
 				store.startDate,
@@ -164,7 +162,6 @@
 			)
 			await store.loadStatisticsAPI(store.getDistrictName, parameters)
 		} catch (e) {
-			console.error('Ошибка:', e.message)
 			store.dropStatistics()
 		} finally {
 			await store.endLoading()

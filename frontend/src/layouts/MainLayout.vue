@@ -28,7 +28,14 @@
 	</t-header-widget>
 
 	<v-main>
-		<t-breadcrumbs v-if="route.name !== 'home'" divider="/"></t-breadcrumbs>
+		<!-- <v-row>
+			<v-col cols="auto">
+				<t-breadcrumbs
+					v-if="route.name !== 'home'"
+					divider="/"
+				></t-breadcrumbs>
+			</v-col>
+		</v-row> -->
 
 		<slot></slot>
 	</v-main>
