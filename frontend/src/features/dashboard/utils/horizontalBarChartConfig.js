@@ -33,34 +33,9 @@ export const createHorizontalBarChartConfig = ({
 				redrawOnParentResize: false,
 				zoom: {
 					enabled: false,
-					type: 'x',
-					autoScaleYaxis: true,
-					allowMouseWheelZoom: false,
-					zoomedArea: {
-						fill: {
-							color: '#90CAF9',
-							opacity: 0.4,
-						},
-						stroke: {
-							color: '#0D47A1',
-							opacity: 0.4,
-							width: 1,
-						},
-					},
 				},
 				toolbar: {
 					show: false,
-					offsetX: 0,
-					offsetY: 0,
-					tools: {
-						download: true,
-						selection: true,
-						zoom: true,
-						zoomin: true,
-						zoomout: true,
-						pan: true,
-						customIcons: [],
-					},
 				},
 			},
 			plotOptions: {

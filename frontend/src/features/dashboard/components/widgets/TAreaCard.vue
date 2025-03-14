@@ -69,6 +69,14 @@
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
+		font-size: 16px;
+	}
+
+	.chart-wrap {
+		height: 350;
+	}
+	.loader-wrap {
+		height: 350;
 	}
 
 	.subtitle-wrap {
@@ -87,5 +95,6 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
+		font-size: 14px;
 	}
 </style>
