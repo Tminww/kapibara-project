@@ -9,16 +9,17 @@
 		@update:rail="rail = $event"
 	/>
 
-	<v-row>
-		<v-col cols="auto">
-			<v-btn
-				class="my-4 ml-4 mr-4"
-				color="primary"
-				variant="tonal"
-				@click="leftMenu = !leftMenu"
-			>
-				Фильтры
-			</v-btn>
+	<v-row no-gutters class="justify-start">
+		<v-col>
+			<v-container fluid class="my-0 py-0">
+				<v-btn
+					color="primary"
+					variant="tonal"
+					@click="leftMenu = !leftMenu"
+				>
+					Фильтры
+				</v-btn>
+			</v-container>
 		</v-col>
 	</v-row>
 

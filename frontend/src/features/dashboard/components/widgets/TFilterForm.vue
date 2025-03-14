@@ -31,7 +31,6 @@
 				label="Дата начала"
 				placeholder="DD.MM.YYYY"
 				prepend-icon=""
-				prepend-inner-icon="$calendar"
 				variant="outlined"
 				v-model="form.startDate"
 			></v-date-input>
@@ -39,7 +38,6 @@
 				label="Дата окончания"
 				placeholder="DD.MM.YYYY"
 				prepend-icon=""
-				prepend-inner-icon="$calendar"
 				variant="outlined"
 				v-model="form.endDate"
 			></v-date-input>

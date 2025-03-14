@@ -2,12 +2,9 @@
 	<v-navigation-drawer
 		location="left"
 		temporary
-		:width="500"
-		elevation="3"
+		floating
+		:width="350"
 		v-model="internalLeftMenu"
-		permanent
-		:rail="rail"
-		@click="updateRail(false)"
 	>
 		<v-list-item nav>
 			<v-list-item-title>
@@ -21,8 +18,7 @@
 				></v-btn>
 			</template>
 		</v-list-item>
-		<v-divider></v-divider>
-		<v-container>
+		<v-container class="scrollable-container">
 			<v-alert
 				v-if="errorSubjects"
 				class="d-flex align-center justify-center"
@@ -50,10 +46,6 @@
 			type: Boolean,
 			required: true,
 		},
-		rail: {
-			type: Boolean,
-			default: false,
-		},
 		loadingSubjects: {
 			type: Boolean,
 			default: false,
@@ -68,7 +60,7 @@
 		},
 	})
 
-	const emits = defineEmits(['update:modelValue', 'update:rail'])
+	const emits = defineEmits(['update:modelValue'])
 
 	const internalLeftMenu = computed({
 		get: () => props.modelValue,
@@ -78,89 +70,40 @@
 	const toggleMenu = () => {
 		internalLeftMenu.value = !internalLeftMenu.value
 	}
-
-	const updateRail = value => {
-		emits('update:rail', value)
-	}
 </script>
 
 <style scoped>
-	.card-container {
-		display: flex;
-		flex-direction: column;
-		max-height: 90vh;
-		overflow: hidden;
-		width: 100%; /* Гарантируем, что контейнер занимает всю ширину */
-		padding: 0; /* Убираем внутренние отступы */
-		margin: 0; /* Убираем внешние отступы */
-		box-sizing: border-box; /* Учитываем padding и border в ширине */
+	/* Стили для контейнера с прокруткой */
+	.scrollable-container {
+		max-height: calc(
+			100vh - 120px
+		); /* Учитываем высоту заголовка и отступы */
+		overflow-y: auto; /* Включаем вертикальную прокрутку */
+		overflow-x: hidden; /* Отключаем горизонтальную прокрутку */
+		scroll-behavior: smooth; /* Плавная прокрутка */
 	}
 
-	.full-width-card {
-		width: 100% !important; /* Переопределяем ширину */
-		max-width: none !important; /* Убираем ограничения max-width */
-		min-width: 0 !important; /* Убираем минимальную ширину */
-		box-sizing: border-box; /* Учитываем padding и border в ширине */
-		padding: 0 !important; /* Убираем внутренние отступы карточки */
-		margin: 0 !important; /* Убираем внешние отступы карточки */
-		/* Отладка: временно добавьте для проверки границ */
-		/* outline: 1px solid red; */
+	/* Опционально: настройка полосы прокрутки */
+	.scrollable-container::-webkit-scrollbar {
+		width: 5px; /* Ширина полосы прокрутки */
 	}
 
-	.title-wrap {
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
+	.scrollable-container::-webkit-scrollbar-thumb {
+		background-color: rgba(0, 0, 0, 0.3); /* Цвет бегунка */
+		border-radius: 4px; /* Закругление бегунка */
+		padding-right: 5px;
 	}
 
-	.subtitle-wrap {
-		white-space: normal;
-		word-wrap: break-word;
-		overflow-wrap: break-word;
-		max-width: 100%;
-		text-align: left;
-		font-size: 14px;
-		height: 20px;
+	.scrollable-container::-webkit-scrollbar-track {
+		background: transparent; /* Фон полосы прокрутки */
 	}
 
-	.time-wrap {
-		flex: 1;
-		text-align: center;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-	}
-
-	.chart-wrap {
-		width: 100%;
-		height: 350px;
-		min-height: 200px;
-	}
-
-	.scrollable {
-		flex: 1;
-		max-height: 60vh;
-		overflow-y: auto;
-		overflow-x: hidden;
-		scroll-behavior: smooth;
-	}
-
-	/* Адаптивность для маленьких экранов */
-	@media (max-height: 896px) {
-		.scrollable {
-			max-height: 50vh;
-		}
-		.chart-wrap {
-			height: 300px;
-		}
-	}
-
+	/* Адаптивность для меньших экранов */
 	@media (max-height: 667px) {
-		.scrollable {
-			max-height: 40vh;
-		}
-		.chart-wrap {
-			height: 250px;
+		.scrollable-container {
+			max-height: calc(
+				100vh - 100px
+			); /* Уменьшаем высоту на малых экранах */
 		}
 	}
 </style>
