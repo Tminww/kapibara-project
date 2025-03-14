@@ -19,44 +19,27 @@
 			</template>
 		</v-list-item>
 		<v-container class="scrollable-container">
-			<v-alert
-				v-if="errorSubjects"
-				class="d-flex align-center justify-center"
-				type="error"
-				title="Произошла ошибка"
-				:text="errorSubjects"
-				variant="tonal"
-			></v-alert>
 			<v-progress-circular
-				v-else-if="loadingSubjects"
+				v-if="loading"
 				class="d-flex align-center justify-center"
 				indeterminate
 			/>
-			<t-filter-form v-else :regions="regions" />
+			<slot v-else name="form"></slot>
 		</v-container>
 	</v-navigation-drawer>
 </template>
 
 <script setup>
 	import { computed } from 'vue'
-	import { TFilterForm } from './'
 
 	const props = defineProps({
 		modelValue: {
 			type: Boolean,
 			required: true,
 		},
-		loadingSubjects: {
+		loading: {
 			type: Boolean,
 			default: false,
-		},
-		errorSubjects: {
-			type: String,
-			default: '',
-		},
-		regions: {
-			type: Array,
-			default: () => [],
 		},
 	})
 

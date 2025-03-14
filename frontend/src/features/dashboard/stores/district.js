@@ -6,29 +6,45 @@ import { getLastMonth, getLastQuarter, getLastYear } from '@/utils/utils.js' // 
 export const useDistrictStore = defineStore('district', () => {
 	// Состояние
 	const loading = ref(false)
-	const name = ref('')
-	const statistics = ref({})
-	const allStatistics = ref([])
-	const subjects = ref([])
+	const selectedPeriod = ref('За прошлый месяц')
+	const selectedRegions = ref([])
 	const startDate = ref('')
 	const endDate = ref('')
-	const selectedRegions = ref([])
-	const selectedPeriod = ref('За прошлый месяц') // Добавляем selectedPeriod
+
+	const subjects = ref([])
+	const statistics = ref({})
+	const allStatistics = ref([])
+	const selectedDistrictName = ref('')
+
+	const districts = ref([])
+	const districtsForRequest = ref([])
 
 	// Геттеры
 	const getStartDate = computed(() => startDate.value)
 	const getEndDate = computed(() => endDate.value)
-	const getDistrictName = computed(() => name.value)
-	const getDistrictStat = computed(() => allStatistics.value)
 	const isLoading = computed(() => loading.value)
-	const getDistrict = computed(() => allStatistics.value)
-	const getRegions = computed(() => statistics.value)
-	const getStatistics = computed(() => statistics.value)
+
 	const getSubjects = computed(() => subjects.value)
+	const getDistrictName = computed(() => selectedDistrictName.value)
+	const getDistrictStat = computed(() => allStatistics.value)
+	const getStatistics = computed(() => statistics.value)
+
+	const getAllStatistics = computed(() => allStatistics.value)
+	const getRegions = computed(() => statistics.value)
+	const getDistrictsForRequest = computed(() => districtsForRequest.value)
+	const getDistricts = computed(() => districts.value)
 
 	// Действия
 	const dropSubjects = () => {
 		subjects.value = []
+	}
+
+	const dropDistricts = () => {
+		districts.value = []
+	}
+
+	const dropDistrictsForRequest = () => {
+		districtsForRequest.value = []
 	}
 
 	const startLoading = async () => {
@@ -87,13 +103,12 @@ export const useDistrictStore = defineStore('district', () => {
 	const loadStatisticsAPI = async (districtName, parameters) => {
 		try {
 			const response = await apiClient.statistics.read(parameters)
-			name.value = response.districts.filter(
-				d => d.name === districtName,
-			)[0].name
+			selectedDistrictName.value = districtName
 			statistics.value = response.districts.filter(
 				d => d.name === districtName,
 			)[0].regions
 			allStatistics.value = response.stat
+
 			startDate.value = response.startDate // Эти значения могут быть перезаписаны API
 			endDate.value = response.endDate
 		} catch (error) {
@@ -116,10 +131,36 @@ export const useDistrictStore = defineStore('district', () => {
 		}
 	}
 
+	// Загрузка субъектов через API
+	const loadDistrictsForRequest = async () => {
+		try {
+			const response = await apiClient.subjects.read()
+			districtsForRequest.value = response.map(d => ({
+				name: d.name,
+				id: d.id,
+			}))
+			console.log(districtsForRequest.value)
+		} catch (error) {
+			console.error('Ошибка при загрузке субъектов:', error)
+			dropDistrictsForRequest()
+		}
+	}
+	const loadDistricts = async () => {
+		try {
+			const response = await apiClient.statistics.read()
+			districts.value = response.districts
+			allStatistics.value = response.stat
+			startDate.value = response.startDate // Эти значения могут быть перезаписаны API
+			endDate.value = response.endDate
+		} catch (error) {
+			console.error('Ошибка при загрузке субъектов:', error)
+			dropDistricts()
+		}
+	}
+
 	// Возвращаем все свойства и методы
 	return {
 		loading,
-		name,
 		statistics,
 		allStatistics,
 		subjects,
@@ -133,10 +174,12 @@ export const useDistrictStore = defineStore('district', () => {
 		getDistrictName,
 		getDistrictStat,
 		isLoading,
-		getDistrict,
 		getRegions,
 		getStatistics,
 		getSubjects,
+		getDistrictsForRequest,
+		getDistricts,
+		getAllStatistics,
 
 		dropSubjects,
 		startLoading,
@@ -145,6 +188,8 @@ export const useDistrictStore = defineStore('district', () => {
 		dropStatistics,
 		loadStatisticsAPI,
 		loadSubjectsAPI,
+		loadDistrictsForRequest,
+		loadDistricts,
 
 		initializeForm,
 		updateDatesByPeriod,

@@ -20,6 +20,7 @@
 			validators: ['top', 'bottom', 'left', 'right'],
 		},
 		isLegendClickable: { type: Boolean, default: false },
+		routeName: { type: String, default: 'region' },
 	})
 
 	const data = computed(() => {
@@ -29,6 +30,7 @@
 			isLegendClickable: props.isLegendClickable,
 			legendPosition: props.legendPosition,
 			router,
+			routeName: props.routeName,
 		})
 	})
 </script>

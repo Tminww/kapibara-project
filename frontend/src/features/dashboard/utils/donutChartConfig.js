@@ -1,11 +1,10 @@
-import { he } from 'vuetify/lib/locale/index.mjs'
-
 export const createDonutChartConfig = ({
 	series,
 	labels,
 	isLegendClickable,
 	legendPosition,
 	router,
+	routeName,
 }) => {
 	return {
 		series: series,
@@ -50,7 +49,7 @@ export const createDonutChartConfig = ({
 						// Используем Vue Router
 						const label = config.globals.labels[seriesIndex]
 						if (isLegendClickable) {
-							router.push({ name: 'district', params: { label } }) // или другой маршрут
+							router.push({ name: routeName, params: { label } }) // или другой маршрут
 						}
 					},
 				},
