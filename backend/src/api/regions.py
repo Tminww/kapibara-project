@@ -1,7 +1,7 @@
 from typing import Annotated, List
 from fastapi import APIRouter, Depends
 
-from src.schemas.regions import PravoGovRegionSchema
+from src.schemas.regions import RegionDTO
 from src.services.service import Service
 from src.utils.utils import get_logger
 
@@ -16,7 +16,9 @@ router = APIRouter(
 @router.get("")
 async def get_regions(
     service: Annotated[Service, Depends()],
-) -> List[PravoGovRegionSchema]:
+) -> List[RegionDTO]:
     logger.info("get_regions")
     regions = await service.regions.get_all_regions()
+
+    print(regions)
     return regions

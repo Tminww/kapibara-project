@@ -15,8 +15,8 @@ class BlockEntity(Base):
     id_organ: Mapped[int] = mapped_column(ForeignKey("organs.id"), nullable=True)
     id_reg: Mapped[int] = mapped_column(ForeignKey("regions.id"), nullable=True)
 
-    in_organ = relationship("OrganEntity", back_populates="blocks")
-    in_region = relationship("RegionEntity", back_populates="blocks")
+    # in_organ = relationship("OrganEntity", back_populates="blocks")
+    # in_region = relationship("RegionEntity", back_populates="blocks")
 
     __table_args__ = (
         UniqueConstraint("id", "id_organ", "id_reg"),

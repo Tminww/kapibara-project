@@ -9,10 +9,8 @@ class RegionsService:
         self.regions_repo: IRegionsRepository = regions_repo()
 
     async def get_all_regions(self):
-        response = []
         regions = await self.regions_repo.get_all_regions()
-
-        # print(response)
+        
         return regions
 
     async def insert_regions(self, regions: List[RegionSchema]) -> tuple[bool, str]:

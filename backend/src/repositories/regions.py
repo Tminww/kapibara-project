@@ -4,13 +4,13 @@ from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
 
 from src.models.regions import RegionEntity
-from src.schemas.regions import RegionSchema
 from src.database.setup import async_session_maker
+from src.schemas.regions import RegionDTO, RegionSchema
 
 
 class IRegionsRepository(ABC):
     @abstractmethod
-    async def get_all_regions() -> List[RegionSchema]:
+    async def get_all_regions() -> List[RegionDTO]:
         raise NotImplementedError
 
     @abstractmethod
@@ -27,7 +27,7 @@ class RegionsRepository(IRegionsRepository):
             stmt = select(self.regions)
             res = await session.execute(stmt)
 
-            res = [row[0] for row in res.all()]
+            res = [row[0].to_read_model() for row in res.all()]
 
             return res
 

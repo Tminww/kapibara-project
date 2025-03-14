@@ -2,9 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends
 
-# from api.dependencies import subjects_service
 from src.services.service import Service
-from src.services.subjects import SubjectsService
 
 from src.utils import utils
 

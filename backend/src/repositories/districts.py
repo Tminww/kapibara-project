@@ -5,21 +5,21 @@ from sqlalchemy.dialects.postgresql import insert
 
 from src.errors import ResultIsEmptyError
 from src.models.districts import DistrictEntity
-from src.schemas.districts import DistrictSchema
+from src.schemas.districts import DistrictDTO
 from src.database.setup import async_session_maker
 
 
 class IDistrictsRepository(ABC):
     @abstractmethod
-    async def get_all_districts() -> List[DistrictSchema]:
+    async def get_all_districts() -> List[DistrictDTO]:
         raise NotImplementedError
 
-    async def get_district(id_item: int) -> List[DistrictSchema]:
+    async def get_district(id_item: int) -> List[DistrictDTO]:
         raise NotImplementedError
 
     @abstractmethod
     async def insert_or_update_districts(
-        districts: List[DistrictSchema],
+        districts: List[DistrictDTO],
     ) -> tuple[bool, str]:
         raise NotImplementedError
 
@@ -27,7 +27,7 @@ class IDistrictsRepository(ABC):
 class DistrictsRepository(IDistrictsRepository):
     districts = DistrictEntity
 
-    async def get_all_districts(self) -> List[DistrictSchema]:
+    async def get_all_districts(self) -> List[DistrictDTO]:
 
         async with async_session_maker() as session:
             stmt = select(self.districts)
@@ -40,7 +40,7 @@ class DistrictsRepository(IDistrictsRepository):
             else:
                 raise ResultIsEmptyError("Result is empty")
 
-    async def get_district(self, item_id: int) -> List[DistrictSchema]:
+    async def get_district(self, item_id: int) -> List[DistrictDTO]:
 
         async with async_session_maker() as session:
             stmt = select(self.districts).where(self.districts.id == item_id)
@@ -54,7 +54,7 @@ class DistrictsRepository(IDistrictsRepository):
                 raise ResultIsEmptyError("Result is empty")
 
     async def insert_or_update_districts(
-        self, districts: List[DistrictSchema]
+        self, districts: List[DistrictDTO]
     ) -> tuple[bool, str]:
 
         values: List[dict] = []

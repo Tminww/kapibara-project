@@ -17,7 +17,7 @@ class OrganEntity(Base):
     code: Mapped[str] = mapped_column(String(64))
     parent_id: Mapped[str] = mapped_column(String(64), nullable=True)
 
-    blocks = relationship("BlockEntity", back_populates="in_organ")
+    # blocks = relationship("BlockEntity", back_populates="in_organ")
 
     __table_args__ = (
         UniqueConstraint("id", "name", "external_id", "code"),
