@@ -240,6 +240,15 @@
 		return yyyyMMdd
 	}
 
+	// Формирование параметров запроса
+	const paramsProcessing = (selected, startDate, endDate) => {
+		const params = {}
+		if (startDate) params.startDate = startDate
+		if (endDate) params.endDate = endDate
+		if (selected.length > 0) params.regions = selected.toString()
+		return params
+	}
+
 	const onSubmit = async data => {
 		// Обработчик отправки формы (синхронизация с Pinia Store)
 		console.log('start')
@@ -247,10 +256,10 @@
 			await store.startLoading()
 
 			// Синхронизируем локальные данные с Pinia Store
-			store.selectedItems = [...form.selectedItems]
-			store.selectedPeriod = form.selectedPeriod
-			store.startDate = convertDateToYYYYMMDDString(form.startDate) // Передаём строку
-			store.endDate = convertDateToYYYYMMDDString(form.endDate) // Передаём строку
+			store.selectedItems = [...data.selectedItems]
+			store.selectedPeriod = data.selectedPeriod
+			store.startDate = convertDateToYYYYMMDDString(data.startDate) // Передаём строку
+			store.endDate = convertDateToYYYYMMDDString(data.endDate) // Передаём строку
 
 			const parameters = paramsProcessing(
 				store.selectedItems,
@@ -259,6 +268,7 @@
 			)
 			await store.loadStatisticsAPI(store.getDistrictName, parameters)
 		} catch (e) {
+			console.log(e)
 			store.dropStatistics()
 		} finally {
 			await store.endLoading()

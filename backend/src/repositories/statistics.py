@@ -139,6 +139,51 @@ class SQLAlchemyRepository:
             # else:
             #     raise ResultIsEmptyError("Result is empty")
 
+
+    async def get_stat_in_districts(self, parameters: RequestBodySchema):
+        async with async_session_maker() as session:
+            start_date = (
+                datetime.strptime(parameters.start_date, "%Y-%m-%d")
+                if parameters.start_date is not None
+                else None
+            )
+            end_date = (
+                datetime.strptime(parameters.end_date, "%Y-%m-%d")
+                if parameters.end_date is not None
+                else None
+            )
+
+            stmt = (
+                select(
+                    ActEntity.name.label("name"),
+                    func.count().label("count"),
+                )
+                .select_from(DocumentEntity)
+                .join(RegionEntity, DocumentEntity.id_reg == RegionEntity.id)
+                .join(ActEntity, DocumentEntity.id_act == ActEntity.id)
+                .filter(
+                    
+                    (
+                        parameters.regions is None
+                        or RegionEntity.id_dist.in_(parameters.regions)
+                    ),
+                    (
+                        parameters.start_date is None
+                        and parameters.end_date is None
+                        or DocumentEntity.view_date.between(start_date, end_date)
+                    ),
+                )
+                .group_by(ActEntity.name)
+                .order_by(ActEntity.name)
+            )
+            res = await session.execute(stmt)
+            res = [StatBaseDTO(name=row.name, count=row.count) for row in res.all()]
+
+            return res
+            # if res:
+            #     return res
+            # else:
+            #     raise ResultIsEmptyError("Result is empty")
     async def get_districts_by_regions(self, regions):
         async with async_session_maker() as session:
             stmt_for_district_id = (

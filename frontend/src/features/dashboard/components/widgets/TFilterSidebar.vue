@@ -1,32 +1,36 @@
 <template>
-	<v-navigation-drawer
-		location="left"
-		temporary
-		floating
-		:width="350"
-		v-model="internalLeftMenu"
-	>
-		<v-list-item nav>
-			<v-list-item-title>
-				<h2 class="font-weight-bold pl-2">Настроить фильтры</h2>
-			</v-list-item-title>
-			<template #append>
-				<v-btn
-					icon="mdi-chevron-left"
-					variant="text"
-					@click.stop="toggleMenu"
-				></v-btn>
-			</template>
-		</v-list-item>
-		<v-container class="scrollable-container">
-			<v-progress-circular
-				v-if="loading"
-				class="d-flex align-center justify-center"
-				indeterminate
-			/>
-			<slot v-else name="form"></slot>
-		</v-container>
-	</v-navigation-drawer>
+	<!-- Добавляем v-overlay вручную -->
+	<div class="sidebar-wrapper">
+		<v-navigation-drawer
+			location="left"
+			temporary
+			floating
+			:width="350"
+			v-model="internalLeftMenu"
+			:scrim="true"
+		>
+			<v-list-item nav>
+				<v-list-item-title>
+					<h2 class="font-weight-bold pl-2">Настроить фильтры</h2>
+				</v-list-item-title>
+				<template #append>
+					<v-btn
+						icon="mdi-chevron-left"
+						variant="text"
+						@click.stop="toggleMenu"
+					></v-btn>
+				</template>
+			</v-list-item>
+			<v-container class="scrollable-container pt-0">
+				<v-progress-circular
+					v-if="loading"
+					class="d-flex align-center justify-center"
+					indeterminate
+				/>
+				<slot v-else name="form"></slot>
+			</v-container>
+		</v-navigation-drawer>
+	</div>
 </template>
 
 <script setup>
@@ -58,35 +62,40 @@
 <style scoped>
 	/* Стили для контейнера с прокруткой */
 	.scrollable-container {
-		max-height: calc(
-			100vh - 120px
-		); /* Учитываем высоту заголовка и отступы */
-		overflow-y: auto; /* Включаем вертикальную прокрутку */
-		overflow-x: hidden; /* Отключаем горизонтальную прокрутку */
-		scroll-behavior: smooth; /* Плавная прокрутка */
+		max-height: calc(100vh - 120px);
+		overflow-y: auto;
+		overflow-x: hidden;
+		scroll-behavior: smooth;
 	}
 
-	/* Опционально: настройка полосы прокрутки */
 	.scrollable-container::-webkit-scrollbar {
-		width: 5px; /* Ширина полосы прокрутки */
+		width: 5px;
 	}
 
 	.scrollable-container::-webkit-scrollbar-thumb {
-		background-color: rgba(0, 0, 0, 0.3); /* Цвет бегунка */
-		border-radius: 4px; /* Закругление бегунка */
+		background-color: rgba(0, 0, 0, 0.3);
+		border-radius: 4px;
 		padding-right: 5px;
 	}
 
 	.scrollable-container::-webkit-scrollbar-track {
-		background: transparent; /* Фон полосы прокрутки */
+		background: transparent;
 	}
 
-	/* Адаптивность для меньших экранов */
 	@media (max-height: 667px) {
 		.scrollable-container {
-			max-height: calc(
-				100vh - 100px
-			); /* Уменьшаем высоту на малых экранах */
+			max-height: calc(100vh - 100px);
 		}
+	}
+
+	/* Стили для затемнения */
+	:deep(.v-navigation-drawer__scrim) {
+		position: fixed !important;
+		top: 0 !important;
+		left: 0 !important;
+		width: 100vw !important;
+		height: 100vh !important;
+		z-index: 1000 !important; /* Убедимся, что затемнение выше контента */
+		background-color: rgba(0, 0, 0, 0.5) !important; /* Цвет затемнения */
 	}
 </style>
