@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy import String, UniqueConstraint
-from database.setup import Base
+from .base import Base
+
 
 class ActEntity(Base):
     __tablename__ = "act"
@@ -15,5 +16,3 @@ class ActEntity(Base):
         UniqueConstraint("name", "npa_id"),
         {"extend_existing": True},
     )
-
-

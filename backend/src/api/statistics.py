@@ -4,11 +4,10 @@ from fastapi import APIRouter, Depends, Query, HTTPException
 from pydantic import ValidationError
 
 from api.dependencies import statistics_service
-from schemas.statistics import (
-    DistrictsStatDTO,
+from schemas import (
     RequestBodySchema,
     RequestMaxMinBodySchema,
-    ResponseStatDTO,
+    ResponseStatSchema,
 )
 from services.statistics import StatisticsService
 from errors import DateValidationError, ResultIsEmptyError
@@ -64,9 +63,12 @@ async def get_documents_in_districts(
         raise DateValidationError(e)
     else:
         documents = await statistics_service.get_stat_in_districts(parameters)
-        documents.startDate = startDate if startDate is not None else None
-        documents.endDate = endDate if endDate is not None else None
-        return documents
+
+        return ResponseStatSchema(
+            data=documents,
+            startDate=startDate if startDate is not None else None,
+            endDate=endDate if endDate is not None else None,
+        )
 
 
 @router.get("/subjects")
@@ -79,25 +81,23 @@ async def get_subjects_stat(
     try:
         startDate, endDate = check_dates(startDate, endDate)
 
-        print(regions)
-        print(startDate)
-        print(endDate)
-
         if regions:
             regions = [int(region) for region in str(regions).split(",")]
-            print(regions)
 
         parameters = RequestBodySchema(
-            regions=regions, start_date=startDate, end_date=endDate
+            ids=regions, start_date=startDate, end_date=endDate
         )
         print(parameters)
     except ValueError as e:
         raise DateValidationError(e)
     else:
         statistics = await statistics_service.get_subjects_stat(parameters)
-        statistics.startDate = startDate if startDate is not None else None
-        statistics.endDate = endDate if endDate is not None else None
-        return statistics
+
+        return ResponseStatSchema(
+            data=statistics,
+            startDate=startDate if startDate is not None else None,
+            endDate=endDate if endDate is not None else None,
+        )
 
 
 @router.get("/districts")
@@ -126,13 +126,11 @@ async def get_districts_stat(
         raise DateValidationError(e)
     else:
         statistics = await statistics_service.get_districts_stat(parameters)
-        startDate = startDate if startDate is not None else None
-        endDate = endDate if endDate is not None else None
-        return DistrictsStatDTO(
-            name="Статистика за ФО",
-            startDate=startDate,
-            endDate=endDate,
-            districts=statistics,
+
+        return ResponseStatSchema(
+            data=statistics,
+            startDate=startDate if startDate is not None else None,
+            endDate=endDate if endDate is not None else None,
         )
 
 
@@ -141,7 +139,7 @@ async def get_publication_by_nomenclature(
     statistics_service: Annotated[StatisticsService, Depends(statistics_service)],
     startDate: Union[str, None] = None,
     endDate: Union[str, None] = None,
-) -> ResponseStatDTO:
+) -> ResponseStatSchema:
     try:
         startDate, endDate = check_dates(startDate, endDate)
 
@@ -160,7 +158,7 @@ async def get_publication_by_nomenclature(
 async def get_publication_by_years(
     statistics_service: Annotated[StatisticsService, Depends(statistics_service)],
     limit: int = 30,
-) -> ResponseStatDTO:
+) -> ResponseStatSchema:
 
     statistics = await statistics_service.get_publication_by_years(limit)
 
@@ -172,7 +170,7 @@ async def get_publication_by_districts(
     statistics_service: Annotated[StatisticsService, Depends(statistics_service)],
     startDate: Union[str, None] = None,
     endDate: Union[str, None] = None,
-) -> ResponseStatDTO:
+) -> ResponseStatSchema:
     try:
         startDate, endDate = check_dates(startDate, endDate)
 
@@ -192,7 +190,7 @@ async def get_publication_by_regions(
     endDate: Union[str, None] = None,
     limit: int = 10,
     sort: Literal["max", "min"] = "max",
-) -> ResponseStatDTO:
+) -> ResponseStatSchema:
     try:
         startDate, endDate = check_dates(startDate, endDate)
 
@@ -212,7 +210,7 @@ async def get_publication_by_nomenclature_detail(
     statistics_service: Annotated[StatisticsService, Depends(statistics_service)],
     startDate: Union[str, None] = None,
     endDate: Union[str, None] = None,
-) -> ResponseStatDTO:
+) -> ResponseStatSchema:
     try:
         startDate, endDate = check_dates(startDate, endDate)
 
@@ -232,7 +230,7 @@ async def get_publication_by_acts(
     statistics_service: Annotated[StatisticsService, Depends(statistics_service)],
     startDate: Union[str, None] = None,
     endDate: Union[str, None] = None,
-) -> ResponseStatDTO:
+) -> ResponseStatSchema:
     try:
         startDate, endDate = check_dates(startDate, endDate)
 

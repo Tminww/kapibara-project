@@ -6,11 +6,11 @@ from models.district import DistrictEntity
 from models.document import DocumentEntity
 from models.region import RegionEntity
 
-from schemas.subjects import RegionInfoDTO, RegionsInDistrictDTO
-from schemas.statistics import (
+from schemas import (
+    RegionSchema,
+    DistrictWithRegionsSchema,
     RequestMaxMinBodySchema,
-    StatRowSchema,
-    StatBaseDTO,
+    StatBaseSchema,
     RequestBodySchema,
 )
 from sqlalchemy import (
@@ -86,7 +86,7 @@ class SQLAlchemyRepository:
             )
             res = await session.execute(stmt)
             print(res)
-            res = [StatBaseDTO(name=row.name, count=row.count) for row in res.all()]
+            res = [StatBaseSchema(name=row.name, count=row.count) for row in res.all()]
             print(res)
             if res:
                 return res
@@ -131,14 +131,13 @@ class SQLAlchemyRepository:
                 .order_by(ActEntity.name)
             )
             res = await session.execute(stmt)
-            res = [StatBaseDTO(name=row.name, count=row.count) for row in res.all()]
+            res = [StatBaseSchema(name=row.name, count=row.count) for row in res.all()]
 
             return res
             # if res:
             #     return res
             # else:
             #     raise ResultIsEmptyError("Result is empty")
-
 
     async def get_stat_in_districts(self, parameters: RequestBodySchema):
         async with async_session_maker() as session:
@@ -162,7 +161,6 @@ class SQLAlchemyRepository:
                 .join(RegionEntity, DocumentEntity.id_reg == RegionEntity.id)
                 .join(ActEntity, DocumentEntity.id_act == ActEntity.id)
                 .filter(
-                    
                     (
                         parameters.regions is None
                         or RegionEntity.id_dist.in_(parameters.regions)
@@ -177,13 +175,14 @@ class SQLAlchemyRepository:
                 .order_by(ActEntity.name)
             )
             res = await session.execute(stmt)
-            res = [StatBaseDTO(name=row.name, count=row.count) for row in res.all()]
+            res = [StatBaseSchema(name=row.name, count=row.count) for row in res.all()]
 
             return res
             # if res:
             #     return res
             # else:
             #     raise ResultIsEmptyError("Result is empty")
+
     async def get_districts_by_regions(self, regions):
         async with async_session_maker() as session:
             stmt_for_district_id = (
@@ -216,10 +215,10 @@ class SQLAlchemyRepository:
                 stmt = select(DistrictEntity)
             else:
                 stmt = select(DistrictEntity).filter(
-                parameters.regions is None
-                or DistrictEntity.id.in_(parameters.regions)
-            )
-            
+                    parameters.regions is None
+                    or DistrictEntity.id.in_(parameters.regions)
+                )
+
             res = await session.execute(stmt)
 
             res = [row[0] for row in res.all()]
@@ -235,7 +234,9 @@ class SQLAlchemyRepository:
             stmt = select(RegionEntity).filter(RegionEntity.id_dist == id_dist)
             res = await session.execute(stmt)
 
-            res = [RegionInfoDTO(name=row[0].name, id=row[0].id) for row in res.all()]
+            res = [
+                RegionInfoSchema(name=row[0].name, id=row[0].id) for row in res.all()
+            ]
 
             if res:
                 return res
@@ -276,7 +277,7 @@ class SQLAlchemyRepository:
                 .order_by(ActEntity.name)
             )
             res = await session.execute(stmt)
-            res = [StatBaseDTO(name=row.name, count=row.count) for row in res.all()]
+            res = [StatBaseSchema(name=row.name, count=row.count) for row in res.all()]
 
             # if res:
             #     return res

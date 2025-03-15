@@ -1,19 +1,15 @@
 from sqlalchemy import Row
 from typing import Sequence
 
-from schemas.subjects import RegionsInDistrictDTO
-from schemas.statistics import (
+from schemas import (
+    DistrictWithRegionsSchema,
     RequestBodySchema,
-    StatAllDTO,
-    StatDistrictDTO,
-    StatRegionDTO,
-    SubjectsStatDTO,
-    DistrictsStatDTO,
-    DistrictStatDTO,
-    StatBaseDTO,
+    StatAllSchema,
+    StatDistrictSchema,
     StatRegionSchema,
-    StatRegionsSchema,
-    ResponseStatDTO,
+    StatBaseSchema,
+    StatRegionSchema,
+    ResponseStatSchema,
 )
 from repositories.statistics import SQLAlchemyRepository
 import time
@@ -37,7 +33,7 @@ class StatisticsService:
         for district in districts:
             regions = await self.statistics_repo.get_regions_in_district(district.id)
             response.append(
-                RegionsInDistrictDTO(
+                DistrictWithRegiosSchema(
                     name=district.name, id=district.id, regions=regions
                 )
             )
@@ -45,15 +41,12 @@ class StatisticsService:
         print(response)
         return response
 
-    
     async def get_publication_by_acts(self, parameters: RequestBodySchema):
-        rows: Sequence[Row] = (
-            await self.statistics_repo.get_publication_by_acts(
-                parameters
-            )
+        rows: Sequence[Row] = await self.statistics_repo.get_publication_by_acts(
+            parameters
         )
-        stat: list[StatBaseDTO] = [
-            StatBaseDTO(name=row.name, count=row.count) for row in rows
+        stat: list[StatBaseSchema] = [
+            StatBaseSchema(name=row.name, count=row.count) for row in rows
         ]
 
         start_date: str | None = (
@@ -63,14 +56,14 @@ class StatisticsService:
             parameters.end_date if parameters.end_date is not None else None
         )
         count = get_count_from_stat(stat)
-        return ResponseStatDTO(
+        return ResponseStatSchema(
             name="Опубликование по актам",
             startDate=start_date,
             endDate=end_date,
             stat=stat,
             count=count,
         )
-    
+
     async def get_publication_by_nomenclature_detail(
         self, parameters: RequestBodySchema
     ):
@@ -79,8 +72,8 @@ class StatisticsService:
                 parameters
             )
         )
-        stat: list[StatBaseDTO] = [
-            StatBaseDTO(name=row.name, count=row.count) for row in rows
+        stat: list[StatBaseSchema] = [
+            StatBaseSchema(name=row.name, count=row.count) for row in rows
         ]
 
         start_date: str | None = (
@@ -90,7 +83,7 @@ class StatisticsService:
             parameters.end_date if parameters.end_date is not None else None
         )
         count = get_count_from_stat(stat)
-        return ResponseStatDTO(
+        return ResponseStatSchema(
             name="Детальное опубликование по номенклатуре",
             startDate=start_date,
             endDate=end_date,
@@ -102,8 +95,8 @@ class StatisticsService:
         rows: Sequence[Row] = await self.statistics_repo.get_publication_by_regions(
             parameters
         )
-        stat: list[StatBaseDTO] = [
-            StatBaseDTO(name=row.name, count=row.count) for row in rows
+        stat: list[StatBaseSchema] = [
+            StatBaseSchema(name=row.name, count=row.count) for row in rows
         ]
 
         start_date: str | None = (
@@ -113,7 +106,7 @@ class StatisticsService:
             parameters.end_date if parameters.end_date is not None else None
         )
         count = get_count_from_stat(stat)
-        return ResponseStatDTO(
+        return ResponseStatSchema(
             name="Опубликование по субъектам",
             startDate=start_date,
             endDate=end_date,
@@ -125,8 +118,8 @@ class StatisticsService:
         rows: Sequence[Row] = await self.statistics_repo.get_publication_by_districts(
             parameters
         )
-        stat: list[StatBaseDTO] = [
-            StatBaseDTO(name=row.name, count=row.count) for row in rows
+        stat: list[StatBaseSchema] = [
+            StatBaseSchema(name=row.name, count=row.count) for row in rows
         ]
 
         start_date: str | None = (
@@ -136,7 +129,7 @@ class StatisticsService:
             parameters.end_date if parameters.end_date is not None else None
         )
         count = get_count_from_stat(stat)
-        return ResponseStatDTO(
+        return ResponseStatSchema(
             name="Опубликование по федеральным округам",
             startDate=start_date,
             endDate=end_date,
@@ -146,19 +139,19 @@ class StatisticsService:
 
     async def get_publication_by_years(self, limit: int):
         rows: Sequence[Row] = await self.statistics_repo.get_publication_by_years(limit)
-        stat: list[StatBaseDTO] = [
-            StatBaseDTO(name=str(int(row.name)), count=row.count) for row in rows
+        stat: list[StatBaseSchema] = [
+            StatBaseSchema(name=str(int(row.name)), count=row.count) for row in rows
         ]
 
         count = get_count_from_stat(stat)
-        return ResponseStatDTO(name="Опубликование по годам", stat=stat, count=count)
+        return ResponseStatSchema(name="Опубликование по годам", stat=stat, count=count)
 
     async def get_publication_by_nomenclature(self, parameters: RequestBodySchema):
         rows: Sequence[Row] = (
             await self.statistics_repo.get_publication_by_nomenclature(parameters)
         )
-        stat: list[StatBaseDTO] = [
-            StatBaseDTO(name=row.name, count=row.count) for row in rows
+        stat: list[StatBaseSchema] = [
+            StatBaseSchema(name=row.name, count=row.count) for row in rows
         ]
 
         start_date: str | None = (
@@ -168,7 +161,7 @@ class StatisticsService:
             parameters.end_date if parameters.end_date is not None else None
         )
         count = get_count_from_stat(stat)
-        return ResponseStatDTO(
+        return ResponseStatSchema(
             name="Опубликование по номенклатуре",
             startDate=start_date,
             endDate=end_date,
@@ -179,18 +172,16 @@ class StatisticsService:
     async def get_subjects_stat(self, parameters: RequestBodySchema):
         stat_all = await self.statistics_repo.get_stat_all(parameters)
 
-        return SubjectsStatDTO(
+        return SubjectsStatSchema(
             name="Вся статистика по субъектам",
             count=get_count_from_stat(stat_all),
             stat=stat_all,
         )
 
     async def get_districts_stat(self, parameters: RequestBodySchema):
-        districts = []  
+        districts = []
 
-        districts_info = await self.statistics_repo.get_districts(
-            parameters.regions
-        )
+        districts_info = await self.statistics_repo.get_districts(parameters.regions)
         for district in districts_info:
             print(district)
 
@@ -200,7 +191,7 @@ class StatisticsService:
             print(stat_in_district)
 
             districts.append(
-                DistrictStatDTO(
+                DistrictStatSchema(
                     name=district.name,
                     id=district.id,
                     count=get_count_from_stat(stat_in_district),
@@ -222,7 +213,7 @@ class StatisticsService:
     #         )
 
     #         regions.append(
-    #             StatRegionDTO(
+    #             StatRegionSchema(
     #                 name=region.name,
     #                 id=region.id,
     #                 count=get_count_from_stat(stat_in_region),
@@ -256,7 +247,7 @@ class StatisticsService:
                 )
 
                 regions.append(
-                    StatRegionDTO(
+                    StatRegionSchema(
                         name=region.name,
                         id=region.id,
                         count=get_count_from_stat(stat_in_region),
@@ -265,7 +256,7 @@ class StatisticsService:
                 )
 
             districts.append(
-                StatDistrictDTO(
+                StatDistrictSchema(
                     name=district.name,
                     id=district.id,
                     count=get_count_from_stat(stat_in_district),
@@ -277,7 +268,7 @@ class StatisticsService:
         end_time = time.time()
         print(end_time - start_time)
 
-        return StatAllDTO(
+        return StatAllSchema(
             name="Вся статистика",
             count=get_count_from_stat(stat_all),
             stat=stat_all,
