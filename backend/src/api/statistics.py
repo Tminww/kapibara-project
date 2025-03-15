@@ -103,23 +103,23 @@ async def get_subjects_stat(
 @router.get("/districts")
 async def get_districts_stat(
     statistics_service: Annotated[StatisticsService, Depends(statistics_service)],
-    regions: Union[str, None] = None,
+    districts: Union[str, None] = None,
     startDate: Union[str, None] = None,
     endDate: Union[str, None] = None,
 ):
     try:
         startDate, endDate = check_dates(startDate, endDate)
 
-        print(regions)
+        print(districts)
         print(startDate)
         print(endDate)
 
-        if regions:
-            regions = [int(region) for region in str(regions).split(",")]
-            print(regions)
+        if districts:
+            districts = [int(region) for region in str(districts).split(",")]
+            print(districts)
 
         parameters = RequestBodySchema(
-            regions=regions, start_date=startDate, end_date=endDate
+            regions=districts, start_date=startDate, end_date=endDate
         )
         print(parameters)
     except ValueError as e:
