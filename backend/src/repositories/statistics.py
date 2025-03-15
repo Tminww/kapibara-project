@@ -209,12 +209,17 @@ class SQLAlchemyRepository:
                 print("get_stat_in_district")
                 raise ResultIsEmptyError("Result is empty")
 
-    async def get_districts(self, parameters: RequestBodySchema):
+    async def get_districts(self, parameters: RequestBodySchema = None):
         async with async_session_maker() as session:
-            stmt = select(DistrictEntity).filter(
+
+            if parameters is None:
+                stmt = select(DistrictEntity)
+            else:
+                stmt = select(DistrictEntity).filter(
                 parameters.regions is None
                 or DistrictEntity.id.in_(parameters.regions)
             )
+            
             res = await session.execute(stmt)
 
             res = [row[0] for row in res.all()]
