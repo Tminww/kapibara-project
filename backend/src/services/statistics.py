@@ -188,6 +188,9 @@ class StatisticsService:
     async def get_districts_stat(self, parameters: RequestBodySchema):
         districts = []
 
+        districts_info = await self.statistics_repo.get_districts(
+            parameters.regions
+        )
         for district in districts_info:
             print(district)
 
