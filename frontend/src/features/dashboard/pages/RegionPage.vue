@@ -1,11 +1,14 @@
 <template>
 	<!-- Фильтры в боковом меню -->
-	<t-filter-sidebar
-		v-model="leftMenu"
-		:loadingSubjects="loadingSubjects"
-		:errorSubjects="errorSubjects"
-		:regions="store.getDistrictsForRequest"
-	/>
+	<t-filter-sidebar v-model="leftMenu" :loading="loadingSubjects">
+		<template #form>
+			<t-filter-form
+				:loading="store.isLoading"
+				:items="store.getSubjects"
+				@submit="data => onSubmit(data)"
+			></t-filter-form>
+		</template>
+	</t-filter-sidebar>
 
 	<v-row no-gutters class="justify-start">
 		<v-col>
@@ -20,7 +23,6 @@
 			</v-container>
 		</v-col>
 	</v-row>
-
 	<v-row v-if="errorStatistics || errorSubjects">
 		<v-col>
 			<v-container fluid>
@@ -39,7 +41,7 @@
 		<v-col cols="auto">
 			<v-container>
 				<t-region-card
-					title="Вся статистика"
+					:title="store.getDistrictName"
 					:is-loading="isLoading"
 					:min-width="400"
 					:max-width="400"
@@ -47,12 +49,15 @@
 					<template #chart>
 						<t-donut-chart
 							:labels="
-								store.getAllStatistics.map(item => item.name)
+								store.getDistrictStat.map(item => item.name)
 							"
 							:series="
-								store.getAllStatistics.map(item => item.count)
+								store.getDistrictStat.map(item => item.count)
 							"
 							:height="350"
+							:enable-logarithmic="false"
+							:log-base="10"
+							:y-start-value="0"
 							legend-position="bottom"
 						/>
 					</template>
@@ -133,6 +138,7 @@
 		TRegionCard,
 		TDonutChart,
 		TFilterSidebar,
+		TFilterForm,
 	} from '../components/widgets'
 	import { useDistrictStore } from '../stores/district'
 	import { dateFormat, getLastMonth } from '@/utils/utils'
@@ -226,19 +232,51 @@
 			loadingStatistics.value = false
 		}
 	}
+	const convertDateToYYYYMMDDString = date => {
+		const year = date.getFullYear()
+		const month = String(date.getMonth() + 1).padStart(2, '0') // +1, так как месяцы с 0
+		const day = String(date.getDate()).padStart(2, '0')
+		const yyyyMMdd = `${year}-${month}-${day}`
+		return yyyyMMdd
+	}
+
+	const onSubmit = async data => {
+		// Обработчик отправки формы (синхронизация с Pinia Store)
+		console.log('start')
+		try {
+			await store.startLoading()
+
+			// Синхронизируем локальные данные с Pinia Store
+			store.selectedItems = [...form.selectedItems]
+			store.selectedPeriod = form.selectedPeriod
+			store.startDate = convertDateToYYYYMMDDString(form.startDate) // Передаём строку
+			store.endDate = convertDateToYYYYMMDDString(form.endDate) // Передаём строку
+
+			const parameters = paramsProcessing(
+				store.selectedItems,
+				store.startDate,
+				store.endDate,
+			)
+			await store.loadStatisticsAPI(store.getDistrictName, parameters)
+		} catch (e) {
+			store.dropStatistics()
+		} finally {
+			await store.endLoading()
+		}
+	}
 
 	// Загрузка начальных данных
 	const loadInitialData = async () => {
 		try {
 			loadingSubjects.value = true
 			errorSubjects.value = null
-			await store.loadDistrictsForRequest()
+			await store.loadSubjectsAPI(route.params.label)
 
 			loadingStatistics.value = true
 			errorStatistics.value = null
 			store.initializeForm() // Инициализируем форму из стора
 			const parameters = getParams()
-			await store.loadDistricts(parameters)
+			await store.loadStatisticsAPI(route.params.label, parameters)
 		} catch (e) {
 			errorSubjects.value = e.message
 			errorStatistics.value = e.message

@@ -1,12 +1,12 @@
 <template>
-	<v-form class="form-container" @submit.prevent="onFormSubmit">
+	<v-form class="form-container" @submit.prevent="$emit('submit', formData)">
 		<v-checkbox
-			v-for="region in props.regions"
+			v-for="region in props.items"
 			:key="region.id"
 			color="primary"
 			:label="region.name"
 			:value="region.id"
-			v-model="form.selectedRegions"
+			v-model="form.selectedItems"
 			hide-details
 			density="compact"
 			@update:modelValue="ensureAtLeastOneSelected"
@@ -47,7 +47,7 @@
 			<v-btn
 				class="items"
 				type="submit"
-				:loading="store.isLoading"
+				:loading="props.loading"
 				color="primary"
 				variant="tonal"
 				text="Применить"
@@ -65,38 +65,50 @@
 
 <script setup>
 	import { onMounted, reactive, watchEffect } from 'vue'
-	import { useDistrictStore } from '../../stores/district'
 	import { getLastMonth, getLastQuarter, getLastYear } from '@/utils/utils.js'
 	import { VDateInput } from 'vuetify/labs/VDateInput'
 
-	const store = useDistrictStore()
-
+	// Определяем props
 	const props = defineProps({
-		regions: { type: Array, required: true },
+		items: { type: Array, required: true },
+		loading: { type: Boolean, default: false }, // Добавляем prop для состояния загрузки
 	})
+
+	// Определяем emit
+	const emit = defineEmits(['submit'])
 
 	// Локальное реактивное состояние формы
 	const form = reactive({
-		selectedRegions: [],
+		selectedItems: [],
 		selectedPeriod: 'За прошлый месяц',
 		startDate: null, // Ожидаем строку в формате yyyy-mm-dd или null
 		endDate: null, // Ожидаем строку в формате yyyy-mm-dd или null
 	})
 
+	// Данные для передачи через emit
+	const formData = reactive({
+		selectedItems: [],
+		selectedPeriod: '',
+		startDate: null,
+		endDate: null,
+	})
+
+	// Синхронизация formData с form
 	watchEffect(() => {
-		form.startDate = new Date(store.startDate)
-		form.endDate = new Date(store.endDate)
+		formData.selectedItems = [...form.selectedItems]
+		formData.selectedPeriod = form.selectedPeriod
+		formData.startDate = form.startDate
+		formData.endDate = form.endDate
 	})
 
 	// Убеждаемся, что хотя бы один регион остаётся выбранным
 	const ensureAtLeastOneSelected = newValue => {
 		if (newValue.length === 0) {
 			// Если массив пустой, возвращаем последний выбранный регион
-			form.selectedRegions = [
-				form.selectedRegions[0] || props.regions[0].id,
-			]
+			form.selectedItems = [form.selectedItems[0] || props.items[0].id]
 		}
 	}
+
 	// Обновление дат по выбранному периоду (локально)
 	const updateDatesByPeriod = period => {
 		let interval
@@ -120,56 +132,14 @@
 
 	// Сброс формы (локально, с использованием начальных значений из стора)
 	const resetForm = () => {
-		form.selectedRegions = props.regions.map(s => s.id) // Все регионы из пропсов
+		form.selectedItems = props.items.map(s => s.id) // Все регионы из пропсов
 		form.selectedPeriod = 'За прошлый месяц'
 		updateDatesByPeriod(form.selectedPeriod)
 	}
 
-	const convertDateToYYYYMMDDString = date => {
-		const year = date.getFullYear()
-		const month = String(date.getMonth() + 1).padStart(2, '0') // +1, так как месяцы с 0
-		const day = String(date.getDate()).padStart(2, '0')
-		const yyyyMMdd = `${year}-${month}-${day}`
-		return yyyyMMdd
-	}
-
-	// Формирование параметров запроса
-	const paramsProcessing = (selected, startDate, endDate) => {
-		const params = {}
-		if (startDate) params.startDate = startDate
-		if (endDate) params.endDate = endDate
-		if (selected.length > 0) params.regions = selected.toString()
-		return params
-	}
-
-	// Обработчик отправки формы (синхронизация с Pinia Store)
-	const onFormSubmit = async () => {
-		try {
-			await store.startLoading()
-
-			// Синхронизируем локальные данные с Pinia Store
-			store.selectedRegions = [...form.selectedRegions]
-			store.selectedPeriod = form.selectedPeriod
-			store.startDate = convertDateToYYYYMMDDString(form.startDate) // Передаём строку
-			store.endDate = convertDateToYYYYMMDDString(form.endDate) // Передаём строку
-
-			const parameters = paramsProcessing(
-				store.selectedRegions,
-				store.startDate,
-				store.endDate,
-			)
-			await store.loadStatisticsAPI(store.getDistrictName, parameters)
-		} catch (e) {
-			store.dropStatistics()
-		} finally {
-			await store.endLoading()
-		}
-	}
-
 	onMounted(() => {
-		store.subjects = props.regions // Устанавливаем регионы в стор
 		// Инициализируем локальную форму начальными значениями
-		form.selectedRegions = props.regions.map(s => s.id)
+		form.selectedItems = props.items.map(s => s.id)
 		form.selectedPeriod = 'За прошлый месяц'
 		updateDatesByPeriod(form.selectedPeriod)
 	})

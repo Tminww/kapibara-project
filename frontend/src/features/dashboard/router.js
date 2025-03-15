@@ -1,5 +1,6 @@
 import { DashboardPage } from './pages/'
 import { DistrictPage } from './pages/'
+import { RegionPage } from './pages/'
 
 const meta = {
 	requiresAuth: false,
@@ -27,9 +28,30 @@ export const routes = [
 		},
 	},
 	{
-		path: '/dashboard/:label',
+		path: '/dashboard/districts/',
 		name: 'district',
 		component: DistrictPage,
+		meta: {
+			...meta,
+			breadCrumb: [
+				{
+					text: 'Главная',
+					to: { name: 'home' },
+				},
+				{
+					text: 'Информационная панель',
+					to: { name: 'dashboard' },
+				},
+				{
+					text: 'Федеральные округа',
+				},
+			],
+		},
+	},
+	{
+		path: '/dashboard/districts/:label',
+		name: 'region',
+		component: RegionPage,
 		meta: {
 			...meta,
 			breadCrumb: [

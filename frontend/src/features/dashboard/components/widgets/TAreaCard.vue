@@ -9,7 +9,14 @@
 		elevation="3"
 		class="card-container full-width-card"
 	>
-		<v-card-title class="title-wrap mt-2">
+		<v-card-title
+			v-if="isTitleClickable"
+			class="title-wrap mt-2 cursor-pointer"
+			@click="$emit('onTitleClick', true)"
+		>
+			{{ title }}
+		</v-card-title>
+		<v-card-title v-else class="title-wrap mt-2">
 			{{ title }}
 		</v-card-title>
 
@@ -38,6 +45,8 @@
 
 <script setup>
 	import { TIcon } from '@/components/ui'
+	defineEmits(['onTitleClick'])
+
 	const props = defineProps({
 		title: { type: String, required: false, default: 'Область' },
 		subtitle: { type: String, required: false },
@@ -47,6 +56,7 @@
 		maxWidth: { type: Number, required: false },
 		minWidth: { type: Number, required: false },
 		isLoading: { type: Boolean, required: true, default: true },
+		isTitleClickable: { type: Boolean, default: false },
 	})
 </script>
 
