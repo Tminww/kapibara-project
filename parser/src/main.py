@@ -1,90 +1,230 @@
-import requests
-import time
+import asyncio
 from datetime import datetime
+import json
+from typing import List, Tuple
+import httpx  # Заменяем aiohttp на httpx
+from sqlalchemy import func, select, update
+from sqlalchemy.dialects.postgresql import insert
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.exc import IntegrityError
 
-import database.initial as initial
-import database.query as query
-import api.parser as parser
-from log.createLogger import logger as logging
+from config import settings
+from database.setup import get_async_session
+from utils.logger import parser_logger as logger
+from models import ActEntity, RegionEntity, DocumentEntity
+
+# Определяем декоратор
+async_session_maker = (
+    get_async_session  # Предполагается, что это возвращает async_sessionmaker
+)
 
 
-def check_time(func):
-    def wrapper(*args, **kwargs):
-        start_time = time.time()
-        res = func(*args, **kwargs)
-        end_time = time.time()
-        logging.info(f"{func.__name__} Всего времени {end_time - start_time}")
-        return res
+@connection
+async def insert_act(name_npaId: List[Tuple[str, str]], session: AsyncSession):
+    """Вставляет записи в таблицу acts асинхронно."""
+    values = [{"name": name, "npa_id": npa_id} for name, npa_id in name_npaId]
+    stmt = (
+        insert(ActEntity)
+        .values(values)
+        .on_conflict_do_nothing(index_elements=["name", "npa_id"])
+    )
+    await session.execute(stmt)
+    await session.commit()
+    logger.info(f"Successfully inserted {len(values)} acts")
 
-    return wrapper
+
+@connection
+async def insert_region(name_code: List[Tuple[str, str]], session: AsyncSession):
+    """Вставляет записи в таблицу regions асинхронно."""
+    values = [{"name": name, "code": code} for name, code in name_code]
+    stmt = (
+        insert(RegionEntity)
+        .values(values)
+        .on_conflict_do_nothing(index_elements=["name", "code"])
+    )
+    await session.execute(stmt)
+    await session.commit()
+    logger.info(f"Successfully inserted {len(values)} regions")
 
 
-@check_time
-def get_document_api(code):
-    logging.info(f"Регион {code} начат")
+@connection
+async def get_id_reg(code: str, session: AsyncSession) -> int:
+    """Получает ID региона по коду."""
+    stmt = select(RegionEntity.id).where(RegionEntity.code == code)
+    result = await session.execute(stmt)
+    id_reg = result.scalar_one_or_none()
+    if id_reg is None:
+        raise ValueError(f"Region with code {code} not found")
+    return id_reg
+
+
+@connection
+async def get_id_act(npa_id: str, session: AsyncSession) -> int:
+    """Получает ID акта по npa_id."""
+    stmt = select(ActEntity.id).where(ActEntity.npa_id == npa_id)
+    result = await session.execute(stmt)
+    id_act = result.scalar_one_or_none()
+    if id_act is None:
+        raise ValueError(f"Act with npa_id {npa_id} not found")
+    return id_act
+
+
+@connection
+async def update_region(subjects_data: List[dict], session: AsyncSession):
+    """Обновляет таблицу regions с id_dist."""
+    for row in subjects_data:
+        stmt = (
+            update(RegionEntity)
+            .where(RegionEntity.name == row["name"])
+            .values(id_dist=row.get("id_dist"))
+        )
+        await session.execute(stmt)
+    await session.commit()
+    logger.info(f"Updated {len(subjects_data)} regions")
+
+
+@connection
+async def insert_document(
+    complex_names: List[str],
+    eo_numbers: List[str],
+    pages_counts: List[int],
+    view_dates: List[str],
+    id_regs: List[int],
+    id_acts: List[int],
+    session: AsyncSession,
+):
+    """Вставляет записи в таблицу documents асинхронно."""
+    values = [
+        {
+            "complex_name": cn,
+            "id_act": ia,
+            "eo_number": en,
+            "view_date": vd,
+            "pages_count": pc,
+            "id_reg": ir,
+        }
+        for cn, ia, en, vd, pc, ir in zip(
+            complex_names, id_acts, eo_numbers, view_dates, pages_counts, id_regs
+        )
+    ]
+    stmt = (
+        insert(DocumentEntity)
+        .values(values)
+        .on_conflict_do_nothing(index_elements=["id", "eo_number"])
+    )
+    await session.execute(stmt)
+    await session.commit()
+    logger.info(f"Successfully inserted {len(values)} documents")
+
+
+@connection
+async def get_total_documents(code: str, session: AsyncSession) -> int:
+    """Подсчитывает общее количество документов для региона."""
+    id_reg = await get_id_reg(code, session=session)
+    stmt = (
+        select(func.count())
+        .select_from(DocumentEntity)
+        .where(DocumentEntity.id_reg == id_reg)
+    )
+    result = await session.execute(stmt)
+    count = result.scalar()
+    logger.info(f"Total documents for region {code}: {count}")
+    return count
+
+
+@connection
+async def get_total_documents_type(
+    code: str, npa_id: str, session: AsyncSession
+) -> int:
+    """Подсчитывает количество документов определённого типа для региона."""
+    id_reg = await get_id_reg(code, session=session)
+    id_act = await get_id_act(npa_id, session=session)
+    stmt = (
+        select(func.count())
+        .select_from(DocumentEntity)
+        .where(DocumentEntity.id_reg == id_reg, DocumentEntity.id_act == id_act)
+    )
+    result = await session.execute(stmt)
+    count = result.scalar()
+    logger.info(f"Total documents for region {code} and npa_id {npa_id}: {count}")
+    return count
+
+
+def regions_data() -> List[dict]:
+    """Загружает данные регионов из JSON."""
+    with open(f"{settings.BASE_DIR}/parser/mock/regions.json", "r") as file:
+        return json.load(file)
+
+
+def districts_data() -> List[dict]:
+    """Загружает данные районов из JSON."""
+    with open(f"{settings.BASE_DIR}/parser/mock/districts.json", "r") as file:
+        return json.load(file)
+
+
+def get_documents_on_page(code: str) -> str:
+    return f"{settings.EXTERNAL_URL}/api/Documents?block={code}&PageSize=200&Index=1"
+
+
+def get_documents_on_page_type(npa_id: str, code: str, index: int) -> str:
+    return f"{settings.EXTERNAL_URL}/api/Documents?DocumentTypes={npa_id}&block={code}&PageSize=200&Index={index}"
+
+
+def get_subjects() -> str:
+    return f"{settings.EXTERNAL_URL}/api/PublicBlocks/?parent=subjects"
+
+
+def get_type_all() -> str:
+    return f"{settings.EXTERNAL_URL}/api/DocumentTypes"
+
+
+def get_type_in_subject(code: str) -> str:
+    return f"{settings.EXTERNAL_URL}/api/DocumentTypes?block={code}"
+
+
+async def get_document_api(code: str, client: httpx.AsyncClient):
+    """Асинхронно получает и парсит документы для региона."""
+    logger.info(f"Регион {code} начат")
     print(f"Регион {code} начат")
 
     # Запрос общего количества документов
-    req_total_documents = requests.get(url=parser.get_documents_on_page(code))
-
-    # Проверка статуса ответа
-    if req_total_documents.status_code != 200:
-        logging.error(f"Ошибка при запросе: статус {req_total_documents.status_code}")
+    resp = await client.get(get_documents_on_page(code))
+    if resp.status_code != 200:
+        logger.error(f"Ошибка при запросе: статус {resp.status_code}")
         return
-
-    # Попытка парсинга JSON
-    try:
-        total_documents_data = req_total_documents.json()
-    except ValueError as e:
-        logging.error(f"Ошибка при парсинге JSON: {e}")
-        return
+    total_documents_data = resp.json()
 
     # Проверка, нужно ли обновлять данные
-    if query.get_total_documents(code=code) == total_documents_data.get("itemsTotalCount"):
-        logging.info(f"Регион {code} уже заполнен")
+    if await get_total_documents(code) == total_documents_data.get("itemsTotalCount"):
+        logger.info(f"Регион {code} уже заполнен")
         print(f"Регион {code} уже заполнен")
         return
 
     # Запрос типов документов
-    req_type = requests.get(url=parser.get_type_in_subject(code))
-
-    # Проверка статуса ответа
-    if req_type.status_code != 200:
-        logging.error(f"Ошибка при запросе типов документов: статус {req_type.status_code}")
+    resp = await client.get(get_type_in_subject(code))
+    if resp.status_code != 200:
+        logger.error(f"Ошибка при запросе типов документов: статус {resp.status_code}")
         return
-
-    # Попытка парсинга JSON
-    try:
-        type_data = req_type.json()
-    except ValueError as e:
-        logging.error(f"Ошибка при парсинге JSON типов документов: {e}")
-        return
+    type_data = resp.json()
 
     # Обработка каждого типа документа
     for npa in type_data:
         current_page = 1
         while True:
-            time.sleep(0.5)
-            req = requests.get(
-                url=parser.get_documents_on_page_type(
-                    npa_id=npa["id"], code=code, index=str(current_page)
+            await asyncio.sleep(0.5)  # Асинхронная задержка
+            url = get_documents_on_page_type(npa["id"], code, current_page)
+            resp = await client.get(url)
+            if resp.status_code != 200:
+                logger.error(
+                    f"Ошибка при запросе документов: статус {resp.status_code}"
                 )
-            )
-
-            # Проверка статуса ответа
-            if req.status_code != 200:
-                logging.error(f"Ошибка при запросе документов: статус {req.status_code}")
                 break
-
-            # Попытка парсинга JSON
-            try:
-                documents_data = req.json()
-            except ValueError as e:
-                logging.error(f"Ошибка при парсинге JSON документов: {e}")
-                break
+            documents_data = resp.json()
 
             # Проверка, нужно ли обновлять данные
-            if query.get_total_documents_type(code=code, npa_id=npa["id"]) == documents_data.get("itemsTotalCount"):
+            if await get_total_documents_type(code, npa["id"]) == documents_data.get(
+                "itemsTotalCount"
+            ):
                 break
 
             if current_page <= documents_data.get("pagesTotalCount", 0):
@@ -94,20 +234,22 @@ def get_document_api(code):
                 view_dates = []
                 id_regs = []
                 id_acts = []
-                id_reg = query.get_id_reg(code=code)
-                id_act = query.get_id_act(npa_id=npa["id"])
+                id_reg = await get_id_reg(code)
+                id_act = await get_id_act(npa["id"])
 
                 for item in documents_data.get("items", []):
                     complex_names.append(item.get("complexName"))
                     eo_numbers.append(item.get("eoNumber"))
                     pages_counts.append(item.get("pagesCount"))
                     view_dates.append(
-                        datetime.strptime(item.get("viewDate"), "%d.%m.%Y").strftime("%Y-%m-%d")
+                        datetime.strptime(item.get("viewDate"), "%d.%m.%Y").strftime(
+                            "%Y-%m-%d"
+                        )
                     )
                     id_regs.append(id_reg)
                     id_acts.append(id_act)
 
-                query.insert_document(
+                await insert_document(
                     complex_names,
                     eo_numbers,
                     pages_counts,
@@ -119,28 +261,29 @@ def get_document_api(code):
             else:
                 break
 
-    logging.info(f"Регион {code} закончен")
+    logger.info(f"Регион {code} закончен")
     print(f"Регион {code} закончен")
 
-def get_npa_api() -> list:
-    names: list = []
-    npa_id: list = []
-    req = requests.get(url=parser.get_type_all())
 
-    for npa in req.json():
+async def get_npa_api(client: httpx.AsyncClient) -> List[Tuple[str, str]]:
+    """Асинхронно получает данные NPA."""
+    names = []
+    npa_ids = []
+    resp = await client.get(get_type_all())
+    data = resp.json()
+    for npa in data:
         names.append(npa["name"])
-        npa_id.append(npa["id"])
-    return list(zip(names, npa_id))
+        npa_ids.append(npa["id"])
+    return list(zip(names, npa_ids))
 
 
-def get_subject_api() -> list:
-    req = requests.get(url=parser.get_subjects())
-    names: list = []
-    codes: list = []
-    for subject in req.json():
-        names.append(subject["name"])
-        codes.append(subject["code"])
-    
+async def get_subject_api(client: httpx.AsyncClient) -> List[Tuple[str, str]]:
+    """Асинхронно получает данные субъектов."""
+    resp = await client.get(get_subjects())
+    data = resp.json()
+    names = [subject["name"] for subject in data]
+    codes = [subject["code"] for subject in data]
+
     other_codes = [
         "president",
         "council_1",
@@ -151,43 +294,35 @@ def get_subject_api() -> list:
         "international",
         "un_securitycouncil",
     ]
-    
     other_names = [
-        'Президент РФ',
-        'Совет Федерации ФС РФ',
-        'Государственная Дума ФС РФ',
-        'Правительство РФ',
-        'ФОИВ и ФГО РФ',
-        'Конституционный Суд РФ',
-        'Международные договоры РФ',
-        'Совет Безопасности ООН',
-        
+        "Президент РФ",
+        "Совет Федерации ФС РФ",
+        "Государственная Дума ФС РФ",
+        "Правительство РФ",
+        "ФОИВ и ФГО РФ",
+        "Конституционный Суд РФ",
+        "Международные договоры РФ",
+        "Совет Безопасности ООН",
     ]
-    
-    for name in other_names:
-        names.append(name)
-    
-    for code in other_codes:
-        codes.append(code)
-
+    names.extend(other_names)
+    codes.extend(other_codes)
     return list(zip(names, codes))
 
 
-def main():
-    print(1234)
-    initial.create_tables()
-    name_code = get_subject_api()
-    name_npa_id = get_npa_api()
+async def parse():
+    """Основная функция парсинга."""
+    logger.info("Начало парсинга")
+    async with httpx.AsyncClient() as client:
+        name_code = await get_subject_api(client)
+        name_npa_id = await get_npa_api(client)
 
-    query.insert_act(name_npa_id)
-    query.insert_region(name_code)
-    query.update_region()
+        await insert_act(name_npa_id)
+        await insert_region(name_code)
+        await update_region([])  # Уточните subjects_data, если нужно
 
-    for name, code in name_code:
-        get_document_api(code=code)
-
-    logging.info("Заполнение завершено!")
+        for name, code in name_code:
+            await get_document_api(code, client)
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(parse())

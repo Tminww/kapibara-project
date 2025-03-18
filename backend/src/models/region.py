@@ -10,19 +10,23 @@ class RegionEntity(Base):
     name: Mapped[str] = mapped_column(String(128))
     short_name: Mapped[str] = mapped_column(String(64))
     external_id: Mapped[str] = mapped_column(String(64))
-    code: Mapped[str] = mapped_column(String(10))
-    parent_id: Mapped[str] = mapped_column(String(64))
+    code: Mapped[str] = mapped_column(String(32))
     id_dist: Mapped[int] = mapped_column(ForeignKey("districts.id"), nullable=True)
 
     # in_district = relationship("DistrictEntity", back_populates="regions")
     # blocks = relationship("BlockEntity", back_populates="in_region")
 
     __table_args__ = (
-        UniqueConstraint("id", "name", "short_name", "external_id", "code"),
+        UniqueConstraint(
+            "name", "code", name="uq_regions_name_code"
+        ),  # Уникальное ограничение для ON CONFLICT
+        Index("idx_regions_external_id", "external_id"),  # Индекс для external_id
+        Index(
+            "idx_regions_code", "code"
+        ),  # Индекс для code (не уникальный, если не требуется)
         {"extend_existing": True},
-        # Index("ix_users_role_id", role_id),
-        # Comment("Комментарий к таблице пользователей"),
     )
 
 
-Index("idx_regions_external_id", RegionEntity.external_id, unique=True)
+# Если нужен уникальный индекс на code отдельно, можно добавить:
+Index("idx_regions_code_unique", RegionEntity.code, unique=True)
