@@ -18,6 +18,6 @@ class DistrictEntity(Base):
     short_name: Mapped[str] = mapped_column(String(64))
 
     __table_args__ = (
-        UniqueConstraint("id", "name"),
+        UniqueConstraint("id", "name", name="uq_districts_id_name"),
         {"extend_existing": True},
     )

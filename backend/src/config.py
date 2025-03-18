@@ -18,6 +18,8 @@ class Config(BaseSettings):
     EXTERNAL_URL: str
     EXTERNAL_API_VERSION_PATH: str
     EXTERNAL_FILE_PATH: str
+    
+    PROXY: str
 
     model_config = SettingsConfigDict(env_file=f"{BASE_DIR}/.env", extra="ignore")
 

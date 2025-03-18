@@ -11,9 +11,8 @@ from sqlalchemy.exc import IntegrityError, ProgrammingError
 from config import settings
 from database.setup import get_async_session, connection
 from utils.logger import parser_logger as logger
-from models import ActEntity, RegionEntity, DocumentEntity
+from models import ActEntity, RegionEntity, DocumentEntity, DistrictEntity
 
-PROXY = "http://10.0.0.1:3128"
 
 
 @connection
@@ -43,10 +42,10 @@ async def insert_region(regions: List[dict], session: AsyncSession):
         values = [
             {
                 "id_dist": r.get("id_dist"),
-                "name": r["name"],
-                "short_name": r["short_name"],
-                "external_id": r["external_id"],
-                "code": r["code"],
+                "name": r.get("name"),
+                "short_name": r.get("short_name"),
+                "external_id": r.get("external_id"),
+                "code": r.get("code"),
             }
             for r in regions
         ]
@@ -82,6 +81,48 @@ async def insert_region(regions: List[dict], session: AsyncSession):
         return False
 
 
+@connection
+async def insert_districts(districts: List[dict], session: AsyncSession):
+    try:
+        values = [
+            {
+                "id": d.get("id"),
+                "name": d.get("name"),
+                "short_name": d.get("short_name"),
+                "full_name": d.get("full_name"),
+            }
+            for d in districts
+        ]
+        stmt = (
+            insert(DistrictEntity)
+            .values(values)
+            .on_conflict_do_update(constraint="uq_districts_id_name", set_=dict(name="updated value", short_name="updated value", full_name="updated value"))
+        )
+        result = await session.execute(stmt)
+        await session.commit()
+        inserted_count = result.rowcount if result.rowcount is not None else len(values)
+        logger.info(f"Successfully inserted {inserted_count} districts")
+        return inserted_count > 0
+    except ProgrammingError as e:
+        logger.warning(f"Отсутствует уникальный индекс: {e}")
+        try:
+            stmt = insert(DistrictEntity).values(values)
+            result = await session.execute(stmt)
+            await session.commit()
+            inserted_count = (
+                result.rowcount if result.rowcount is not None else len(values)
+            )
+            logger.info(f"Inserted {inserted_count} regions without conflict handling")
+            return inserted_count > 0
+        except Exception as e2:
+            logger.error(f"Ошибка вставки без ON CONFLICT: {e2}")
+            return False
+    except IntegrityError as e:
+        logger.error(f"Нарушение целостности данных: {e}")
+        return False
+    except Exception as e:
+        logger.error(f"Неизвестная ошибка: {e}")
+        return False
 @connection
 async def get_id_reg(code: str, session: AsyncSession) -> int:
     """Получает ID региона по коду."""
@@ -402,24 +443,33 @@ async def get_npa_api(client: httpx.AsyncClient) -> List[Tuple[str, str]]:
 async def parse():
     """Основная функция парсинга."""
     logger.info("Начало парсинга")
-    timeout = httpx.Timeout(30.0, connect=30.0)
-    async with httpx.AsyncClient(proxy=PROXY, timeout=timeout) as client:
+    async with httpx.AsyncClient(proxy=settings.PROXY) as client:
 
         name_npa_id = await get_npa_api(client)
-
-        if not regions_data() or not name_npa_id:
+        districts = districts_data()
+        regions = regions_data()
+        if not regions or not districts or not name_npa_id:
             logger.error("Не удалось загрузить начальные данные, завершение парсинга")
             return
 
         await insert_act(name_npa_id)
-        regions_inserted = await insert_region(regions_data)
-        if not regions_inserted:
+
+        inserted_districts = await insert_districts(districts)
+        if not inserted_districts:
+            logger.warning(
+                "Округа не вставлены, дальнейшая обработка может быть некорректной"
+            )
+            return
+        
+        inserted_regions = await insert_region(regions)
+        if not inserted_regions:
             logger.warning(
                 "Регионы не вставлены, дальнейшая обработка может быть некорректной"
             )
             return
 
-        for region in regions_data():
+        
+        for region in regions:
             await get_document_api(region.get("code"), client)
 
 
