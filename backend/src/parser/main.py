@@ -28,7 +28,7 @@ async def insert_act(name_npaId: List[Tuple[str, str]], session: AsyncSession):
         )
         await session.execute(stmt)
         await session.commit()
-        logger.info(f"Successfully inserted {len(values)} acts")
+        logger.info(f"Успешно  вставлено {len(values)} типов актов")
     except ProgrammingError as e:
         logger.error(f"Ошибка структуры таблицы acts: {e}")
     except IntegrityError as e:
@@ -38,10 +38,18 @@ async def insert_act(name_npaId: List[Tuple[str, str]], session: AsyncSession):
 
 
 @connection
-async def insert_region(name_code: List[Tuple[str, str]], session: AsyncSession):
-    """Вставляет записи в таблицу regions асинхронно."""
+async def insert_region(regions: List[dict], session: AsyncSession):
     try:
-        values = [{"name": name, "code": code} for name, code in name_code]
+        values = [
+            {
+                "id_dist": r.get("id_dist"),
+                "name": r["name"],
+                "short_name": r["short_name"],
+                "external_id": r["external_id"],
+                "code": r["code"],
+            }
+            for r in regions
+        ]
         stmt = (
             insert(RegionEntity)
             .values(values)
@@ -51,12 +59,9 @@ async def insert_region(name_code: List[Tuple[str, str]], session: AsyncSession)
         await session.commit()
         inserted_count = result.rowcount if result.rowcount is not None else len(values)
         logger.info(f"Successfully inserted {inserted_count} regions")
-        return inserted_count > 0  # Возвращаем True, если вставка успешна
+        return inserted_count > 0
     except ProgrammingError as e:
-        logger.warning(
-            f"Отсутствует уникальный индекс на name, code в таблице regions: {e}"
-        )
-        # Пробуем вставить без ON CONFLICT
+        logger.warning(f"Отсутствует уникальный индекс: {e}")
         try:
             stmt = insert(RegionEntity).values(values)
             result = await session.execute(stmt)
@@ -67,13 +72,13 @@ async def insert_region(name_code: List[Tuple[str, str]], session: AsyncSession)
             logger.info(f"Inserted {inserted_count} regions without conflict handling")
             return inserted_count > 0
         except Exception as e2:
-            logger.error(f"Не удалось вставить регионы даже без ON CONFLICT: {e2}")
+            logger.error(f"Ошибка вставки без ON CONFLICT: {e2}")
             return False
     except IntegrityError as e:
-        logger.error(f"Нарушение целостности данных при вставке в regions: {e}")
+        logger.error(f"Нарушение целостности данных: {e}")
         return False
     except Exception as e:
-        logger.error(f"Неизвестная ошибка при вставке в regions: {e}")
+        logger.error(f"Неизвестная ошибка: {e}")
         return False
 
 
@@ -394,68 +399,28 @@ async def get_npa_api(client: httpx.AsyncClient) -> List[Tuple[str, str]]:
     return list(zip(names, npa_ids))
 
 
-async def get_subject_api(client: httpx.AsyncClient) -> List[Tuple[str, str]]:
-    """Асинхронно получает данные субъектов."""
-    try:
-        resp = await client.get(get_subjects())
-        resp.raise_for_status()
-        data = resp.json()
-        names = [subject["name"] for subject in data]
-        codes = [subject["code"] for subject in data]
-    except httpx.RequestError as e:
-        logger.error(f"Ошибка запроса субъектов: {e}")
-        return []
-    except Exception as e:
-        logger.error(f"Неизвестная ошибка при запросе субъектов: {e}")
-        return []
-
-    other_codes = [
-        "president",
-        "council_1",
-        "council_2",
-        "government",
-        "federal_authorities",
-        "court",
-        "international",
-        "un_securitycouncil",
-    ]
-    other_names = [
-        "Президент РФ",
-        "Совет Федерации ФС РФ",
-        "Государственная Дума ФС РФ",
-        "Правительство РФ",
-        "ФОИВ и ФГО РФ",
-        "Конституционный Суд РФ",
-        "Международные договоры РФ",
-        "Совет Безопасности ООН",
-    ]
-    names.extend(other_names)
-    codes.extend(other_codes)
-    return list(zip(names, codes))
-
-
 async def parse():
     """Основная функция парсинга."""
     logger.info("Начало парсинга")
     timeout = httpx.Timeout(30.0, connect=30.0)
     async with httpx.AsyncClient(proxy=PROXY, timeout=timeout) as client:
-        name_code = await get_subject_api(client)
+
         name_npa_id = await get_npa_api(client)
 
-        if not name_code or not name_npa_id:
+        if not regions_data() or not name_npa_id:
             logger.error("Не удалось загрузить начальные данные, завершение парсинга")
             return
 
         await insert_act(name_npa_id)
-        regions_inserted = await insert_region(name_code)
+        regions_inserted = await insert_region(regions_data)
         if not regions_inserted:
             logger.warning(
                 "Регионы не вставлены, дальнейшая обработка может быть некорректной"
             )
-        await update_region([])  # Уточните subjects_data, если нужно
+            return
 
-        for name, code in name_code:
-            await get_document_api(code, client)
+        for region in regions_data():
+            await get_document_api(region.get("code"), client)
 
 
 if __name__ == "__main__":
