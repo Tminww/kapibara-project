@@ -10,7 +10,7 @@ from .base import Base
 
 
 class DistrictEntity(Base):
-    __tablename__ = "district"
+    __tablename__ = "districts"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     full_name: Mapped[str] = mapped_column(String(64))

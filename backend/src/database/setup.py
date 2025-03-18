@@ -1,12 +1,12 @@
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
 from config import settings
-from utils import database_logger as logger
+from utils import backend_logger as logger
 
 
 try:
     engine = create_async_engine(
-        url=settings.db.DATABASE_URL,
+        url=settings.DATABASE_URL,
         # echo=True,
     )
 

@@ -10,7 +10,7 @@ from sqlalchemy import (
     ForeignKey,
     Index,
 )
-from src.models.base import Base
+from .base import Base
 
 
 class DocumentEntity(Base):
@@ -32,7 +32,6 @@ class DocumentEntity(Base):
     hash: Mapped[str] = mapped_column(String(256), nullable=True)
     date_of_publication: Mapped[datetime] = mapped_column(Date, nullable=True)
     date_of_signing: Mapped[datetime] = mapped_column(Date, nullable=True)
-    id_doc_type_block: Mapped[int] = mapped_column(ForeignKey("types_in_block.id"))
 
     # id_reg: Mapped[int] = mapped_column(ForeignKey("region.id"), nullable=False)
     # act = relationship("ActEntity", overlaps="act", innerjoin=True)

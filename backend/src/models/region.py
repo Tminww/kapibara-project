@@ -1,7 +1,6 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import String, UniqueConstraint, ForeignKey, Index
-from src.models.base import Base
-from schemas import RegionSchema
+from .base import Base
 
 
 class RegionEntity(Base):
@@ -24,17 +23,6 @@ class RegionEntity(Base):
         # Index("ix_users_role_id", role_id),
         # Comment("Комментарий к таблице пользователей"),
     )
-
-    def to_read_model(self) -> RegionSchema:
-        return RegionSchema(
-            id=self.id,
-            name=self.name,
-            short_name=self.short_name,
-            external_id=self.external_id,
-            code=self.code,
-            parent_id=self.parent_id,
-            id_dist=self.id_dist,
-        )
 
 
 Index("idx_regions_external_id", RegionEntity.external_id, unique=True)

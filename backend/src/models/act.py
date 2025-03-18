@@ -4,7 +4,7 @@ from .base import Base
 
 
 class ActEntity(Base):
-    __tablename__ = "act"
+    __tablename__ = "acts"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(128))

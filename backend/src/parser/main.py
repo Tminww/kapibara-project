@@ -168,23 +168,23 @@ def districts_data():
 
 
 def get_documents_on_page(code):
-    return f"{settings.external.EXTERNAL_URL}/api/Documents?block={code}&PageSize=200&Index=1"
+    return f"{settings.EXTERNAL_URL}/api/Documents?block={code}&PageSize=200&Index=1"
 
 
 def get_documents_on_page_type(npa_id, code, index):
-    return f"{settings.external.EXTERNAL_URL}/api/Documents?DocumentTypes={npa_id}&block={code}&PageSize=200&Index={index}"
+    return f"{settings.EXTERNAL_URL}/api/Documents?DocumentTypes={npa_id}&block={code}&PageSize=200&Index={index}"
 
 
 def get_subjects():
-    return f"{settings.external.EXTERNAL_URL}/api/PublicBlocks/?parent=subjects"
+    return f"{settings.EXTERNAL_URL}/api/PublicBlocks/?parent=subjects"
 
 
 def get_type_all():
-    return f"{settings.external.EXTERNAL_URL}/api/DocumentTypes"
+    return f"{settings.EXTERNAL_URL}/api/DocumentTypes"
 
 
 def get_type_in_subject(code):
-    return f"{settings.external.EXTERNAL_URL}/api/DocumentTypes?block={code}"
+    return f"{settings.EXTERNAL_URL}/api/DocumentTypes?block={code}"
 
 
 async def parse():
