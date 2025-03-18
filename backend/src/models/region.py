@@ -18,12 +18,8 @@ class RegionEntity(Base):
 
     __table_args__ = (
         UniqueConstraint(
-            "name", "code", name="uq_regions_name_code"
+            "id", "code", name="uq_regions_id_code"
         ),  # Уникальное ограничение для ON CONFLICT
-        Index("idx_regions_external_id", "external_id"),  # Индекс для external_id
-        Index(
-            "idx_regions_code", "code"
-        ),  # Индекс для code (не уникальный, если не требуется)
         {"extend_existing": True},
     )
 

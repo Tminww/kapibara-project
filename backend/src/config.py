@@ -5,7 +5,6 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent
 print(BASE_DIR)
 
-
 class Config(BaseSettings):
     BASE_DIR: Path = BASE_DIR
 

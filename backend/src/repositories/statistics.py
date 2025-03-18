@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
 
-from models.act import ActEntity
+from backend.src.models.type import ActEntity
 from models.district import DistrictEntity
 from models.document import DocumentEntity
 from models.region import RegionEntity

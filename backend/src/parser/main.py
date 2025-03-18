@@ -11,29 +11,46 @@ from sqlalchemy.exc import IntegrityError, ProgrammingError
 from config import settings
 from database.setup import get_async_session, connection
 from utils.logger import parser_logger as logger
-from models import ActEntity, RegionEntity, DocumentEntity, DistrictEntity
-
+from models import TypeEntity, RegionEntity, DocumentEntity, DistrictEntity
 
 
 @connection
-async def insert_act(name_npaId: List[Tuple[str, str]], session: AsyncSession):
+async def insert_types(types: List[dict], session: AsyncSession):
     """Вставляет записи в таблицу acts асинхронно."""
     try:
-        values = [{"name": name, "npa_id": npa_id} for name, npa_id in name_npaId]
-        stmt = (
-            insert(ActEntity)
-            .values(values)
-            .on_conflict_do_nothing(index_elements=["name", "npa_id"])
+        values = [
+            {
+                "name": t.get("name"),
+                "weight": int(t.get("weight")),
+                "external_id": t.get("id"),
+            }
+            for t in types
+        ]
+        stmt_insert = insert(TypeEntity).values(values)
+        stmt_on_conflict = stmt_insert.on_conflict_do_update(
+            constraint="uq_types_id_external_id",
+            set_=dict(
+                name=stmt_insert.excluded.name,
+                weight=stmt_insert.excluded.weight,
+                external_id=stmt_insert.excluded.external_id,
+            ),
         )
-        await session.execute(stmt)
+        result = await session.execute(stmt_on_conflict)
         await session.commit()
-        logger.info(f"Успешно  вставлено {len(values)} типов актов")
+        inserted_count = result.rowcount if result.rowcount is not None else len(values)
+
+        logger.info(f"Successfully inserted {inserted_count} types")
+        return inserted_count > 0
     except ProgrammingError as e:
-        logger.error(f"Ошибка структуры таблицы acts: {e}")
+        logger.error(f"Ошибка структуры таблицы types: {e}")
+        return False
+
     except IntegrityError as e:
-        logger.error(f"Нарушение целостности данных при вставке в acts: {e}")
+        logger.error(f"Нарушение целостности данных при вставке в types: {e}")
+        return False
     except Exception as e:
-        logger.error(f"Неизвестная ошибка при вставке в acts: {e}")
+        logger.error(f"Неизвестная ошибка при вставке в types: {e}")
+        return False
 
 
 @connection
@@ -49,30 +66,28 @@ async def insert_region(regions: List[dict], session: AsyncSession):
             }
             for r in regions
         ]
-        stmt = (
-            insert(RegionEntity)
-            .values(values)
-            .on_conflict_do_nothing(index_elements=["name", "code"])
+        stmt_insert = insert(RegionEntity).values(values)
+
+        stmt_on_conflict = stmt_insert.on_conflict_do_update(
+            constraint="uq_regions_id_code",
+            set_=dict(
+                name=stmt_insert.excluded.name,
+                short_name=stmt_insert.excluded.short_name,
+                external_id=stmt_insert.excluded.external_id,
+                code=stmt_insert.excluded.code,
+                id_dist=stmt_insert.excluded.id_dist,
+            ),
         )
-        result = await session.execute(stmt)
+        result = await session.execute(stmt_on_conflict)
         await session.commit()
         inserted_count = result.rowcount if result.rowcount is not None else len(values)
+
         logger.info(f"Successfully inserted {inserted_count} regions")
         return inserted_count > 0
     except ProgrammingError as e:
         logger.warning(f"Отсутствует уникальный индекс: {e}")
-        try:
-            stmt = insert(RegionEntity).values(values)
-            result = await session.execute(stmt)
-            await session.commit()
-            inserted_count = (
-                result.rowcount if result.rowcount is not None else len(values)
-            )
-            logger.info(f"Inserted {inserted_count} regions without conflict handling")
-            return inserted_count > 0
-        except Exception as e2:
-            logger.error(f"Ошибка вставки без ON CONFLICT: {e2}")
-            return False
+
+        return False
     except IntegrityError as e:
         logger.error(f"Нарушение целостности данных: {e}")
         return False
@@ -93,36 +108,32 @@ async def insert_districts(districts: List[dict], session: AsyncSession):
             }
             for d in districts
         ]
-        stmt = (
-            insert(DistrictEntity)
-            .values(values)
-            .on_conflict_do_update(constraint="uq_districts_id_name", set_=dict(name="updated value", short_name="updated value", full_name="updated value"))
+        stmt_insert = insert(DistrictEntity).values(values)
+
+        stmt_on_conflict = stmt_insert.on_conflict_do_update(
+            constraint="districts_pkey",
+            set_=dict(
+                name=stmt_insert.excluded.name,
+                short_name=stmt_insert.excluded.short_name,
+                full_name=stmt_insert.excluded.full_name,
+            ),
         )
-        result = await session.execute(stmt)
+        result = await session.execute(stmt_on_conflict)
         await session.commit()
         inserted_count = result.rowcount if result.rowcount is not None else len(values)
         logger.info(f"Successfully inserted {inserted_count} districts")
         return inserted_count > 0
     except ProgrammingError as e:
         logger.warning(f"Отсутствует уникальный индекс: {e}")
-        try:
-            stmt = insert(DistrictEntity).values(values)
-            result = await session.execute(stmt)
-            await session.commit()
-            inserted_count = (
-                result.rowcount if result.rowcount is not None else len(values)
-            )
-            logger.info(f"Inserted {inserted_count} regions without conflict handling")
-            return inserted_count > 0
-        except Exception as e2:
-            logger.error(f"Ошибка вставки без ON CONFLICT: {e2}")
-            return False
+        return False
     except IntegrityError as e:
         logger.error(f"Нарушение целостности данных: {e}")
         return False
     except Exception as e:
         logger.error(f"Неизвестная ошибка: {e}")
         return False
+
+
 @connection
 async def get_id_reg(code: str, session: AsyncSession) -> int:
     """Получает ID региона по коду."""
@@ -152,7 +163,7 @@ async def get_id_reg(code: str, session: AsyncSession) -> int:
 async def get_id_act(npa_id: str, session: AsyncSession) -> int:
     """Получает ID акта по npa_id."""
     try:
-        stmt = select(ActEntity.id).where(ActEntity.npa_id == npa_id)
+        stmt = select(TypeEntity.id).where(TypeEntity.npa_id == npa_id)
         result = await session.execute(stmt)
         id_act = result.scalar_one_or_none()
         if id_act is None:
@@ -161,23 +172,6 @@ async def get_id_act(npa_id: str, session: AsyncSession) -> int:
     except Exception as e:
         logger.error(f"Ошибка при получении ID акта для npa_id {npa_id}: {e}")
         return -1
-
-
-@connection
-async def update_region(subjects_data: List[dict], session: AsyncSession):
-    """Обновляет таблицу regions с id_dist."""
-    try:
-        for row in subjects_data:
-            stmt = (
-                update(RegionEntity)
-                .where(RegionEntity.name == row["name"])
-                .values(id_dist=row.get("id_dist"))
-            )
-            await session.execute(stmt)
-        await session.commit()
-        logger.info(f"Updated {len(subjects_data)} regions")
-    except Exception as e:
-        logger.error(f"Ошибка при обновлении regions: {e}")
 
 
 @connection
@@ -285,6 +279,16 @@ def districts_data() -> List[dict]:
             return json.load(file)
     except Exception as e:
         logger.error(f"Ошибка при загрузке districts.json: {e}")
+        return []
+
+
+def types_data() -> List[dict]:
+    """Загружает данные районов из JSON."""
+    try:
+        with open(f"{settings.BASE_DIR}/parser/mock/types.json", "r") as file:
+            return json.load(file)
+    except Exception as e:
+        logger.error(f"Ошибка при загрузке types.json: {e}")
         return []
 
 
@@ -426,6 +430,7 @@ async def get_npa_api(client: httpx.AsyncClient) -> List[Tuple[str, str]]:
     npa_ids = []
     try:
         resp = await client.get(get_type_all())
+        print(resp.json())
         resp.raise_for_status()
         data = resp.json()
         for npa in data:
@@ -445,22 +450,27 @@ async def parse():
     logger.info("Начало парсинга")
     async with httpx.AsyncClient(proxy=settings.PROXY) as client:
 
-        name_npa_id = await get_npa_api(client)
+        types = types_data()
         districts = districts_data()
         regions = regions_data()
-        if not regions or not districts or not name_npa_id:
+
+        if not regions or not districts or not types:
             logger.error("Не удалось загрузить начальные данные, завершение парсинга")
             return
 
-        await insert_act(name_npa_id)
-
+        inserted_types = await insert_types(types)
+        if not inserted_types:
+            logger.warning(
+                "Типы не вставлены, дальнейшая обработка может быть некорректной"
+            )
+            return
         inserted_districts = await insert_districts(districts)
         if not inserted_districts:
             logger.warning(
                 "Округа не вставлены, дальнейшая обработка может быть некорректной"
             )
             return
-        
+
         inserted_regions = await insert_region(regions)
         if not inserted_regions:
             logger.warning(
@@ -468,7 +478,6 @@ async def parse():
             )
             return
 
-        
         for region in regions:
             await get_document_api(region.get("code"), client)
 
