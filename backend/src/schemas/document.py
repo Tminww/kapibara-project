@@ -1,14 +1,58 @@
-from datetime import date
+from datetime import datetime
+from typing import Optional
 
-from pydantic import ConfigDict
+from pydantic import field_validator
+
 from .base import BaseSchema
 
 
 class DocumentSchema(BaseSchema):
-    id_doc: int
-    id_act: int
-    complexName: str
-    eoNumber: int
-    viewDate: date
-    pagesCount: int
+    id: Optional[int] = None
+    eo_number: Optional[str] = None
+    complex_name: Optional[str] = None
+    pages_count: Optional[int] = None
+    pdf_file_length: Optional[int] = None
+    name: Optional[str] = None
+    document_date: Optional[datetime] = None  # Изменили на datetime для единообразия
+    signatory_authority_id: Optional[str] = None
+    document_type_id: Optional[str] = None
+    title: Optional[str] = None
+    view_date: Optional[datetime] = None
+    external_id: Optional[str] = None
+    id_type: int
     id_reg: int
+    hash: Optional[str] = None
+    date_of_publication: Optional[datetime] = None
+    date_of_signing: Optional[datetime] = None
+
+    @field_validator(
+        "view_date",
+        "document_date",
+        "date_of_publication",
+        "date_of_signing",
+        mode="before",
+    )
+    @classmethod
+    def str_to_date(cls, value):
+        if isinstance(value, str):
+            # Список поддерживаемых форматов
+            date_formats = [
+                "%d.%m.%Y",  # dd.mm.yyyy (например, 17.03.2025)
+                "%Y-%m-%d",  # yyyy-mm-dd (например, 2025-03-17)
+                "%d-%m-%Y",  # dd-mm-yyyy (например, 17-03-2025)
+                "%Y.%m.%d",  # yyyy.mm.dd (например, 2025.03.17)
+            ]
+            for fmt in date_formats:
+                try:
+                    # Парсим строку и возвращаем объект datetime
+                    return datetime.strptime(value, fmt)
+                except ValueError:
+                    continue
+            # Если ни один формат не подошел, выбрасываем ошибку
+            raise ValueError(
+                f"Неверный формат даты: {value}. Ожидаются форматы: DD.MM.YYYY, YYYY-MM-DD, DD-MM-YYYY, YYYY.MM.DD."
+            )
+        return value
+
+    class Config:
+        from_attributes = True

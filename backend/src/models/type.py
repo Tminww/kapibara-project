@@ -14,6 +14,6 @@ class TypeEntity(Base):
     # documents = relationship("DocumentEntity", innerjoin=True)
 
     __table_args__ = (
-        UniqueConstraint("id", "external_id", name="uq_types_id_external_id"),
+        UniqueConstraint("external_id", name="uq_types_external_id"),
         {"extend_existing": True},
     )
