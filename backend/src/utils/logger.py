@@ -30,4 +30,4 @@ def get_logger(logger_name: str, file_name: str = "logger") -> logging:
 timestamp = datetime.now().strftime("%d-%m-%Y-%H-%M-%S")
 parser_logger = get_logger(logger_name="parser", file_name="parser")
 backend_logger = get_logger(logger_name="backend", file_name="backend")
-database_logger = get_logger(logger_name="database", file_name="sqlalchemy")
+database_logger = get_logger("sqlalchemy.engine", "database")

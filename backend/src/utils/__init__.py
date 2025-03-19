@@ -1,4 +1,4 @@
-from .logger import parser_logger, backend_logger, database_logger
+from .logger import parser_logger, backend_logger, database_logger, get_logger
 from .utils import check_time
 
 

@@ -1,7 +1,9 @@
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
 from config import settings
-from utils import backend_logger as logger
+from utils import database_logger as logger
+
+# Настройка логирования
 
 
 try:

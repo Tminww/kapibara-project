@@ -15,6 +15,50 @@ from models import TypeEntity, RegionEntity, DocumentEntity, DistrictEntity
 from schemas import DocumentSchema
 
 
+def get_regions() -> List[dict]:
+    """Загружает данные регионов из JSON."""
+    try:
+        with open(f"{settings.BASE_DIR}/parser/mock/regions.json", "r") as file:
+            return json.load(file)
+    except Exception as e:
+        logger.error(f"Ошибка при загрузке regions.json: {e}")
+        return []
+
+
+def get_districts() -> List[dict]:
+    """Загружает данные районов из JSON."""
+    try:
+        with open(f"{settings.BASE_DIR}/parser/mock/districts.json", "r") as file:
+            return json.load(file)
+    except Exception as e:
+        logger.error(f"Ошибка при загрузке districts.json: {e}")
+        return []
+
+
+def get_types() -> List[dict]:
+    """Загружает данные типов из JSON."""
+    try:
+        with open(f"{settings.BASE_DIR}/parser/mock/types.json", "r") as file:
+            return json.load(file)
+    except Exception as e:
+        logger.error(f"Ошибка при загрузке types.json: {e}")
+        return []
+
+
+def get_documents_by_block(code: str) -> str:
+    return f"{settings.EXTERNAL_URL}/api/Documents?block={code}&PageSize=200&Index=1"
+
+
+def get_documents_by_block_and_document_types(
+    external_id: str, code: str, index: int
+) -> str:
+    return f"{settings.EXTERNAL_URL}/api/Documents?DocumentTypes={external_id}&block={code}&PageSize=200&Index={index}"
+
+
+def get_document_types_by_block(code: str) -> str:
+    return f"{settings.EXTERNAL_URL}/api/DocumentTypes?block={code}"
+
+
 @connection
 async def insert_types(types: List[dict], session: AsyncSession):
     """Вставляет записи в таблицу types асинхронно."""
@@ -172,59 +216,40 @@ async def get_id_type(external_id: str, session: AsyncSession) -> int:
 
 @connection
 async def insert_document(
-    complex_names: List[str],
-    eo_numbers: List[str],
-    pages_counts: List[int],
-    view_dates: List[str],
-    id_regs: List[int],
-    id_types: List[int],
+    documents: List[DocumentSchema],
     session: AsyncSession,
 ):
     """Вставляет записи в таблицу documents асинхронно с использованием Pydantic-схемы."""
     try:
-        # Проверяем существующие eo_number в базе
-        existing_stmt = select(DocumentEntity.eo_number).where(
-            DocumentEntity.eo_number.in_(eo_numbers)
-        )
-        result = await session.execute(existing_stmt)
-        existing_eo_numbers = set(result.scalars().all())
-        logger.debug(f"Existing eo_numbers in DB: {existing_eo_numbers}")
-
-        # Фильтруем только новые документы
-        new_documents = [
-            DocumentSchema(
-                complex_name=cn,
-                eo_number=en,
-                pages_count=pc,
-                view_date=vd,
-                id_reg=ir,
-                id_type=ia,
-            )
-            for cn, en, pc, vd, ir, ia in zip(
-                complex_names, eo_numbers, pages_counts, view_dates, id_regs, id_types
-            )
-            if en not in existing_eo_numbers  # Пропускаем существующие
-        ]
-
-        if not new_documents:
-            logger.info("No new documents to insert")
-            return
-
         # Преобразуем в словари для вставки
-        values = [doc.model_dump(exclude_none=True) for doc in new_documents]
-        logger.debug(f"Values to insert: {values}")
+        values = [d.model_dump(exclude_none=True) for d in documents]
+        # logger.debug(f"Values to insert: {values}")
 
         # Вставка с обработкой конфликтов по eo_number
-        stmt = (
-            insert(DocumentEntity)
-            .values(values)
-            .on_conflict_do_nothing(
-                index_elements=["eo_number"]  # Уникальность по eo_number
-            )
+        stmt_insert = insert(DocumentEntity).values(values)
+
+        stmt_on_conflict = stmt_insert.on_conflict_do_update(
+            constraint="uq_documents_eo_number",
+            set_=dict(
+                complex_name=stmt_insert.excluded.complex_name,
+                pages_count=stmt_insert.excluded.pages_count,
+                view_date=stmt_insert.excluded.view_date,
+                id_reg=stmt_insert.excluded.id_reg,
+                id_type=stmt_insert.excluded.id_type,
+                pdf_file_length=stmt_insert.excluded.pdf_file_length,
+                name=stmt_insert.excluded.name,
+                document_date=stmt_insert.excluded.document_date,
+                signatory_authority_id=stmt_insert.excluded.signatory_authority_id,
+                number=stmt_insert.excluded.number,
+                title=stmt_insert.excluded.title,
+                external_id=stmt_insert.excluded.external_id,
+                date_of_publication=stmt_insert.excluded.date_of_publication,
+                updated_at=func.now(),
+            ),
         )
 
         # Выполняем запрос и получаем количество вставленных строк
-        result = await session.execute(stmt)
+        result = await session.execute(stmt_on_conflict)
         await session.commit()
 
         inserted_count = result.rowcount
@@ -257,7 +282,6 @@ async def get_total_documents(code: str, session: AsyncSession) -> int:
         )
         result = await session.execute(stmt)
         count = result.scalar()
-        logger.info(f"Total documents for region {code}: {count}")
         return count
     except Exception as e:
         logger.error(f"Ошибка при подсчёте документов для региона {code}: {e}")
@@ -281,65 +305,13 @@ async def get_total_documents_type(
         )
         result = await session.execute(stmt)
         count = result.scalar()
-        logger.info(
-            f"Total documents for region {code} with type {external_id}: {count}"
-        )
+
         return count
     except Exception as e:
         logger.error(
             f"Ошибка при подсчёте документов для региона {code} with type {external_id}: {e}"
         )
         return 0
-
-
-def regions_data() -> List[dict]:
-    """Загружает данные регионов из JSON."""
-    try:
-        with open(f"{settings.BASE_DIR}/parser/mock/regions.json", "r") as file:
-            return json.load(file)
-    except Exception as e:
-        logger.error(f"Ошибка при загрузке regions.json: {e}")
-        return []
-
-
-def districts_data() -> List[dict]:
-    """Загружает данные районов из JSON."""
-    try:
-        with open(f"{settings.BASE_DIR}/parser/mock/districts.json", "r") as file:
-            return json.load(file)
-    except Exception as e:
-        logger.error(f"Ошибка при загрузке districts.json: {e}")
-        return []
-
-
-def types_data() -> List[dict]:
-    """Загружает данные типов из JSON."""
-    try:
-        with open(f"{settings.BASE_DIR}/parser/mock/types.json", "r") as file:
-            return json.load(file)
-    except Exception as e:
-        logger.error(f"Ошибка при загрузке types.json: {e}")
-        return []
-
-
-def get_documents_on_page(code: str) -> str:
-    return f"{settings.EXTERNAL_URL}/api/Documents?block={code}&PageSize=200&Index=1"
-
-
-def get_documents_on_page_type(external_id: str, code: str, index: int) -> str:
-    return f"{settings.EXTERNAL_URL}/api/Documents?DocumentTypes={external_id}&block={code}&PageSize=200&Index={index}"
-
-
-def get_subjects() -> str:
-    return f"{settings.EXTERNAL_URL}/api/PublicBlocks/?parent=subjects"
-
-
-def get_type_all() -> str:
-    return f"{settings.EXTERNAL_URL}/api/DocumentTypes"
-
-
-def get_type_in_subject(code: str) -> str:
-    return f"{settings.EXTERNAL_URL}/api/DocumentTypes?block={code}"
 
 
 async def get_document_api(region: dict, client: httpx.AsyncClient):
@@ -350,7 +322,7 @@ async def get_document_api(region: dict, client: httpx.AsyncClient):
     print(f"Объект {region_name}, {code} начат")
 
     try:
-        resp = await client.get(get_documents_on_page(code))
+        resp = await client.get(get_documents_by_block(code))
         resp.raise_for_status()
         total_documents_data = resp.json()
     except httpx.RequestError as e:
@@ -366,6 +338,7 @@ async def get_document_api(region: dict, client: httpx.AsyncClient):
 
     total_docs = await get_total_documents(code)
     total_expected = total_documents_data.get("itemsTotalCount", 0)
+    logger.debug(f"Region total: DB={total_docs}, API={total_expected}")
     if total_docs >= total_expected:
         logger.info(
             f"Регион {region_name}, {code} уже заполнен (DB: {total_docs}, API: {total_expected})"
@@ -374,7 +347,7 @@ async def get_document_api(region: dict, client: httpx.AsyncClient):
         return
 
     try:
-        resp = await client.get(get_type_in_subject(code))
+        resp = await client.get(get_document_types_by_block(code))
         resp.raise_for_status()
         types: List[dict] = resp.json()
     except httpx.RequestError as e:
@@ -390,77 +363,120 @@ async def get_document_api(region: dict, client: httpx.AsyncClient):
 
     for type_ in types:
         current_page = 1
+        type_name = type_.get("name")
         type_id = type_.get("id")
+        type_total = await get_total_documents_type(code, type_id)
+        has_new_data = True  # Флаг для отслеживания новых вставок
+
         while True:
             await asyncio.sleep(0.5)
-            url = get_documents_on_page_type(type_id, code, current_page)
+            url = get_documents_by_block_and_document_types(type_id, code, current_page)
             try:
                 resp = await client.get(url)
                 resp.raise_for_status()
                 documents_data: dict = resp.json()
             except httpx.RequestError as e:
                 logger.error(
-                    f"Ошибка запроса документов для региона {region_name}, {code}, {type_.get('name')} {type_id}: {e}"
+                    f"Ошибка запроса документов для региона {region_name}, {code}, {type_.get('name')} {type_name} {type_id}: {e}"
                 )
                 break
             except Exception as e:
                 logger.error(
-                    f"Неизвестная ошибка при запроса документов для региона {region_name}, {code}, {type_.get('name')} {type_id}: {e}"
+                    f"Неизвестная ошибка при запроса документов для региона {region_name}, {code}, {type_.get('name')} {type_name} {type_id}: {e}"
                 )
                 break
 
-            type_total = await get_total_documents_type(code, type_id)
             type_expected = documents_data.get("itemsTotalCount", 0)
+            total_pages = documents_data.get("pagesTotalCount", 0)
+            logger.debug(
+                f"Type {type_name} {type_id}, page {current_page}/{total_pages}: DB={type_total}, API={type_expected}"
+            )
+
             if type_total >= type_expected:
                 logger.debug(
-                    f"Type {type_id} already fully inserted (DB: {type_total}, API: {type_expected})"
+                    f"Type {type_name} {type_id} already fully inserted (DB: {type_total}, API: {type_expected})"
                 )
                 break
 
-            if current_page <= documents_data.get("pagesTotalCount", 0):
-                complex_names = []
-                eo_numbers = []
-                pages_counts = []
-                view_dates = []
-                id_regs = []
-                id_types = []
-                id_reg = await get_id_reg(code)
-                id_type = await get_id_type(type_id)
+            if current_page > total_pages:
+                logger.debug(
+                    f"All pages processed for type {type_name} {type_id} (page {current_page} > {total_pages})"
+                )
+                break
 
-                if id_reg == -1 or id_type == -1:
-                    logger.error(
-                        f"Пропуск вставки документов для региона {code}, type {type_id} из-за ошибки ID"
+            id_reg = await get_id_reg(code)
+            id_type = await get_id_type(type_id)
+
+            if id_reg == -1 or id_type == -1:
+                logger.error(
+                    f"Пропуск вставки документов для региона {code}, type {type_name} {type_id} из-за ошибки ID"
+                )
+                break
+
+            items = documents_data.get("items", [])
+            logger.debug(
+                f"Items on page {current_page} for type {type_name} {type_id}: {len(items)} documents"
+            )
+            documents_for_insert = []
+            for item in items:
+                print(item.get("number"))
+
+                documents_for_insert.append(
+                    DocumentSchema(
+                        id=None,
+                        eo_number=item.get("eoNumber"),
+                        complex_name=item.get("complexName"),
+                        pages_count=item.get("pagesCount"),
+                        pdf_file_length=item.get("pdfFileLength"),
+                        name=item.get("name"),
+                        document_date=item.get("documentDate").split("T")[0],
+                        signatory_authority_id=item.get("signatoryAuthorityId"),
+                        number=item.get("number", ""),
+                        title=item.get("title"),
+                        view_date=item.get("viewDate"),
+                        external_id=item.get("id"),
+                        id_reg=id_reg,  # Добавляем извне
+                        id_type=id_type,  # Добавляем извне
+                        date_of_publication=item.get("publishDateShort").split("T")[0],
+                        date_of_signing=None,  # Нет в JSON, оставляем None
+                        updated_at=None,  # Нет в JSON, оставляем None или можно установить текущее время
                     )
-                    break
-
-                for item in documents_data.get("items", []):
-                    complex_names.append(item.get("complexName"))
-                    eo_numbers.append(item.get("eoNumber"))
-                    pages_counts.append(item.get("pagesCount"))
-                    view_dates.append(item.get("viewDate"))
-                    id_regs.append(id_reg)
-                    id_types.append(id_type)
-
-                await insert_document(
-                    complex_names,
-                    eo_numbers,
-                    pages_counts,
-                    view_dates,
-                    id_regs,
-                    id_types,
                 )
 
-                # Проверяем общее количество после вставки
-                new_total = await get_total_documents_type(code, type_id)
-                if new_total >= type_expected:
-                    logger.debug(
-                        f"Type {type_id} fully inserted after update (DB: {new_total}, API: {type_expected})"
-                    )
-                    break
+            await insert_document(documents_for_insert)
 
-                current_page += 1
+            # Проверяем, были ли новые вставки
+            new_type_total = await get_total_documents_type(code, type_id)
+            if new_type_total > type_total:
+                type_total = new_type_total
+                has_new_data = True
+                logger.debug(
+                    f"Type {type_name} {type_id} updated (DB: {type_total}, API: {type_expected})"
+                )
             else:
+                has_new_data = False
+                logger.debug(f"No new data inserted for type {type_name} {type_id}")
+
+            if type_total >= type_expected:
+                logger.debug(
+                    f"Type {type_name} {type_id} fully inserted after update (DB: {type_total}, API: {type_expected})"
+                )
                 break
+
+            else:
+                logger.debug(
+                    f"No documents on page {current_page} for type {type_name} {type_id}"
+                )
+                has_new_data = False
+
+            # Прерываем цикл, если нет новых данных и все страницы не обработаны
+            if not has_new_data and type_total < type_expected:
+                logger.warning(
+                    f"Type {type_name} {type_id} incomplete (DB: {type_total}, API: {type_expected}), but no new data available"
+                )
+                break
+
+            current_page += 1
 
     logger.info(f"Регион {code} закончен")
     print(f"Регион {code} закончен")
@@ -470,9 +486,9 @@ async def parse():
     """Основная функция парсинга."""
     logger.info("Начало парсинга")
     async with httpx.AsyncClient(proxy=settings.PROXY) as client:
-        types = types_data()
-        districts = districts_data()
-        regions = regions_data()
+        types = get_types()
+        districts = get_districts()
+        regions = get_regions()
 
         if not regions or not districts or not types:
             logger.error("Не удалось загрузить начальные данные, завершение парсинга")

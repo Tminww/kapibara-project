@@ -4,6 +4,7 @@ from typing import Optional
 from pydantic import field_validator
 
 from .base import BaseSchema
+from utils import parser_logger as logger
 
 
 class DocumentSchema(BaseSchema):
@@ -13,23 +14,39 @@ class DocumentSchema(BaseSchema):
     pages_count: Optional[int] = None
     pdf_file_length: Optional[int] = None
     name: Optional[str] = None
-    document_date: Optional[datetime] = None  # Изменили на datetime для единообразия
     signatory_authority_id: Optional[str] = None
-    document_type_id: Optional[str] = None
-    title: Optional[str] = None
+    number: Optional[str] = None
+    document_date: Optional[datetime] = None
     view_date: Optional[datetime] = None
+    title: Optional[str] = None
     external_id: Optional[str] = None
     id_type: int
     id_reg: int
     hash: Optional[str] = None
     date_of_publication: Optional[datetime] = None
     date_of_signing: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
     @field_validator(
-        "view_date",
+        "complex_name",
+        "name",
+        "title",
+        mode="before",
+    )
+    @classmethod
+    def clean_text(cls, value):
+        """Убирает переносы строк и лишние пробелы из строковых полей."""
+        if value is None:
+            return None
+        value = value.replace("<br />", " ").replace("<br>", " ")
+        return " ".join(str(value).split())
+
+    @field_validator(
         "document_date",
+        "view_date",
         "date_of_publication",
         "date_of_signing",
+        "updated_at",
         mode="before",
     )
     @classmethod
@@ -48,11 +65,11 @@ class DocumentSchema(BaseSchema):
                     return datetime.strptime(value, fmt)
                 except ValueError:
                     continue
+            logger.error(
+                "Неверный формат даты: {value}. Ожидаются форматы: DD.MM.YYYY, YYYY-MM-DD, DD-MM-YYYY, YYYY.MM.DD."
+            )
             # Если ни один формат не подошел, выбрасываем ошибку
             raise ValueError(
                 f"Неверный формат даты: {value}. Ожидаются форматы: DD.MM.YYYY, YYYY-MM-DD, DD-MM-YYYY, YYYY.MM.DD."
             )
         return value
-
-    class Config:
-        from_attributes = True
