@@ -18,7 +18,7 @@ class DocumentEntity(Base):
     __tablename__ = "documents"
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
-    eo_number: Mapped[str] = mapped_column(String(16), nullable=True)
+    eo_number: Mapped[str] = mapped_column(String(32), nullable=True)
     complex_name: Mapped[str] = mapped_column(Text, nullable=True)
     pages_count: Mapped[int] = mapped_column(Integer, nullable=True)
     pdf_file_length: Mapped[int] = mapped_column(Integer, nullable=True)
@@ -45,3 +45,6 @@ class DocumentEntity(Base):
         UniqueConstraint("eo_number", name="uq_documents_eo_number"),
         {"extend_existing": True},
     )
+
+
+Index("idx_documents_eo_number", DocumentEntity.eo_number, unique=True)

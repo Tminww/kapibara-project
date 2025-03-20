@@ -8,7 +8,6 @@ from utils import parser_logger as logger
 
 
 class DocumentSchema(BaseSchema):
-    id: Optional[int] = None
     eo_number: Optional[str] = None
     complex_name: Optional[str] = None
     pages_count: Optional[int] = None
@@ -73,3 +72,7 @@ class DocumentSchema(BaseSchema):
                 f"Неверный формат даты: {value}. Ожидаются форматы: DD.MM.YYYY, YYYY-MM-DD, DD-MM-YYYY, YYYY.MM.DD."
             )
         return value
+
+
+class DocumentSelectSchema(DocumentSchema):
+    id: int
