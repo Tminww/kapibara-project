@@ -1,3 +1,4 @@
+from typing import Optional
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from functools import lru_cache
 from pathlib import Path
@@ -18,7 +19,7 @@ class Config(BaseSettings):
     EXTERNAL_API_VERSION_PATH: str
     EXTERNAL_FILE_PATH: str
     
-    PROXY: str
+    PROXY: Optional[str] = None
 
     model_config = SettingsConfigDict(env_file=f"{BASE_DIR}/.env", extra="ignore")
 

@@ -42,9 +42,9 @@ class DocumentEntity(Base):
     # region = relationship("RegionEntity", overlaps="region", innerjoin=True)
 
     __table_args__ = (
-        UniqueConstraint("eo_number", name="uq_documents_eo_number"),
+        UniqueConstraint("eo_number", "id_reg", name="uq_documents_eo_number_id_reg"),
         {"extend_existing": True},
     )
 
 
-Index("idx_documents_eo_number", DocumentEntity.eo_number, unique=True)
+# Index("idx_documents_eo_number", DocumentEntity.eo_number, unique=True)
