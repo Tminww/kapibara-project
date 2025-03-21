@@ -21,7 +21,7 @@ class DocumentEntity(Base):
     eo_number: Mapped[str] = mapped_column(String(32), nullable=True)
     complex_name: Mapped[str] = mapped_column(Text, nullable=True)
     pages_count: Mapped[int] = mapped_column(Integer, nullable=True)
-    pdf_file_length: Mapped[int] = mapped_column(Integer, nullable=True)
+    pdf_file_length: Mapped[int] = mapped_column(BigInteger, nullable=True)
     name: Mapped[str] = mapped_column(Text, nullable=True)
     document_date: Mapped[datetime] = mapped_column(Date, nullable=True)
     signatory_authority_id: Mapped[str] = mapped_column(String(256), nullable=True)

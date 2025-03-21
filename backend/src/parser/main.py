@@ -265,8 +265,7 @@ async def insert_document(
                 f"Документы не вставлены {inserted_count} из {len(values)}, Данные: {values}"
             )
         else:
-            pass
-            # logger.info(f"Успешно вставлено {inserted_count} из {len(values)}")
+            logger.debug(f"Успешно вставлено {inserted_count} из {len(values)}")
     except ProgrammingError as e:
         logger.error(f"Ошибка структуры таблицы documents: {e}")
         await session.rollback()
@@ -279,6 +278,7 @@ async def insert_document(
         logger.error(f"Неизвестная ошибка при вставке в documents: {e}")
         await session.rollback()
         raise
+
 
 @connection
 async def get_total_documents(code: str, session: AsyncSession) -> int:
@@ -324,7 +324,6 @@ async def get_total_documents_type(
             f"Ошибка при подсчёте документов для региона {code} with type {external_id}: {e}"
         )
         return 0
-
 
 
 async def get_document_api(region: dict, client: httpx.AsyncClient):
@@ -456,7 +455,9 @@ async def get_document_api(region: dict, client: httpx.AsyncClient):
 async def parse():
     """Основная функция парсинга."""
     logger.info("Начало парсинга")
-    async with httpx.AsyncClient(proxy=settings.PROXY, timeout=httpx.Timeout(30.0)) as client:
+    async with httpx.AsyncClient(
+        proxy=settings.PROXY, timeout=httpx.Timeout(30.0)
+    ) as client:
         types = get_types()
         districts = get_districts()
         regions = get_regions()
