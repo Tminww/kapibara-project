@@ -16,7 +16,7 @@ const routes = [
 	{
 		path: '/root',
 		name: 'home',
-		component: HomePage,
+		component: () => import('@/pages/HomePage.vue'),
 		meta: {
 			...meta,
 			breadCrumb: [
@@ -30,7 +30,8 @@ const routes = [
 	{
 		path: '/subjects',
 		name: 'subjects',
-		component: SubjectPage,
+		component: () => import('@/pages/SubjectPage.vue'),
+
 		meta: {
 			...meta,
 			breadCrumb: [
@@ -47,7 +48,7 @@ const routes = [
 	{
 		path: '/president',
 		name: 'president',
-		component: NotFound404,
+		component: () => import('@/pages/errors/NotFound404.vue'),
 		meta: {
 			...meta,
 			breadCrumb: [
@@ -64,7 +65,7 @@ const routes = [
 	{
 		path: '/council_1',
 		name: 'council_1',
-		component: NotFound404,
+		component: () => import('@/pages/errors/NotFound404.vue'),
 		meta: {
 			...meta,
 			breadCrumb: [
@@ -81,7 +82,7 @@ const routes = [
 	{
 		path: '/council_2',
 		name: 'council_2',
-		component: NotFound404,
+		component: () => import('@/pages/errors/NotFound404.vue'),
 		meta: {
 			...meta,
 			breadCrumb: [
@@ -98,7 +99,7 @@ const routes = [
 	{
 		path: '/government',
 		name: 'government',
-		component: NotFound404,
+		component: () => import('@/pages/errors/NotFound404.vue'),
 		meta: {
 			...meta,
 			breadCrumb: [
@@ -115,7 +116,7 @@ const routes = [
 	{
 		path: '/federal_authorities',
 		name: 'federal_authorities',
-		component: NotFound404,
+		component: () => import('@/pages/errors/NotFound404.vue'),
 		meta: {
 			...meta,
 			breadCrumb: [
@@ -132,7 +133,7 @@ const routes = [
 	{
 		path: '/court',
 		name: 'court',
-		component: NotFound404,
+		component: () => import('@/pages/errors/NotFound404.vue'),
 		meta: {
 			...meta,
 			breadCrumb: [
@@ -149,7 +150,7 @@ const routes = [
 	{
 		path: '/international',
 		name: 'international',
-		component: NotFound404,
+		component: () => import('@/pages/errors/NotFound404.vue'),
 		meta: {
 			...meta,
 			breadCrumb: [
@@ -166,7 +167,7 @@ const routes = [
 	{
 		path: '/un_securitycouncil',
 		name: 'un_securitycouncil',
-		component: NotFound404,
+		component: () => import('@/pages/errors/NotFound404.vue'),
 		meta: {
 			...meta,
 			breadCrumb: [
@@ -184,7 +185,7 @@ const routes = [
 	{
 		path: '/:pathMatch(.*)*',
 		name: 'not-found',
-		component: NotFound404,
+		component: () => import('@/pages/errors/NotFound404.vue'),
 		meta,
 	},
 ]

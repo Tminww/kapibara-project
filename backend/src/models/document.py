@@ -38,7 +38,7 @@ class DocumentEntity(Base):
     updated_at: Mapped[datetime] = mapped_column(Date, nullable=True)
 
     # id_reg: Mapped[int] = mapped_column(ForeignKey("region.id"), nullable=False)
-    # act = relationship("ActEntity", overlaps="act", innerjoin=True)
+    # act = relationship("TypeEntity", overlaps="act", innerjoin=True)
     # region = relationship("RegionEntity", overlaps="region", innerjoin=True)
 
     __table_args__ = (

@@ -1,10 +1,11 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
 
-from backend.src.models.type import ActEntity
-from models.district import DistrictEntity
-from models.document import DocumentEntity
-from models.region import RegionEntity
+from models import (
+    TypeEntity,
+ DistrictEntity,
+ DocumentEntity,
+ RegionEntity,)
 
 from schemas import (
     RegionSchema,
@@ -64,12 +65,12 @@ class SQLAlchemyRepository:
 
             stmt = (
                 select(
-                    ActEntity.name.label("name"),
+                    TypeEntity.name.label("name"),
                     func.count().label("count"),
                 )
                 .select_from(DocumentEntity)
                 .join(RegionEntity, DocumentEntity.id_reg == RegionEntity.id)
-                .join(ActEntity, DocumentEntity.id_act == ActEntity.id)
+                .join(TypeEntity, DocumentEntity.id_type == TypeEntity.id)
                 .filter(
                     (
                         parameters.regions is None
@@ -81,8 +82,8 @@ class SQLAlchemyRepository:
                         or DocumentEntity.view_date.between(start_date, end_date)
                     ),
                 )
-                .group_by(ActEntity.name)
-                .order_by(ActEntity.name)
+                .group_by(TypeEntity.name)
+                .order_by(TypeEntity.name)
             )
             res = await session.execute(stmt)
             print(res)
@@ -109,12 +110,12 @@ class SQLAlchemyRepository:
 
             stmt = (
                 select(
-                    ActEntity.name.label("name"),
+                    TypeEntity.name.label("name"),
                     func.count().label("count"),
                 )
                 .select_from(DocumentEntity)
                 .join(RegionEntity, DocumentEntity.id_reg == RegionEntity.id)
-                .join(ActEntity, DocumentEntity.id_act == ActEntity.id)
+                .join(TypeEntity, DocumentEntity.id_type == TypeEntity.id)
                 .filter(
                     (RegionEntity.id_dist == id_dist),
                     (
@@ -127,8 +128,8 @@ class SQLAlchemyRepository:
                         or DocumentEntity.view_date.between(start_date, end_date)
                     ),
                 )
-                .group_by(ActEntity.name)
-                .order_by(ActEntity.name)
+                .group_by(TypeEntity.name)
+                .order_by(TypeEntity.name)
             )
             res = await session.execute(stmt)
             res = [StatBaseSchema(name=row.name, count=row.count) for row in res.all()]
@@ -154,12 +155,12 @@ class SQLAlchemyRepository:
 
             stmt = (
                 select(
-                    ActEntity.name.label("name"),
+                    TypeEntity.name.label("name"),
                     func.count().label("count"),
                 )
                 .select_from(DocumentEntity)
                 .join(RegionEntity, DocumentEntity.id_reg == RegionEntity.id)
-                .join(ActEntity, DocumentEntity.id_act == ActEntity.id)
+                .join(TypeEntity, DocumentEntity.id_type == TypeEntity.id)
                 .filter(
                     (
                         parameters.regions is None
@@ -171,8 +172,8 @@ class SQLAlchemyRepository:
                         or DocumentEntity.view_date.between(start_date, end_date)
                     ),
                 )
-                .group_by(ActEntity.name)
-                .order_by(ActEntity.name)
+                .group_by(TypeEntity.name)
+                .order_by(TypeEntity.name)
             )
             res = await session.execute(stmt)
             res = [StatBaseSchema(name=row.name, count=row.count) for row in res.all()]
@@ -259,12 +260,12 @@ class SQLAlchemyRepository:
 
             stmt = (
                 select(
-                    ActEntity.name.label("name"),
+                    TypeEntity.name.label("name"),
                     func.count().label("count"),
                 )
                 .select_from(DocumentEntity)
                 .join(RegionEntity, DocumentEntity.id_reg == RegionEntity.id)
-                .join(ActEntity, DocumentEntity.id_act == ActEntity.id)
+                .join(TypeEntity, DocumentEntity.id_type == TypeEntity.id)
                 .filter(
                     (RegionEntity.id == id_reg),
                     (
@@ -273,8 +274,8 @@ class SQLAlchemyRepository:
                         or DocumentEntity.view_date.between(start_date, end_date)
                     ),
                 )
-                .group_by(ActEntity.name)
-                .order_by(ActEntity.name)
+                .group_by(TypeEntity.name)
+                .order_by(TypeEntity.name)
             )
             res = await session.execute(stmt)
             res = [StatBaseSchema(name=row.name, count=row.count) for row in res.all()]
@@ -451,7 +452,7 @@ class SQLAlchemyRepository:
             # --- Часть 1: Запрос для актов президента ---
             # CTE для отфильтрованных документов президента
             filtered_documents_president = (
-                select(DocumentEntity.id_act, DocumentEntity.id)
+                select(DocumentEntity.id_type, DocumentEntity.id)
                 .join(RegionEntity, DocumentEntity.id_reg == RegionEntity.id)
                 .where(
                     and_(
@@ -469,9 +470,9 @@ class SQLAlchemyRepository:
             # CTE для актов президента
             president_acts = (
                 select(
-                    distinct(ActEntity.id).label("act_id"), ActEntity.name.label("name")
+                    distinct(TypeEntity.id).label("act_id"), TypeEntity.name.label("name")
                 )
-                .join(DocumentEntity, ActEntity.id == DocumentEntity.id_act)
+                .join(DocumentEntity, TypeEntity.id == DocumentEntity.id_type)
                 .join(RegionEntity, DocumentEntity.id_reg == RegionEntity.id)
                 .where(RegionEntity.code == "president")
                 .cte("president_acts")
@@ -500,7 +501,7 @@ class SQLAlchemyRepository:
                 .select_from(president_acts)
                 .outerjoin(
                     filtered_documents_president,
-                    president_acts.c.act_id == filtered_documents_president.c.id_act,
+                    president_acts.c.act_id == filtered_documents_president.c.id_type,
                 )
                 .group_by(
                     president_acts.c.name,
@@ -526,7 +527,7 @@ class SQLAlchemyRepository:
             # --- Часть 2: Запрос для актов правительства ---
             # CTE для отфильтрованных документов правительства
             filtered_documents_government = (
-                select(DocumentEntity.id_act, DocumentEntity.id)
+                select(DocumentEntity.id_type, DocumentEntity.id)
                 .join(RegionEntity, DocumentEntity.id_reg == RegionEntity.id)
                 .where(
                     and_(
@@ -544,9 +545,9 @@ class SQLAlchemyRepository:
             # CTE для актов правительства
             government_acts = (
                 select(
-                    distinct(ActEntity.id).label("act_id"), ActEntity.name.label("name")
+                    distinct(TypeEntity.id).label("act_id"), TypeEntity.name.label("name")
                 )
-                .join(DocumentEntity, ActEntity.id == DocumentEntity.id_act)
+                .join(DocumentEntity, TypeEntity.id == DocumentEntity.id_type)
                 .join(RegionEntity, DocumentEntity.id_reg == RegionEntity.id)
                 .where(RegionEntity.code == "government")
                 .cte("government_acts")
@@ -571,7 +572,7 @@ class SQLAlchemyRepository:
                 .select_from(government_acts)
                 .outerjoin(
                     filtered_documents_government,
-                    government_acts.c.act_id == filtered_documents_government.c.id_act,
+                    government_acts.c.act_id == filtered_documents_government.c.id_type,
                 )
                 .group_by(
                     government_acts.c.name,
@@ -653,14 +654,14 @@ class SQLAlchemyRepository:
 
             query = (
                 select(
-                    ActEntity.name.label("name"),
+                    TypeEntity.name.label("name"),
                     func.count(DocumentEntity.id).label("count"),
                 )
-                .select_from(ActEntity)
+                .select_from(TypeEntity)
                 .join(
                     DocumentEntity,
                     and_(
-                        ActEntity.id == DocumentEntity.id_act,
+                        TypeEntity.id == DocumentEntity.id_type,
                         (
                             DocumentEntity.view_date.between(start_date, end_date)
                             if start_date is not None and end_date is not None
@@ -668,7 +669,7 @@ class SQLAlchemyRepository:
                         ),
                     ),
                 )
-                .group_by(ActEntity.name)
+                .group_by(TypeEntity.name)
             )
 
             print(query)

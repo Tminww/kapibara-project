@@ -63,7 +63,7 @@ export const createColumnChartConfig = ({
 					show: true,
 					hideOverlappingLabels: true,
 					trim: true,
-					rotate: -30,
+					rotate: 0,
 					rotateAlways: false,
 					style: {
 						fontSize: '10px',
@@ -159,31 +159,31 @@ export const createColumnChartConfig = ({
 					},
 				},
 			},
-			responsive: [
-				{
-					breakpoint: 400,
-					options: {
-						dataLabels: {
-							enabled: false,
-						},
-						yaxis: {
-							show: true,
-						},
-						xaxis: {
-							labels: {
-								show: true,
-								hideOverlappingLabels: true,
-								trim: false,
-								rotate: -30,
-								rotateAlways: false,
-								style: {
-									fontSize: '12px',
-								},
-							},
-						},
-					},
-				},
-			],
+			// responsive: [
+			// 	{
+			// 		breakpoint: 400,
+			// 		options: {
+			// 			dataLabels: {
+			// 				enabled: false,
+			// 			},
+			// 			yaxis: {
+			// 				show: true,
+			// 			},
+			// 			xaxis: {
+			// 				labels: {
+			// 					show: true,
+			// 					hideOverlappingLabels: true,
+			// 					trim: false,
+			// 					rotate: -30,
+			// 					rotateAlways: false,
+			// 					style: {
+			// 						fontSize: '12px',
+			// 					},
+			// 				},
+			// 			},
+			// 		},
+			// 	},
+			// ],
 		},
 	}
 }

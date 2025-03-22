@@ -1,10 +1,11 @@
 <template>
 	<v-row no-gutters
 		><v-col cols="12" sm="12" md="12" lg="6" xl="6" xxl="6">
-			<v-container>
+			<v-container height="100%">
 				<t-area-card
 					:isLoading="isFirstAreaLoading"
 					title="Опубликование всех НПА по годам"
+					height="100%"
 				>
 					<template #chart>
 						<t-column-chart
@@ -21,7 +22,7 @@
 			</v-container>
 		</v-col>
 		<v-col cols="12" sm="12" md="12" lg="6" xl="6" xxl="6">
-			<v-container>
+			<v-container height="100%">
 				<t-area-card
 					:isLoading="isSecondAreaLoading"
 					:title="
@@ -30,6 +31,7 @@
 							secondAreaMonth.startDate,
 						)
 					"
+					height="100%"
 				>
 					<template #chart>
 						<t-column-chart
@@ -65,12 +67,13 @@
 			</v-container>
 		</v-col>
 		<v-col cols="12" sm="12" md="12" lg="4" xl="4" xxl="4">
-			<v-container>
+			<v-container height="100%" :height="'100%'">
 				<t-area-card
 					:isLoading="isThirdAreaLoading"
 					title="Опубликование по всем ФО за квартал"
 					:is-title-clickable="true"
 					@onTitleClick="toRouteName('district')"
+					:height="'100%'"
 				>
 					<template #chart>
 						<t-donut-chart
@@ -108,175 +111,183 @@
 			</v-container>
 		</v-col>
 		<v-col cols="12" sm="12" md="12" lg="4" xl="4" xxl="4">
-			<t-area-card
-				:isLoading="isFourthAreaLoading"
-				:title="
-					'Опубликование по номенклатуре за ' +
-					fourthAreaYear.startDate.split('.')[2] +
-					' г.'
-				"
-			>
-				<template #chart>
-					<t-column-chart
-						:labels="fourthAreaLabels"
-						:series="fourthAreaSeries"
-						:height="350"
-					/>
-					<!-- <t-donut-chart
+			<v-container height="100%">
+				<t-area-card
+					:isLoading="isFourthAreaLoading"
+					:title="
+						'Опубликование по номенклатуре за ' +
+						fourthAreaYear.startDate.split('.')[2] +
+						' г.'
+					"
+				>
+					<template #chart>
+						<t-column-chart
+							:labels="fourthAreaLabels"
+							:series="fourthAreaSeries"
+							:height="350"
+						/>
+						<!-- <t-donut-chart
 							v-else
 							:labels="fourthAreaLabels"
 							:series="fourthAreaSeries"
 							:height="350"
 						/> -->
-				</template>
-				<template #previous>
-					<v-btn
-						color="primary"
-						:loading="isFourthAreaPreviousLoading"
-						@click="fourthAreaPreviousYear"
-					>
-						<v-icon>mdi-arrow-left</v-icon>
-					</v-btn>
-				</template>
-				<template #next
-					><v-btn
-						color="primary"
-						:loading="isFourthAreaNextLoading"
-						@click="fourthAreaNextYear"
-					>
-						<v-icon>mdi-arrow-right</v-icon>
-					</v-btn>
-				</template>
-				<template #interval v-if="!isFourthAreaLoading">
-					{{ fourthAreaYear.startDate }} -
-					{{ fourthAreaYear.endDate }}
-				</template>
-				<template #error> {{ fourthAreaError }}</template>
-			</t-area-card>
+					</template>
+					<template #previous>
+						<v-btn
+							color="primary"
+							:loading="isFourthAreaPreviousLoading"
+							@click="fourthAreaPreviousYear"
+						>
+							<v-icon>mdi-arrow-left</v-icon>
+						</v-btn>
+					</template>
+					<template #next
+						><v-btn
+							color="primary"
+							:loading="isFourthAreaNextLoading"
+							@click="fourthAreaNextYear"
+						>
+							<v-icon>mdi-arrow-right</v-icon>
+						</v-btn>
+					</template>
+					<template #interval v-if="!isFourthAreaLoading">
+						{{ fourthAreaYear.startDate }} -
+						{{ fourthAreaYear.endDate }}
+					</template>
+					<template #error> {{ fourthAreaError }}</template>
+				</t-area-card>
+			</v-container>
 		</v-col>
 		<v-col cols="12" sm="12" md="12" lg="4" xl="4" xxl="4">
-			<t-area-card
-				:isLoading="isNomenclatureDetailLoading"
-				title="Детальное опубликование по номенклатуре за неделю"
-			>
-				<template #chart>
-					<!-- <v-icon
+			<v-container height="100%">
+				<t-area-card
+					:isLoading="isNomenclatureDetailLoading"
+					title="Детальное опубликование по номенклатуре за неделю"
+				>
+					<template #chart>
+						<!-- <v-icon
 							:loading="isNomenclatureDetailLoading"
 							@click="copyNomenclatureDetail"
 							size="16"
 							>mdi-content-copy</v-icon
 						> -->
 
-					<t-column-chart
-						:labels="nomenclatureDetailLabels"
-						:series="nomenclatureDetailSeries"
-						:height="350"
-					/>
-				</template>
-				<template #previous>
-					<v-btn
-						color="primary"
-						:loading="isNomenclatureDetailPreviousLoading"
-						@click="nomenclatureDetailPrevious"
-					>
-						<v-icon>mdi-arrow-left</v-icon>
-					</v-btn>
-				</template>
-				<template #next
-					><v-btn
-						color="primary"
-						:loading="isNomenclatureDetailNextLoading"
-						@click="nomenclatureDetailNext"
-					>
-						<v-icon>mdi-arrow-right</v-icon>
-					</v-btn>
-				</template>
-				<template #interval v-if="!isNomenclatureDetailLoading">
-					{{ nomenclatureDetailInterval.startDate }} -
-					{{ nomenclatureDetailInterval.endDate }}
-				</template>
-				<template #error> {{ nomenclatureDetailError }}</template>
-			</t-area-card>
+						<t-column-chart
+							:labels="nomenclatureDetailLabels"
+							:series="nomenclatureDetailSeries"
+							:height="350"
+						/>
+					</template>
+					<template #previous>
+						<v-btn
+							color="primary"
+							:loading="isNomenclatureDetailPreviousLoading"
+							@click="nomenclatureDetailPrevious"
+						>
+							<v-icon>mdi-arrow-left</v-icon>
+						</v-btn>
+					</template>
+					<template #next
+						><v-btn
+							color="primary"
+							:loading="isNomenclatureDetailNextLoading"
+							@click="nomenclatureDetailNext"
+						>
+							<v-icon>mdi-arrow-right</v-icon>
+						</v-btn>
+					</template>
+					<template #interval v-if="!isNomenclatureDetailLoading">
+						{{ nomenclatureDetailInterval.startDate }} -
+						{{ nomenclatureDetailInterval.endDate }}
+					</template>
+					<template #error> {{ nomenclatureDetailError }}</template>
+				</t-area-card>
+			</v-container>
 		</v-col>
 		<v-col cols="12" sm="12" md="12" lg="6" xl="6" xxl="6">
-			<t-area-card
-				:isLoading="isFifthAreaLoading"
-				title="Минимальное опубликование по ОГВ субъектов РФ за квартал"
-			>
-				<template #chart>
-					<t-horizontal-bar-chart
-						:labels="fifthAreaLabels"
-						:series="fifthAreaSeries"
-						:log-base="10"
-						:enable-logarithmic="false"
-						:y-start-value="0"
-						:height="350"
-					/>
-				</template>
-				<template #previous>
-					<v-btn
-						color="primary"
-						:loading="isFifthAreaPreviousLoading"
-						@click="fifthAreaPreviousQuarter"
-					>
-						<v-icon>mdi-arrow-left</v-icon>
-					</v-btn>
-				</template>
-				<template #next
-					><v-btn
-						color="primary"
-						:loading="isFifthAreaNextLoading"
-						@click="fifthAreaNextQuarter"
-					>
-						<v-icon>mdi-arrow-right</v-icon>
-					</v-btn>
-				</template>
-				<template #interval v-if="!isFifthAreaLoading">
-					{{ fifthAreaQuarter.startDate }} -
-					{{ fifthAreaQuarter.endDate }}
-				</template>
-				<template #error> {{ fifthAreaError }}</template>
-			</t-area-card>
+			<v-container height="100%">
+				<t-area-card
+					:isLoading="isFifthAreaLoading"
+					title="Минимальное опубликование по ОГВ субъектов РФ за квартал"
+				>
+					<template #chart>
+						<t-horizontal-bar-chart
+							:labels="fifthAreaLabels"
+							:series="fifthAreaSeries"
+							:log-base="10"
+							:enable-logarithmic="false"
+							:y-start-value="0"
+							:height="350"
+						/>
+					</template>
+					<template #previous>
+						<v-btn
+							color="primary"
+							:loading="isFifthAreaPreviousLoading"
+							@click="fifthAreaPreviousQuarter"
+						>
+							<v-icon>mdi-arrow-left</v-icon>
+						</v-btn>
+					</template>
+					<template #next
+						><v-btn
+							color="primary"
+							:loading="isFifthAreaNextLoading"
+							@click="fifthAreaNextQuarter"
+						>
+							<v-icon>mdi-arrow-right</v-icon>
+						</v-btn>
+					</template>
+					<template #interval v-if="!isFifthAreaLoading">
+						{{ fifthAreaQuarter.startDate }} -
+						{{ fifthAreaQuarter.endDate }}
+					</template>
+					<template #error> {{ fifthAreaError }}</template>
+				</t-area-card>
+			</v-container>
 		</v-col>
 		<v-col cols="12" sm="12" md="12" lg="6" xl="6" xxl="6">
-			<t-area-card
-				:isLoading="isSixthAreaLoading"
-				title="Максимальное опубликование по ОГВ субъектов РФ за квартал"
-			>
-				<template #chart>
-					<t-horizontal-bar-chart
-						:labels="sixthAreaLabels"
-						:series="sixthAreaSeries"
-						:log-base="10"
-						:enable-logarithmic="false"
-						:y-start-value="0"
-						:height="350"
-					/>
-				</template>
-				<template #previous>
-					<v-btn
-						color="primary"
-						:loading="isSixthAreaPreviousLoading"
-						@click="sixthAreaPreviousQuarter"
-					>
-						<v-icon>mdi-arrow-left</v-icon>
-					</v-btn>
-				</template>
-				<template #next
-					><v-btn
-						color="primary"
-						:loading="isSixthAreaNextLoading"
-						@click="sixthAreaNextQuarter"
-					>
-						<v-icon>mdi-arrow-right</v-icon>
-					</v-btn>
-				</template>
-				<template #interval v-if="!isSixthAreaLoading">
-					{{ sixthAreaQuarter.startDate }} -
-					{{ sixthAreaQuarter.endDate }}
-				</template>
-				<template #error> {{ sixthAreaError }}</template>
-			</t-area-card>
+			<v-container height="100%">
+				<t-area-card
+					:isLoading="isSixthAreaLoading"
+					title="Максимальное опубликование по ОГВ субъектов РФ за квартал"
+				>
+					<template #chart>
+						<t-horizontal-bar-chart
+							:labels="sixthAreaLabels"
+							:series="sixthAreaSeries"
+							:log-base="10"
+							:enable-logarithmic="false"
+							:y-start-value="0"
+							:height="350"
+						/>
+					</template>
+					<template #previous>
+						<v-btn
+							color="primary"
+							:loading="isSixthAreaPreviousLoading"
+							@click="sixthAreaPreviousQuarter"
+						>
+							<v-icon>mdi-arrow-left</v-icon>
+						</v-btn>
+					</template>
+					<template #next
+						><v-btn
+							color="primary"
+							:loading="isSixthAreaNextLoading"
+							@click="sixthAreaNextQuarter"
+						>
+							<v-icon>mdi-arrow-right</v-icon>
+						</v-btn>
+					</template>
+					<template #interval v-if="!isSixthAreaLoading">
+						{{ sixthAreaQuarter.startDate }} -
+						{{ sixthAreaQuarter.endDate }}
+					</template>
+					<template #error> {{ sixthAreaError }}</template>
+				</t-area-card>
+			</v-container>
 		</v-col>
 	</v-row>
 </template>

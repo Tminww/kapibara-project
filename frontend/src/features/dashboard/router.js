@@ -13,7 +13,7 @@ export const routes = [
 	{
 		path: '/',
 		name: 'dashboard',
-		component: DashboardPage,
+		component: () => import('./pages/DashboardPage.vue'),
 		meta: {
 			...meta,
 			breadCrumb: [
@@ -30,7 +30,7 @@ export const routes = [
 	{
 		path: '/dashboard/districts/',
 		name: 'district',
-		component: DistrictPage,
+		component: () => import('./pages/DistrictPage.vue'),
 		meta: {
 			...meta,
 			breadCrumb: [
@@ -51,7 +51,8 @@ export const routes = [
 	{
 		path: '/dashboard/districts/:label',
 		name: 'region',
-		component: RegionPage,
+		component: () => import('./pages/RegionPage.vue'),
+
 		meta: {
 			...meta,
 			breadCrumb: [

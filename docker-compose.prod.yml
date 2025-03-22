@@ -5,10 +5,9 @@ services:
     restart: unless-stopped
     ports:
       - "127.0.0.1:54321:5432"
-    environment:
-      - POSTGRES_DB=kapibara-postgres
-      - POSTGRES_USER=kapibara-postgres
-      - POSTGRES_PASSWORD=kapibara-postgres
+    env_file:
+      - path: ./postgres.env
+        required: true
     volumes:
       - kapibara-postgres-data:/var/lib/postgresql/data
 
@@ -20,18 +19,11 @@ services:
       - database
     ports:
       - "0.0.0.0:8082:80"
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@kapibara.com
-      PGADMIN_DEFAULT_PASSWORD: kapibara
+    env_file:
+      - path: ./pgadmin.env
+        required: true
     volumes:
       - kapibara-pgadmin-data:/var/lib/pgadmin
-
-  parser:
-    build: ./parser/
-    container_name: kapibara-parser
-    restart: unless-stopped
-    depends_on:
-      - database
 
   backend:
     build: ./backend/

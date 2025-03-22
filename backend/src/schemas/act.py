@@ -2,6 +2,6 @@ from .base import BaseSchema
 
 
 class ActSchema(BaseSchema):
-    id_act: int
+    id_type: int
     name: str
     npa_id: str
