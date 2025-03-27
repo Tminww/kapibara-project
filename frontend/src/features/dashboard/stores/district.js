@@ -104,10 +104,10 @@ export const useDistrictStore = defineStore('district', () => {
 		try {
 			const response = await apiClient.statistics.read(parameters)
 			selectedDistrictName.value = districtName
-			statistics.value = response.districts.filter(
+			statistics.value = response.data.districts.filter(
 				d => d.name === districtName,
 			)[0].regions
-			allStatistics.value = response.stat
+			allStatistics.value = response.data.stat
 
 			startDate.value = response.startDate // Эти значения могут быть перезаписаны API
 			endDate.value = response.endDate

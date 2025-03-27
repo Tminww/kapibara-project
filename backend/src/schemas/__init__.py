@@ -1,5 +1,5 @@
 from .district import DistrictSchema, DistrictWithRegionsSchema
-from .region import RegionSchema
+from .region import RegionSchema, RegionInfoSchema
 from .act import ActSchema
 from .document import DocumentSchema
 from .role import RoleSchema
@@ -17,4 +17,5 @@ from .statistic import (
     StatBaseSchema,
     StatDistrictSchema,
     StatRegionSchema,
+    StatPublicationSchema
 )

@@ -56,7 +56,7 @@ async def get_documents_in_districts(
             print(regions)
 
         parameters = RequestBodySchema(
-            regions=regions, start_date=startDate, end_date=endDate
+            ids=regions, start_date=startDate, end_date=endDate
         )
         print(parameters)
     except ValueError as e:
@@ -119,7 +119,7 @@ async def get_districts_stat(
             print(districts)
 
         parameters = RequestBodySchema(
-            regions=districts, start_date=startDate, end_date=endDate
+            ids=districts, start_date=startDate, end_date=endDate
         )
         print(parameters)
     except ValueError as e:
@@ -151,7 +151,11 @@ async def get_publication_by_nomenclature(
             parameters
         )
 
-        return statistics
+        return ResponseStatSchema(
+            data=statistics,
+            startDate=startDate if startDate is not None else None,
+            endDate=endDate if endDate is not None else None,
+        )
 
 
 @router.get("/publication-by-years")
@@ -162,7 +166,11 @@ async def get_publication_by_years(
 
     statistics = await statistics_service.get_publication_by_years(limit)
 
-    return statistics
+    return ResponseStatSchema(
+            data=statistics,
+            startDate=None,
+            endDate=None,
+        )
 
 
 @router.get("/publication-by-districts")
@@ -180,7 +188,11 @@ async def get_publication_by_districts(
     else:
         statistics = await statistics_service.get_publication_by_districts(parameters)
 
-        return statistics
+        return ResponseStatSchema(
+            data=statistics,
+            startDate=startDate if startDate is not None else None,
+            endDate=endDate if endDate is not None else None,
+        )
 
 
 @router.get("/publication-by-regions")
@@ -202,7 +214,11 @@ async def get_publication_by_regions(
     else:
         statistics = await statistics_service.get_publication_by_regions(parameters)
 
-        return statistics
+        return ResponseStatSchema(
+            data=statistics,
+            startDate=startDate if startDate is not None else None,
+            endDate=endDate if endDate is not None else None,
+        )
 
 
 @router.get("/publication-by-nomenclature-detail")
@@ -222,7 +238,11 @@ async def get_publication_by_nomenclature_detail(
             parameters
         )
 
-        return statistics
+        return ResponseStatSchema(
+            data=statistics,
+            startDate=startDate if startDate is not None else None,
+            endDate=endDate if endDate is not None else None,
+        )
 
 
 @router.get("/publication-by-acts")
@@ -240,4 +260,8 @@ async def get_publication_by_acts(
     else:
         statistics = await statistics_service.get_publication_by_acts(parameters)
 
-        return statistics
+        return ResponseStatSchema(
+            data=statistics,
+            startDate=startDate if startDate is not None else None,
+            endDate=endDate if endDate is not None else None,
+        )

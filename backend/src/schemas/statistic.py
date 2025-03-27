@@ -27,3 +27,8 @@ class StatAllSchema(BaseSchema):
     count: int = None
     stat: list[StatBaseSchema] = None
     districts: Optional[list[StatDistrictSchema]] = None
+
+class StatPublicationSchema(BaseSchema):
+    name: str = None
+    count: int = None
+    stat: list[StatBaseSchema] = None

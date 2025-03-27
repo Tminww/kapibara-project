@@ -164,6 +164,7 @@
 		}
 		if (store.selectedRegions.length > 0) {
 			params.regions = store.selectedRegions.toString()
+			console.log(params.regions)
 		}
 		return params
 	}

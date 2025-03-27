@@ -9,7 +9,7 @@ from models import (
 
 from schemas import (
     RegionSchema,
-    DistrictWithRegionsSchema,
+    RegionInfoSchema,
     RequestMaxMinBodySchema,
     StatBaseSchema,
     RequestBodySchema,
@@ -38,7 +38,7 @@ class SQLAlchemyRepository:
     ):
         async with async_session_maker() as session:
             stmt = select(RegionEntity).filter(
-                (parameters.regions is None or RegionEntity.id.in_(parameters.regions)),
+                (parameters.ids is None or RegionEntity.id.in_(parameters.ids)),
                 (RegionEntity.id_dist == id_dist),
             )
             res = await session.execute(stmt)
@@ -73,8 +73,8 @@ class SQLAlchemyRepository:
                 .join(TypeEntity, DocumentEntity.id_type == TypeEntity.id)
                 .filter(
                     (
-                        parameters.regions is None
-                        or RegionEntity.id.in_(parameters.regions)
+                        parameters.ids is None
+                        or RegionEntity.id.in_(parameters.ids)
                     ),
                     (
                         parameters.start_date is None
@@ -119,8 +119,8 @@ class SQLAlchemyRepository:
                 .filter(
                     (RegionEntity.id_dist == id_dist),
                     (
-                        parameters.regions is None
-                        or RegionEntity.id.in_(parameters.regions)
+                        parameters.ids is None
+                        or RegionEntity.id.in_(parameters.ids)
                     ),
                     (
                         parameters.start_date is None
@@ -163,8 +163,8 @@ class SQLAlchemyRepository:
                 .join(TypeEntity, DocumentEntity.id_type == TypeEntity.id)
                 .filter(
                     (
-                        parameters.regions is None
-                        or RegionEntity.id_dist.in_(parameters.regions)
+                        parameters.ids is None
+                        or RegionEntity.id_dist.in_(parameters.ids)
                     ),
                     (
                         parameters.start_date is None
@@ -216,8 +216,8 @@ class SQLAlchemyRepository:
                 stmt = select(DistrictEntity)
             else:
                 stmt = select(DistrictEntity).filter(
-                    parameters.regions is None
-                    or DistrictEntity.id.in_(parameters.regions)
+                    parameters.ids is None
+                    or DistrictEntity.id.in_(parameters.ids)
                 )
 
             res = await session.execute(stmt)

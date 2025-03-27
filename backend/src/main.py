@@ -1,4 +1,5 @@
-from fastapi import FastAPI, Request, status
+from contextlib import asynccontextmanager
+from fastapi import FastAPI, Request, status, BackgroundTasks
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from api.routers import all_routers
@@ -8,9 +9,20 @@ from errors import (
     DateValidationError,
     ResultIsEmptyError,
 )
+from parser.main import parse
 from utils import backend_logger
 
-app = FastAPI(title="Вывод статистики по документам")
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Before app starts
+    # await parse()
+    yield
+    # After app ends
+    
+
+app = FastAPI(title="Вывод статистики по документам", lifespan=lifespan)
+
+
 
 # настройка CORS
 origins = [

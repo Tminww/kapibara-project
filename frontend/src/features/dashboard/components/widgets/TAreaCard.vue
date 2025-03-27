@@ -86,7 +86,11 @@
 		height: 350;
 	}
 	.loader-wrap {
-		height: 350;
+		height: 100%;
+		text-align: center;
+		display: flex;
+		justify-content: center;
+		align-items: center;
 	}
 
 	.subtitle-wrap {

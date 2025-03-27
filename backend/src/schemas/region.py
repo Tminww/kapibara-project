@@ -9,3 +9,7 @@ class RegionSchema(BaseModel):
     code: str
     parent_id: str
     id_dist: int
+
+class RegionInfoSchema(BaseModel):
+    id: int
+    name: str

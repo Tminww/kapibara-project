@@ -187,7 +187,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
 			let response =
 				await apiClient.publicationByDistricts.read(parameters)
 
-			publicationByDistricts.value = response
+			publicationByDistricts.value = response.data
 		} catch (error) {
 			console.error('Ошибка при загрузке статистики:', error)
 			dropPublicationByDistricts()
@@ -198,7 +198,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
 		try {
 			let response = await apiClient.publicationByYears.read(parameters)
 
-			publicationByYears.value = response
+			publicationByYears.value = response.data
 		} catch (error) {
 			console.error('Ошибка при загрузке статистики:', error)
 			dropPublicationByYears()
@@ -208,7 +208,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
 		try {
 			let response = await apiClient.publicationByActs.read(parameters)
 
-			publicationByActs.value = response
+			publicationByActs.value = response.data
 		} catch (error) {
 			console.error('Ошибка при загрузке статистики:', error)
 			dropPublicationByActs()
@@ -219,7 +219,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
 			let response =
 				await apiClient.publicationByNomenclature.read(parameters)
 
-			publicationByNomenclature.value = response
+			publicationByNomenclature.value = response.data
 		} catch (error) {
 			console.error('Ошибка при загрузке статистики:', error)
 			dropPublicationByNomenclature()
@@ -230,7 +230,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
 			let response =
 				await apiClient.publicationByNomenclatureDetail.read(parameters)
 
-			publicationByNomenclatureDetail.value = response
+			publicationByNomenclatureDetail.value = response.data
 		} catch (error) {
 			console.error('Ошибка при загрузке статистики:', error)
 			dropPublicationByNomenclatureDetail()
@@ -243,7 +243,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
 
 			let response = await apiClient.publicationByRegions.read(parameters)
 
-			publicationByRegionsMin.value = response
+			publicationByRegionsMin.value = response.data
 		} catch (error) {
 			console.error('Ошибка при загрузке статистики:', error)
 			dropPublicationByRegionsMin()
@@ -256,7 +256,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
 
 			let response = await apiClient.publicationByRegions.read(parameters)
 
-			publicationByRegionsMax.value = response
+			publicationByRegionsMax.value = response.data
 		} catch (error) {
 			console.error('Ошибка при загрузке статистики:', error)
 			dropPublicationByRegionsMax()
@@ -271,7 +271,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
 				response.districts.filter(d => d.name === districtName)[0]
 					.regions,
 			)
-			publicationInDistricts.value = response.districts.filter(
+			publicationInDistricts.value = response.data.districts.filter(
 				d => d.name === districtName,
 			)[0].regions
 		} catch (error) {

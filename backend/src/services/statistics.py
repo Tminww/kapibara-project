@@ -2,14 +2,14 @@ from sqlalchemy import Row
 from typing import Sequence
 
 from schemas import (
-    DistrictWithRegionsSchema,
     RequestBodySchema,
     StatAllSchema,
     StatDistrictSchema,
     StatRegionSchema,
     StatBaseSchema,
     StatRegionSchema,
-    ResponseStatSchema,
+
+    StatPublicationSchema,
 )
 from repositories.statistics import SQLAlchemyRepository
 import time
@@ -33,7 +33,7 @@ class StatisticsService:
         for district in districts:
             regions = await self.statistics_repo.get_regions_in_district(district.id)
             response.append(
-                DistrictWithRegiosSchema(
+                StatDistrictSchema(
                     name=district.name, id=district.id, regions=regions
                 )
             )
@@ -49,17 +49,11 @@ class StatisticsService:
             StatBaseSchema(name=row.name, count=row.count) for row in rows
         ]
 
-        start_date: str | None = (
-            parameters.start_date if parameters.start_date is not None else None
-        )
-        end_date: str | None = (
-            parameters.end_date if parameters.end_date is not None else None
-        )
+        
         count = get_count_from_stat(stat)
-        return ResponseStatSchema(
+        return StatPublicationSchema(
             name="Опубликование по актам",
-            startDate=start_date,
-            endDate=end_date,
+            
             stat=stat,
             count=count,
         )
@@ -76,17 +70,11 @@ class StatisticsService:
             StatBaseSchema(name=row.name, count=row.count) for row in rows
         ]
 
-        start_date: str | None = (
-            parameters.start_date if parameters.start_date is not None else None
-        )
-        end_date: str | None = (
-            parameters.end_date if parameters.end_date is not None else None
-        )
+        
         count = get_count_from_stat(stat)
-        return ResponseStatSchema(
+        return StatPublicationSchema(
             name="Детальное опубликование по номенклатуре",
-            startDate=start_date,
-            endDate=end_date,
+            
             stat=stat,
             count=count,
         )
@@ -99,17 +87,11 @@ class StatisticsService:
             StatBaseSchema(name=row.name, count=row.count) for row in rows
         ]
 
-        start_date: str | None = (
-            parameters.start_date if parameters.start_date is not None else None
-        )
-        end_date: str | None = (
-            parameters.end_date if parameters.end_date is not None else None
-        )
+        
         count = get_count_from_stat(stat)
-        return ResponseStatSchema(
+        return StatPublicationSchema(
             name="Опубликование по субъектам",
-            startDate=start_date,
-            endDate=end_date,
+            
             stat=stat,
             count=count,
         )
@@ -122,17 +104,11 @@ class StatisticsService:
             StatBaseSchema(name=row.name, count=row.count) for row in rows
         ]
 
-        start_date: str | None = (
-            parameters.start_date if parameters.start_date is not None else None
-        )
-        end_date: str | None = (
-            parameters.end_date if parameters.end_date is not None else None
-        )
+        
         count = get_count_from_stat(stat)
-        return ResponseStatSchema(
+        return StatPublicationSchema(
             name="Опубликование по федеральным округам",
-            startDate=start_date,
-            endDate=end_date,
+            
             stat=stat,
             count=count,
         )
@@ -144,7 +120,7 @@ class StatisticsService:
         ]
 
         count = get_count_from_stat(stat)
-        return ResponseStatSchema(name="Опубликование по годам", stat=stat, count=count)
+        return StatPublicationSchema(name="Опубликование по годам", stat=stat, count=count)
 
     async def get_publication_by_nomenclature(self, parameters: RequestBodySchema):
         rows: Sequence[Row] = (
@@ -154,17 +130,11 @@ class StatisticsService:
             StatBaseSchema(name=row.name, count=row.count) for row in rows
         ]
 
-        start_date: str | None = (
-            parameters.start_date if parameters.start_date is not None else None
-        )
-        end_date: str | None = (
-            parameters.end_date if parameters.end_date is not None else None
-        )
+        
         count = get_count_from_stat(stat)
-        return ResponseStatSchema(
+        return StatPublicationSchema(
             name="Опубликование по номенклатуре",
-            startDate=start_date,
-            endDate=end_date,
+            
             stat=stat,
             count=count,
         )
@@ -172,7 +142,7 @@ class StatisticsService:
     async def get_subjects_stat(self, parameters: RequestBodySchema):
         stat_all = await self.statistics_repo.get_stat_all(parameters)
 
-        return SubjectsStatSchema(
+        return StatPublicationSchema(
             name="Вся статистика по субъектам",
             count=get_count_from_stat(stat_all),
             stat=stat_all,
@@ -181,7 +151,7 @@ class StatisticsService:
     async def get_districts_stat(self, parameters: RequestBodySchema):
         districts = []
 
-        districts_info = await self.statistics_repo.get_districts(parameters.regions)
+        districts_info = await self.statistics_repo.get_districts(parameters.ids)
         for district in districts_info:
             print(district)
 
@@ -191,7 +161,7 @@ class StatisticsService:
             print(stat_in_district)
 
             districts.append(
-                DistrictStatSchema(
+                StatDistrictSchema(
                     name=district.name,
                     id=district.id,
                     count=get_count_from_stat(stat_in_district),
@@ -227,7 +197,7 @@ class StatisticsService:
         stat_all = await self.statistics_repo.get_stat_all(parameters)
 
         districts_info = await self.statistics_repo.get_districts_by_regions(
-            parameters.regions
+            parameters.ids
         )
         for district in districts_info:
             print(district)

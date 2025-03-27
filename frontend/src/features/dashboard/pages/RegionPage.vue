@@ -168,8 +168,9 @@
 			startDate: store.startDate,
 			endDate: store.endDate,
 		}
-		if (store.selectedRegions.length > 0) {
-			params.regions = store.selectedRegions.toString()
+		console.log(store.selectedItems)
+		if (store.selectedItems.length > 0) {
+			params.regions = store.selectedItems.toString()
 		}
 		return params
 	}
@@ -252,6 +253,7 @@
 	const onSubmit = async data => {
 		// Обработчик отправки формы (синхронизация с Pinia Store)
 		console.log('start')
+		console.log(data)
 		try {
 			await store.startLoading()
 
@@ -261,6 +263,7 @@
 			store.startDate = convertDateToYYYYMMDDString(data.startDate) // Передаём строку
 			store.endDate = convertDateToYYYYMMDDString(data.endDate) // Передаём строку
 
+			console.log(store.selectedItems)
 			const parameters = paramsProcessing(
 				store.selectedItems,
 				store.startDate,
