@@ -1,11 +1,10 @@
 <template>
 	<v-row no-gutters
 		><v-col cols="12" sm="12" md="12" lg="6" xl="6" xxl="6">
-			<v-container height="100%">
+			<v-container :height="'100%'">
 				<t-area-card
 					:isLoading="isFirstAreaLoading"
 					title="Опубликование всех НПА по годам"
-					height="100%"
 				>
 					<template #chart>
 						<t-column-chart
@@ -22,7 +21,7 @@
 			</v-container>
 		</v-col>
 		<v-col cols="12" sm="12" md="12" lg="6" xl="6" xxl="6">
-			<v-container height="100%">
+			<v-container :height="'100%'">
 				<t-area-card
 					:isLoading="isSecondAreaLoading"
 					:title="
@@ -31,7 +30,6 @@
 							secondAreaMonth.startDate,
 						)
 					"
-					height="100%"
 				>
 					<template #chart>
 						<t-column-chart
@@ -67,13 +65,12 @@
 			</v-container>
 		</v-col>
 		<v-col cols="12" sm="12" md="12" lg="4" xl="4" xxl="4">
-			<v-container height="100%" :height="'100%'">
+			<v-container :height="'100%'">
 				<t-area-card
 					:isLoading="isThirdAreaLoading"
 					title="Опубликование по всем ФО за квартал"
 					:is-title-clickable="true"
 					@onTitleClick="toRouteName('district')"
-					:height="'100%'"
 				>
 					<template #chart>
 						<t-donut-chart
@@ -111,7 +108,7 @@
 			</v-container>
 		</v-col>
 		<v-col cols="12" sm="12" md="12" lg="4" xl="4" xxl="4">
-			<v-container height="100%">
+			<v-container :height="'100%'">
 				<t-area-card
 					:isLoading="isFourthAreaLoading"
 					:title="
@@ -160,7 +157,7 @@
 			</v-container>
 		</v-col>
 		<v-col cols="12" sm="12" md="12" lg="4" xl="4" xxl="4">
-			<v-container height="100%">
+			<v-container :height="'100%'">
 				<t-area-card
 					:isLoading="isNomenclatureDetailLoading"
 					title="Детальное опубликование по номенклатуре за неделю"
@@ -206,7 +203,7 @@
 			</v-container>
 		</v-col>
 		<v-col cols="12" sm="12" md="12" lg="6" xl="6" xxl="6">
-			<v-container height="100%">
+			<v-container :height="'100%'">
 				<t-area-card
 					:isLoading="isFifthAreaLoading"
 					title="Минимальное опубликование по ОГВ субъектов РФ за квартал"
@@ -248,7 +245,7 @@
 			</v-container>
 		</v-col>
 		<v-col cols="12" sm="12" md="12" lg="6" xl="6" xxl="6">
-			<v-container height="100%">
+			<v-container :height="'100%'">
 				<t-area-card
 					:isLoading="isSixthAreaLoading"
 					title="Максимальное опубликование по ОГВ субъектов РФ за квартал"

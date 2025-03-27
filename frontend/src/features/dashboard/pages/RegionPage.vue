@@ -140,14 +140,14 @@
 		TFilterSidebar,
 		TFilterForm,
 	} from '../components/widgets'
-	import { useDistrictStore } from '../stores/district'
+	import { useRegionStore } from '../stores/region'
 	import { dateFormat, getLastMonth } from '@/utils/utils'
 	import { ref, computed, onMounted } from 'vue'
 	import { useRoute } from 'vue-router'
 	import { toast } from 'vue-sonner'
 
 	const route = useRoute()
-	const store = useDistrictStore()
+	const store = useRegionStore()
 
 	const leftMenu = ref(false)
 	const isPreviousLoading = ref(false)
@@ -168,7 +168,6 @@
 			startDate: store.startDate,
 			endDate: store.endDate,
 		}
-		console.log(store.selectedItems)
 		if (store.selectedItems.length > 0) {
 			params.regions = store.selectedItems.toString()
 		}

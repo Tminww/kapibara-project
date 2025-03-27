@@ -5,7 +5,7 @@
 		:min-width="minWidth"
 		:max-height="maxHeight"
 		:width="width"
-		:height="height"
+		height="100%"
 		elevation="3"
 		class="card-container full-width-card"
 	>
@@ -52,7 +52,6 @@
 		subtitle: { type: String, required: false },
 		width: { type: Number, required: false },
 		maxHeight: { type: Number, required: false },
-		height: { type: Number, required: false },
 		maxWidth: { type: Number, required: false },
 		minWidth: { type: Number, required: false },
 		isLoading: { type: Boolean, required: true, default: true },
