@@ -1,8 +1,5 @@
-from api.subjects import router as router_subjects
-from api.statistics import router as router_statistics
+from .subjects import router as router_subjects
+from .statistics import router as router_statistics
+from .dashboard import router as router_dashboard
 
-
-all_routers = [
-    router_subjects,
-    router_statistics,
-]
+routers = [router_subjects, router_statistics, router_dashboard]

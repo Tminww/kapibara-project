@@ -3,9 +3,10 @@ from datetime import datetime
 
 from models import (
     TypeEntity,
- DistrictEntity,
- DocumentEntity,
- RegionEntity,)
+    DistrictEntity,
+    DocumentEntity,
+    RegionEntity,
+)
 
 from schemas import (
     RegionSchema,
@@ -31,14 +32,14 @@ from database.setup import async_session_maker
 from errors import ResultIsEmptyError
 
 
-class SQLAlchemyRepository:
+class StatisticsRepository:
 
     async def get_definite_regions_in_district(
-        self, parameters: RequestBodySchema, id_dist
+        self, params: RequestBodySchema, id_dist
     ):
         async with async_session_maker() as session:
             stmt = select(RegionEntity).filter(
-                (parameters.ids is None or RegionEntity.id.in_(parameters.ids)),
+                (params.ids is None or RegionEntity.id.in_(params.ids)),
                 (RegionEntity.id_dist == id_dist),
             )
             res = await session.execute(stmt)
@@ -50,16 +51,16 @@ class SQLAlchemyRepository:
             else:
                 raise ResultIsEmptyError("Result is empty")
 
-    async def get_stat_all(self, parameters: RequestBodySchema):
+    async def get_stat_all(self, params: RequestBodySchema):
         async with async_session_maker() as session:
             start_date = (
-                datetime.strptime(parameters.start_date, "%Y-%m-%d")
-                if parameters.start_date is not None
+                datetime.strptime(params.start_date, "%Y-%m-%d")
+                if params.start_date is not None
                 else None
             )
             end_date = (
-                datetime.strptime(parameters.end_date, "%Y-%m-%d")
-                if parameters.end_date is not None
+                datetime.strptime(params.end_date, "%Y-%m-%d")
+                if params.end_date is not None
                 else None
             )
 
@@ -72,13 +73,10 @@ class SQLAlchemyRepository:
                 .join(RegionEntity, DocumentEntity.id_reg == RegionEntity.id)
                 .join(TypeEntity, DocumentEntity.id_type == TypeEntity.id)
                 .filter(
+                    (params.ids is None or RegionEntity.id.in_(params.ids)),
                     (
-                        parameters.ids is None
-                        or RegionEntity.id.in_(parameters.ids)
-                    ),
-                    (
-                        parameters.start_date is None
-                        and parameters.end_date is None
+                        params.start_date is None
+                        and params.end_date is None
                         or DocumentEntity.view_date.between(start_date, end_date)
                     ),
                 )
@@ -95,16 +93,16 @@ class SQLAlchemyRepository:
                 print("get_stat_all")
                 raise ResultIsEmptyError("Result is empty")
 
-    async def get_stat_in_district(self, parameters: RequestBodySchema, id_dist):
+    async def get_stat_in_district(self, params: RequestBodySchema, id_dist):
         async with async_session_maker() as session:
             start_date = (
-                datetime.strptime(parameters.start_date, "%Y-%m-%d")
-                if parameters.start_date is not None
+                datetime.strptime(params.start_date, "%Y-%m-%d")
+                if params.start_date is not None
                 else None
             )
             end_date = (
-                datetime.strptime(parameters.end_date, "%Y-%m-%d")
-                if parameters.end_date is not None
+                datetime.strptime(params.end_date, "%Y-%m-%d")
+                if params.end_date is not None
                 else None
             )
 
@@ -118,13 +116,10 @@ class SQLAlchemyRepository:
                 .join(TypeEntity, DocumentEntity.id_type == TypeEntity.id)
                 .filter(
                     (RegionEntity.id_dist == id_dist),
+                    (params.ids is None or RegionEntity.id.in_(params.ids)),
                     (
-                        parameters.ids is None
-                        or RegionEntity.id.in_(parameters.ids)
-                    ),
-                    (
-                        parameters.start_date is None
-                        and parameters.end_date is None
+                        params.start_date is None
+                        and params.end_date is None
                         or DocumentEntity.view_date.between(start_date, end_date)
                     ),
                 )
@@ -140,16 +135,16 @@ class SQLAlchemyRepository:
             # else:
             #     raise ResultIsEmptyError("Result is empty")
 
-    async def get_stat_in_districts(self, parameters: RequestBodySchema):
+    async def get_stat_in_districts(self, params: RequestBodySchema):
         async with async_session_maker() as session:
             start_date = (
-                datetime.strptime(parameters.start_date, "%Y-%m-%d")
-                if parameters.start_date is not None
+                datetime.strptime(params.start_date, "%Y-%m-%d")
+                if params.start_date is not None
                 else None
             )
             end_date = (
-                datetime.strptime(parameters.end_date, "%Y-%m-%d")
-                if parameters.end_date is not None
+                datetime.strptime(params.end_date, "%Y-%m-%d")
+                if params.end_date is not None
                 else None
             )
 
@@ -162,13 +157,10 @@ class SQLAlchemyRepository:
                 .join(RegionEntity, DocumentEntity.id_reg == RegionEntity.id)
                 .join(TypeEntity, DocumentEntity.id_type == TypeEntity.id)
                 .filter(
+                    (params.ids is None or RegionEntity.id_dist.in_(params.ids)),
                     (
-                        parameters.ids is None
-                        or RegionEntity.id_dist.in_(parameters.ids)
-                    ),
-                    (
-                        parameters.start_date is None
-                        and parameters.end_date is None
+                        params.start_date is None
+                        and params.end_date is None
                         or DocumentEntity.view_date.between(start_date, end_date)
                     ),
                 )
@@ -209,15 +201,14 @@ class SQLAlchemyRepository:
                 print("get_stat_in_district")
                 raise ResultIsEmptyError("Result is empty")
 
-    async def get_districts(self, parameters: RequestBodySchema = None):
+    async def get_districts(self, params: RequestBodySchema = None):
         async with async_session_maker() as session:
 
-            if parameters is None:
+            if params is None:
                 stmt = select(DistrictEntity)
             else:
                 stmt = select(DistrictEntity).filter(
-                    parameters.ids is None
-                    or DistrictEntity.id.in_(parameters.ids)
+                    params.ids is None or DistrictEntity.id.in_(params.ids)
                 )
 
             res = await session.execute(stmt)
@@ -245,16 +236,16 @@ class SQLAlchemyRepository:
                 print("get_regions_in_district")
                 raise ResultIsEmptyError("Result is empty")
 
-    async def get_stat_in_region(self, parameters: RequestBodySchema, id_reg):
+    async def get_stat_in_region(self, params: RequestBodySchema, id_reg):
         async with async_session_maker() as session:
             start_date = (
-                datetime.strptime(parameters.start_date, "%Y-%m-%d")
-                if parameters.start_date is not None
+                datetime.strptime(params.start_date, "%Y-%m-%d")
+                if params.start_date is not None
                 else None
             )
             end_date = (
-                datetime.strptime(parameters.end_date, "%Y-%m-%d")
-                if parameters.end_date is not None
+                datetime.strptime(params.end_date, "%Y-%m-%d")
+                if params.end_date is not None
                 else None
             )
 
@@ -286,16 +277,16 @@ class SQLAlchemyRepository:
             #     raise ResultIsEmptyError("Result is empty")
             return res
 
-    async def get_publication_by_nomenclature(self, parameters):
+    async def get_publication_by_nomenclature(self, params):
         async with async_session_maker() as session:
             start_date = (
-                datetime.strptime(parameters.start_date, "%Y-%m-%d")
-                if parameters.start_date is not None
+                datetime.strptime(params.start_date, "%Y-%m-%d")
+                if params.start_date is not None
                 else None
             )
             end_date = (
-                datetime.strptime(parameters.end_date, "%Y-%m-%d")
-                if parameters.end_date is not None
+                datetime.strptime(params.end_date, "%Y-%m-%d")
+                if params.end_date is not None
                 else None
             )
 
@@ -346,16 +337,16 @@ class SQLAlchemyRepository:
 
             return res.all()
 
-    async def get_publication_by_districts(self, parameters: RequestBodySchema):
+    async def get_publication_by_districts(self, params: RequestBodySchema):
         async with async_session_maker() as session:
             start_date = (
-                datetime.strptime(parameters.start_date, "%Y-%m-%d")
-                if parameters.start_date is not None
+                datetime.strptime(params.start_date, "%Y-%m-%d")
+                if params.start_date is not None
                 else None
             )
             end_date = (
-                datetime.strptime(parameters.end_date, "%Y-%m-%d")
-                if parameters.end_date is not None
+                datetime.strptime(params.end_date, "%Y-%m-%d")
+                if params.end_date is not None
                 else None
             )
 
@@ -388,20 +379,20 @@ class SQLAlchemyRepository:
 
             return res.all()
 
-    async def get_publication_by_regions(self, parameters: RequestMaxMinBodySchema):
+    async def get_publication_by_regions(self, params: RequestMaxMinBodySchema):
         async with async_session_maker() as session:
             start_date = (
-                datetime.strptime(parameters.start_date, "%Y-%m-%d")
-                if parameters.start_date is not None
+                datetime.strptime(params.start_date, "%Y-%m-%d")
+                if params.start_date is not None
                 else None
             )
             end_date = (
-                datetime.strptime(parameters.end_date, "%Y-%m-%d")
-                if parameters.end_date is not None
+                datetime.strptime(params.end_date, "%Y-%m-%d")
+                if params.end_date is not None
                 else None
             )
 
-            order_func = desc if parameters.sort == "max" else asc
+            order_func = desc if params.sort == "max" else asc
 
             query = (
                 select(
@@ -416,8 +407,7 @@ class SQLAlchemyRepository:
                     (DocumentEntity.id_reg == RegionEntity.id)
                     & (
                         DocumentEntity.view_date.between(start_date, end_date)
-                        if parameters.start_date is not None
-                        and parameters.end_date is not None
+                        if params.start_date is not None and params.end_date is not None
                         else True
                     ),  # Условие по дате только внутри JOIN
                 )
@@ -426,7 +416,7 @@ class SQLAlchemyRepository:
                 .order_by(
                     order_func(func.count(DocumentEntity.id))
                 )  # Сортировка по количеству документов
-                .limit(parameters.limit)  # Ограничение до 10 строк
+                .limit(params.limit)  # Ограничение до 10 строк
             )
 
             print(query)
@@ -435,17 +425,17 @@ class SQLAlchemyRepository:
             return res.all()
 
     async def get_publication_by_nomenclature_detail_president_and_government(
-        self, parameters: RequestBodySchema
+        self, params: RequestBodySchema
     ):
         async with async_session_maker() as session:
             start_date = (
-                datetime.strptime(parameters.start_date, "%Y-%m-%d")
-                if parameters.start_date is not None
+                datetime.strptime(params.start_date, "%Y-%m-%d")
+                if params.start_date is not None
                 else None
             )
             end_date = (
-                datetime.strptime(parameters.end_date, "%Y-%m-%d")
-                if parameters.end_date is not None
+                datetime.strptime(params.end_date, "%Y-%m-%d")
+                if params.end_date is not None
                 else None
             )
 
@@ -470,7 +460,8 @@ class SQLAlchemyRepository:
             # CTE для актов президента
             president_acts = (
                 select(
-                    distinct(TypeEntity.id).label("act_id"), TypeEntity.name.label("name")
+                    distinct(TypeEntity.id).label("act_id"),
+                    TypeEntity.name.label("name"),
                 )
                 .join(DocumentEntity, TypeEntity.id == DocumentEntity.id_type)
                 .join(RegionEntity, DocumentEntity.id_reg == RegionEntity.id)
@@ -545,7 +536,8 @@ class SQLAlchemyRepository:
             # CTE для актов правительства
             government_acts = (
                 select(
-                    distinct(TypeEntity.id).label("act_id"), TypeEntity.name.label("name")
+                    distinct(TypeEntity.id).label("act_id"),
+                    TypeEntity.name.label("name"),
                 )
                 .join(DocumentEntity, TypeEntity.id == DocumentEntity.id_type)
                 .join(RegionEntity, DocumentEntity.id_reg == RegionEntity.id)
@@ -639,16 +631,16 @@ class SQLAlchemyRepository:
 
             return result.all()
 
-    async def get_publication_by_acts(self, parameters: RequestBodySchema):
+    async def get_publication_by_types(self, params: RequestBodySchema):
         async with async_session_maker() as session:
             start_date = (
-                datetime.strptime(parameters.start_date, "%Y-%m-%d")
-                if parameters.start_date is not None
+                datetime.strptime(params.start_date, "%Y-%m-%d")
+                if params.start_date is not None
                 else None
             )
             end_date = (
-                datetime.strptime(parameters.end_date, "%Y-%m-%d")
-                if parameters.end_date is not None
+                datetime.strptime(params.end_date, "%Y-%m-%d")
+                if params.end_date is not None
                 else None
             )
 

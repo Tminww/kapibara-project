@@ -3,8 +3,17 @@ from .region import RegionSchema, RegionInfoSchema
 from .act import ActSchema
 from .document import DocumentSchema
 from .role import RoleSchema
-from .request import RequestBodySchema, RequestMaxMinBodySchema
-from .response import ResponseSchema, ResponseStatSchema
+from .subject import SubjectWithRegionsSchema, SubjectBaseSchema
+from .request import (
+    RequestBodySchema,
+    RequestMaxMinBodySchema,
+    RequestRegionSchema,
+    RequestSchema,
+)
+from .response import (
+    ResponseSchema,
+    ResponseStatSchema,
+)
 from .user import (
     UserSchema,
     UserRequestSchema,
@@ -17,5 +26,5 @@ from .statistic import (
     StatBaseSchema,
     StatDistrictSchema,
     StatRegionSchema,
-    StatPublicationSchema
+    StatPublicationSchema,
 )

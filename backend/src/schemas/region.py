@@ -1,7 +1,7 @@
-from pydantic import BaseModel
+from .base import BaseSchema
 
 
-class RegionSchema(BaseModel):
+class RegionSchema(BaseSchema):
     id: int
     name: str
     short_name: str
@@ -10,6 +10,7 @@ class RegionSchema(BaseModel):
     parent_id: str
     id_dist: int
 
-class RegionInfoSchema(BaseModel):
+
+class RegionInfoSchema(BaseSchema):
     id: int
     name: str

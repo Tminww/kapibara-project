@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request, status, BackgroundTasks
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-from api.routers import all_routers
+from api import routers
 from errors import (
     DataDelitionError,
     DataInsertionError,
@@ -12,16 +12,16 @@ from errors import (
 from parser.main import parse
 from utils import backend_logger
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Before app starts
     # await parse()
     yield
     # After app ends
-    
+
 
 app = FastAPI(title="Вывод статистики по документам", lifespan=lifespan)
-
 
 
 # настройка CORS
@@ -39,8 +39,8 @@ app.add_middleware(
 )
 
 # настройка роутеров
-for router in all_routers:
-    app.include_router(router)
+for router in routers:
+    app.include_router(router, prefix="/api")
 
 
 @app.exception_handler(DateValidationError)
