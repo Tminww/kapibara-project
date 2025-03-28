@@ -1,16 +1,13 @@
-from typing import Annotated, Literal, Union, Optional, List
-from fastapi import APIRouter, Depends
+from typing import Annotated
+from fastapi import APIRouter, Depends, Query
 
-from schemas import (
+from src.schemas import (
     RequestBodySchema,
-    RequestMaxMinBodySchema,
     ResponseStatSchema,
-    RequestSchema,
 )
 
-from services.statistics import StatisticsService as Service
+from src.services import StatisticService as Service
 from .dependencies import get_statistics_service as get_service
-from errors import DateValidationError
 
 router = APIRouter(prefix="/statistics", tags=["statistics"])
 
@@ -18,7 +15,7 @@ router = APIRouter(prefix="/statistics", tags=["statistics"])
 @router.get("")
 async def get_statistics(
     service: Annotated[Service, Depends(get_service)],
-    params: RequestBodySchema,
+    params: Annotated[RequestBodySchema, Query()] = None,
 ) -> ResponseStatSchema:
 
     statistics = await service.get_stat_in_districts(params)
@@ -32,10 +29,25 @@ async def get_statistics(
 @router.get("/districts")
 async def get_districts_stat(
     service: Annotated[Service, Depends(get_service)],
-    params: RequestBodySchema,
+    params: Annotated[RequestBodySchema, Query()],
 ) -> ResponseStatSchema:
 
     statistics = await service.get_districts_stat(params)
+    return ResponseStatSchema(
+        data=statistics,
+        startDate=params.start_date,
+        endDate=params.end_date,
+    )
+
+
+@router.get("/districts/{dist_id}")
+async def get_districts_stat(
+    dist_id: int,
+    params: Annotated[RequestBodySchema, Query()],
+    service: Annotated[Service, Depends(get_service)],
+) -> ResponseStatSchema:
+
+    statistics = await service.get_regions_in_district(dist_id, params)
     return ResponseStatSchema(
         data=statistics,
         startDate=params.start_date,

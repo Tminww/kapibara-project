@@ -8,11 +8,11 @@ from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError, ProgrammingError
 from tenacity import retry, stop_after_attempt, wait_fixed
-from config import settings
-from database.setup import connection
-from utils.logger import parser_logger as logger
-from models import TypeEntity, RegionEntity, DocumentEntity, DistrictEntity
-from schemas import DocumentSchema
+from src.config import settings
+from src.database import connection
+from src.utils import parser_logger as logger
+from src.models import TypeEntity, RegionEntity, DocumentEntity, DistrictEntity
+from src.schemas import DocumentSchema
 
 
 def get_regions() -> List[dict]:

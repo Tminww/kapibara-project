@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
-from config import settings
-from utils import database_logger as logger
+from src.config import settings
+from src.utils import database_logger as logger
 
 # Настройка логирования
 
@@ -9,12 +9,16 @@ from utils import database_logger as logger
 try:
     engine = create_async_engine(
         url=settings.DATABASE_URL,
-        # echo=True,
+        pool_size=20,  # Adjust pool size based on your workload
+        max_overflow=10,  # Adjust maximum overflow connections
+        pool_recycle=3600,  # Periodically recycle connections (optional)
+        pool_pre_ping=True,  # Check the connection status before using it
     )
 
     async_session_maker = async_sessionmaker(
         bind=engine,
         expire_on_commit=False,
+        autoflush=False,  # Отключаем автофлеш для явного контроля
     )
     logger.info(f"Подключение успешно")
 except Exception as ex:
@@ -30,8 +34,6 @@ def connection(method):
             except Exception as e:
                 await session.rollback()  # Откатываем сессию при ошибке
                 raise e  # Поднимаем исключение дальше
-            finally:
-                await session.close()  # Закрываем сессию
 
     return wrapper
 

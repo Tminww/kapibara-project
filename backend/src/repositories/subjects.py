@@ -1,16 +1,14 @@
-from abc import ABC, abstractmethod
-from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, or_
 
-from models import DistrictEntity, RegionEntity
+from src.models import DistrictEntity, RegionEntity
 
-from schemas import SubjectBaseSchema, RequestBodySchema
-from database.setup import connection
-from errors import ResultIsEmptyError
+from src.schemas import SubjectBaseSchema, RequestBodySchema
+from src.database import connection
+from src.errors import ResultIsEmptyError
 
 
-class SubjectsRepository:
+class SubjectRepository:
     @connection
     async def get_districts_by_regions(self, regions, session: AsyncSession):
         stmt_for_district_id = (
@@ -52,7 +50,42 @@ class SubjectsRepository:
             raise ResultIsEmptyError("Result is empty")
 
     @connection
-    async def get_regions_in_district(self, id_dist, session: AsyncSession):
+    async def get_regions_in_district_by_id(self, id_dist, session: AsyncSession):
+        stmt = select(RegionEntity).filter(RegionEntity.id_dist == id_dist)
+        res = await session.execute(stmt)
+        res = [SubjectBaseSchema(name=row[0].name, id=row[0].id) for row in res.all()]
+        if res:
+            return res
+        else:
+            raise ResultIsEmptyError("Result is empty")
+
+    @connection
+    async def get_regions(self, session: AsyncSession):
+        stmt = select(RegionEntity)
+        res = await session.execute(stmt)
+        res = [SubjectBaseSchema(name=row[0].name, id=row[0].id) for row in res.all()]
+        if res:
+            return res
+        else:
+            raise ResultIsEmptyError("Result is empty")
+
+    @connection
+    async def get_regions_in_district_by_name(self, name, session: AsyncSession):
+        stmt = select(DistrictEntity.id).where(
+            or_(
+                DistrictEntity.name == name,
+                DistrictEntity.full_name == name,
+                DistrictEntity.short_name == name,
+            )
+        )
+
+        res = await session.execute(stmt)
+        res = res.all()
+        if not res:
+            raise ResultIsEmptyError("Invalid district name")
+
+        id_dist = res[0][0]
+
         stmt = select(RegionEntity).filter(RegionEntity.id_dist == id_dist)
         res = await session.execute(stmt)
         res = [SubjectBaseSchema(name=row[0].name, id=row[0].id) for row in res.all()]

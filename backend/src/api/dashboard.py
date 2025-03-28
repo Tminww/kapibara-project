@@ -1,14 +1,14 @@
 from typing import Annotated, Literal, Union, Optional, List
 from fastapi import APIRouter, Depends
 
-from schemas import (
+from src.schemas import (
     RequestBodySchema,
     RequestMaxMinBodySchema,
     ResponseStatSchema,
     RequestSchema,
 )
-from services.statistics import StatisticsService as Service
-from .dependencies import get_statistics_service as get_service
+from src.services import DashboardService as Service
+from .dependencies import get_dashboard_service as get_service
 
 router = APIRouter(prefix="/dashboard", tags=["dashboard"])
 

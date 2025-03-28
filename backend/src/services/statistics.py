@@ -1,7 +1,7 @@
 from sqlalchemy import Row
 from typing import Sequence
 
-from schemas import (
+from src.schemas import (
     RequestBodySchema,
     StatAllSchema,
     StatDistrictSchema,
@@ -10,7 +10,7 @@ from schemas import (
     StatRegionSchema,
     StatPublicationSchema,
 )
-from repositories.statistics import StatisticsRepository
+from src.repositories.statistics import StatisticRepository
 import time
 
 
@@ -22,104 +22,10 @@ def get_count_from_stat(stat: list) -> int:
     return count
 
 
-class StatisticsService:
+class StatisticService:
 
-    def __init__(self, repository: StatisticsRepository):
-        self.repository: StatisticsRepository = repository()
-
-    async def get_subjects(self):
-        response = []
-        districts = await self.repository.get_districts()
-        for district in districts:
-            regions = await self.repository.get_regions_in_district(district.id)
-            response.append(
-                StatDistrictSchema(name=district.name, id=district.id, regions=regions)
-            )
-
-        print(response)
-        return response
-
-    async def get_publication_by_types(self, params: RequestBodySchema):
-        rows: Sequence[Row] = await self.repository.get_publication_by_types(params)
-        stat: list[StatBaseSchema] = [
-            StatBaseSchema(name=row.name, count=row.count) for row in rows
-        ]
-
-        count = get_count_from_stat(stat)
-        return StatPublicationSchema(
-            name="Опубликование по актам",
-            stat=stat,
-            count=count,
-        )
-
-    async def get_publication_by_nomenclature_detail(self, params: RequestBodySchema):
-        rows: Sequence[Row] = (
-            await self.repository.get_publication_by_nomenclature_detail_president_and_government(
-                params
-            )
-        )
-        stat: list[StatBaseSchema] = [
-            StatBaseSchema(name=row.name, count=row.count) for row in rows
-        ]
-
-        count = get_count_from_stat(stat)
-        return StatPublicationSchema(
-            name="Детальное опубликование по номенклатуре",
-            stat=stat,
-            count=count,
-        )
-
-    async def get_publication_by_regions(self, params: RequestBodySchema):
-        rows: Sequence[Row] = await self.repository.get_publication_by_regions(params)
-        stat: list[StatBaseSchema] = [
-            StatBaseSchema(name=row.name, count=row.count) for row in rows
-        ]
-
-        count = get_count_from_stat(stat)
-        return StatPublicationSchema(
-            name="Опубликование по субъектам",
-            stat=stat,
-            count=count,
-        )
-
-    async def get_publication_by_districts(self, params: RequestBodySchema):
-        rows: Sequence[Row] = await self.repository.get_publication_by_districts(params)
-        stat: list[StatBaseSchema] = [
-            StatBaseSchema(name=row.name, count=row.count) for row in rows
-        ]
-
-        count = get_count_from_stat(stat)
-        return StatPublicationSchema(
-            name="Опубликование по федеральным округам",
-            stat=stat,
-            count=count,
-        )
-
-    async def get_publication_by_years(self, limit: int):
-        rows: Sequence[Row] = await self.repository.get_publication_by_years(limit)
-        stat: list[StatBaseSchema] = [
-            StatBaseSchema(name=str(int(row.name)), count=row.count) for row in rows
-        ]
-
-        count = get_count_from_stat(stat)
-        return StatPublicationSchema(
-            name="Опубликование по годам", stat=stat, count=count
-        )
-
-    async def get_publication_by_nomenclature(self, params: RequestBodySchema):
-        rows: Sequence[Row] = await self.repository.get_publication_by_nomenclature(
-            params
-        )
-        stat: list[StatBaseSchema] = [
-            StatBaseSchema(name=row.name, count=row.count) for row in rows
-        ]
-
-        count = get_count_from_stat(stat)
-        return StatPublicationSchema(
-            name="Опубликование по номенклатуре",
-            stat=stat,
-            count=count,
-        )
+    def __init__(self, repository: StatisticRepository):
+        self.repository: StatisticRepository = repository()
 
     async def get_subjects_stat(self, params: RequestBodySchema):
         stat_all = await self.repository.get_stat_all(params)
@@ -224,3 +130,27 @@ class StatisticsService:
             stat=stat_all,
             districts=districts,
         )
+
+    ## USE
+    async def get_regions_in_district(self, dist_id: int, params: RequestBodySchema):
+        districts = []
+
+        districts_info = await self.repository.get_districts(dist_id)
+        for district in districts_info:
+            print(district)
+
+            stat_in_district = await self.repository.get_stat_in_district(
+                params, district.id
+            )
+            print(stat_in_district)
+
+            districts.append(
+                StatDistrictSchema(
+                    name=district.name,
+                    id=district.id,
+                    count=get_count_from_stat(stat_in_district),
+                    stat=stat_in_district,
+                )
+            )
+
+        return districts

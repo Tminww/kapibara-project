@@ -2,15 +2,15 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request, status, BackgroundTasks
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-from api import routers
-from errors import (
+from .api import routers
+from .errors import (
     DataDelitionError,
     DataInsertionError,
     DateValidationError,
     ResultIsEmptyError,
 )
-from parser.main import parse
-from utils import backend_logger
+from .parser.main import parse
+from .utils import backend_logger as logger
 
 
 @asynccontextmanager

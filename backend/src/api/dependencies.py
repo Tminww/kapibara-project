@@ -1,13 +1,15 @@
-from repositories.statistics import StatisticsRepository
-from services.statistics import StatisticsService
+from src.repositories import StatisticRepository, SubjectRepository, DashboardRepository
 
-from repositories.subjects import SubjectsRepository
-from services.subjects import SubjectsService
+from src.services import StatisticService, DashboardService, SubjectService
 
 
 def get_statistics_service():
-    return StatisticsService(StatisticsRepository)
+    return StatisticService(StatisticRepository)
 
 
 def get_subjects_service():
-    return SubjectsService(SubjectsRepository)
+    return SubjectService(SubjectRepository)
+
+
+def get_dashboard_service():
+    return DashboardService(DashboardRepository)

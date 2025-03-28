@@ -1,5 +1,6 @@
 from datetime import datetime
-from typing import Literal, Optional
+from typing import Annotated, Literal, Optional
+from fastapi import Query
 from pydantic import ConfigDict, Field, field_validator, model_validator, validator
 from .base import BaseSchema
 
@@ -78,19 +79,21 @@ class RequestSchema(BaseSchema):
         return values
 
     model_config = ConfigDict(
-        populate_by_name=True,  # Разрешает использовать aliases для заполнения
+        populate_by_name=True,
+        validate_assignment=False,
     )
 
 
 class RequestBodySchema(RequestSchema):
-    ids: Optional[list[int]] = None
+    # Внешний интерфейс — строка, внутренний — список целых чисел
+    ids: Optional[str] = None
 
-    @field_validator("ids", mode="before")
+    @field_validator("ids", mode="after")
     @classmethod
-    def parse_ids(cls, value):
-        if isinstance(value, str):
-            return [int(id) for id in value.split(",")]
-        return value
+    def check_ids(cls, value):
+        if value is None:
+            return None
+        return [int(id.strip()) for id in value.split(",")]
 
 
 class RequestMaxMinBodySchema(RequestSchema):
@@ -101,3 +104,13 @@ class RequestMaxMinBodySchema(RequestSchema):
 class RequestRegionSchema(BaseSchema):
     districtName: Optional[str] = None
     districtId: Optional[int] = None
+
+    @model_validator(mode="after")
+    def check_params(cls, values):
+        if not values:
+            return
+
+        if values.districtId and values.districtName:
+            raise ValueError("districtName or districtId must be provided")
+
+        return values

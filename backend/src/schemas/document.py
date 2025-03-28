@@ -4,7 +4,7 @@ from typing import Optional
 from pydantic import field_validator
 
 from .base import BaseSchema
-from utils import parser_logger as logger
+from src.utils import parser_logger as logger
 
 
 class DocumentSchema(BaseSchema):
