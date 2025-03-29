@@ -1,6 +1,9 @@
-from abc import ABC, abstractmethod
-from datetime import datetime
+from collections import defaultdict
+
 from sqlalchemy import (
+    Date,
+    and_,
+    cast,
     select,
     func,
 )
@@ -30,10 +33,10 @@ class StatisticRepository:
         self, params: RequestBodySchema, id_dist, session: AsyncSession
     ):
 
-        regions_id = [int(id.strip()) for id in params.ids.split(",")]
+        print(params.ids)
 
         stmt = select(RegionEntity).filter(
-            (regions_id is None or RegionEntity.id.in_(regions_id)),
+            (params.ids is None or RegionEntity.id.in_(params.ids)),
             (RegionEntity.id_dist == id_dist),
         )
         res = await session.execute(stmt)
@@ -48,7 +51,7 @@ class StatisticRepository:
     @connection
     async def get_stat_all(self, params: RequestBodySchema, session: AsyncSession):
 
-        regions_id = [int(id.strip()) for id in params.ids.split(",")]
+        print(params.ids)
 
         stmt = (
             select(
@@ -59,7 +62,7 @@ class StatisticRepository:
             .join(RegionEntity, DocumentEntity.id_reg == RegionEntity.id)
             .join(TypeEntity, DocumentEntity.id_type == TypeEntity.id)
             .filter(
-                (regions_id is None or RegionEntity.id.in_(regions_id)),
+                (params.ids is None or RegionEntity.id.in_(params.ids)),
                 (
                     params.start_date is None
                     and params.end_date is None
@@ -117,40 +120,40 @@ class StatisticRepository:
         # else:
         #     raise ResultIsEmptyError("Result is empty")
 
-    @connection
-    async def get_stat_in_districts(
-        self, params: RequestBodySchema, session: AsyncSession
-    ):
+    # @connection
+    # async def get_stat_in_districts(
+    #     self, params: RequestBodySchema, session: AsyncSession
+    # ):
 
-        stmt = (
-            select(
-                TypeEntity.name.label("name"),
-                func.count().label("count"),
-            )
-            .select_from(DocumentEntity)
-            .join(RegionEntity, DocumentEntity.id_reg == RegionEntity.id)
-            .join(TypeEntity, DocumentEntity.id_type == TypeEntity.id)
-            .filter(
-                (params.ids is None or RegionEntity.id_dist.in_(params.ids)),
-                (
-                    params.start_date is None
-                    and params.end_date is None
-                    or DocumentEntity.view_date.between(
-                        params.start_date, params.end_date
-                    )
-                ),
-            )
-            .group_by(TypeEntity.name)
-            .order_by(TypeEntity.name)
-        )
-        res = await session.execute(stmt)
-        res = [StatBaseSchema(name=row.name, count=row.count) for row in res.all()]
+    #     stmt = (
+    #         select(
+    #             TypeEntity.name.label("name"),
+    #             func.count().label("count"),
+    #         )
+    #         .select_from(DocumentEntity)
+    #         .join(RegionEntity, DocumentEntity.id_reg == RegionEntity.id)
+    #         .join(TypeEntity, DocumentEntity.id_type == TypeEntity.id)
+    #         .filter(
+    #             (params.ids is None or RegionEntity.id_dist.in_(params.ids)),
+    #             (
+    #                 params.start_date is None
+    #                 and params.end_date is None
+    #                 or DocumentEntity.view_date.between(
+    #                     params.start_date, params.end_date
+    #                 )
+    #             ),
+    #         )
+    #         .group_by(TypeEntity.name)
+    #         .order_by(TypeEntity.name)
+    #     )
+    #     res = await session.execute(stmt)
+    #     res = [StatBaseSchema(name=row.name, count=row.count) for row in res.all()]
 
-        return res
-        # if res:
-        #     return res
-        # else:
-        #     raise ResultIsEmptyError("Result is empty")
+    #     return res
+    #     # if res:
+    #     #     return res
+    #     # else:
+    #     #     raise ResultIsEmptyError("Result is empty")
 
     @connection
     async def get_districts_by_regions(self, regions, session: AsyncSession):
@@ -246,3 +249,92 @@ class StatisticRepository:
         # else:
         #     raise ResultIsEmptyError("Result is empty")
         return res
+
+    async def _base_stat_query(self, params: RequestBodySchema):
+        """Базовый запрос для статистики с фильтрами"""
+        query = (
+            select(
+                RegionEntity.id_dist,
+                RegionEntity.id.label("region_id"),
+                RegionEntity.name.label("region_name"),  # Добавляем имя региона
+                TypeEntity.name.label("type_name"),
+                func.count().label("count"),
+            )
+            .select_from(DocumentEntity)
+            .join(RegionEntity, DocumentEntity.id_reg == RegionEntity.id)
+            .join(TypeEntity, DocumentEntity.id_type == TypeEntity.id)
+            .group_by(
+                RegionEntity.id_dist,
+                RegionEntity.id,
+                TypeEntity.name,
+                RegionEntity.name,
+            )
+        )
+
+        # Фильтры по датам
+        date_filters = []
+        if params.start_date:
+            date_filters.append(
+                DocumentEntity.view_date >= cast(params.start_date, Date)
+            )
+        if params.end_date:
+            date_filters.append(DocumentEntity.view_date <= cast(params.end_date, Date))
+
+        if date_filters:
+            query = query.filter(and_(*date_filters))
+
+        # Фильтр по регионам
+        if params.ids:
+            query = query.filter(RegionEntity.id.in_(params.ids))
+
+        return query
+
+    @connection
+    async def get_stat_data(self, params: RequestBodySchema, session: AsyncSession):
+        """Основной запрос для получения всей статистики"""
+        query = await self._base_stat_query(params)
+        result = await session.execute(query)
+        return result.all()
+
+    @connection
+    async def get_stat_in_districts(
+        self, params: RequestBodySchema, session: AsyncSession
+    ):
+        """Получение агрегированных данных для всех уровней"""
+        all_data = await self.get_stat_data(params)
+
+        result = {
+            "total": defaultdict(int),
+            "districts": defaultdict(
+                lambda: {
+                    "total": defaultdict(int),
+                    "regions": defaultdict(
+                        lambda: {
+                            "name": "",  # Добавляем поле для имени
+                            "stats": defaultdict(int),
+                        }
+                    ),
+                }
+            ),
+        }
+
+        for row in all_data:
+            district_id = row.id_dist
+            region_id = row.region_id
+            region_name = row.region_name  # Получаем имя из результата запроса
+            type_name = row.type_name
+            count = row.count
+
+            # Сохраняем имя региона
+            result["districts"][district_id]["regions"][region_id]["name"] = region_name
+
+            # Обновляем статистику
+            result["total"][type_name] += count
+            result["districts"][district_id]["total"][type_name] += count
+            result["districts"][district_id]["regions"][region_id]["stats"][
+                type_name
+            ] += count
+
+        return result
+
+    # Остальные методы адаптируются под новую структуру

@@ -18,6 +18,7 @@ async def get_statistics(
     params: Annotated[RequestBodySchema, Query()] = None,
 ) -> ResponseStatSchema:
 
+    print(params)
     statistics = await service.get_stat_in_districts(params)
     return ResponseStatSchema(
         data=statistics,

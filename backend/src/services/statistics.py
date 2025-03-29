@@ -81,53 +81,53 @@ class StatisticService:
 
     async def get_stat_in_districts(self, params: RequestBodySchema):
         start_time = time.time()
+
+        # Получаем все данные одним запросом
+        stat_data = await self.repository.get_stat_in_districts(params)
+
         districts = []
-        stat_all = await self.repository.get_stat_all(params)
 
+        # Получаем информацию об округах
         districts_info = await self.repository.get_districts_by_regions(params.ids)
+
+        # Формируем ответ
         for district in districts_info:
-            print(district)
+            district_id = district.id
+            district_stats = stat_data["districts"].get(district_id, {})
+
             regions = []
-
-            stat_in_district = await self.repository.get_stat_in_district(
-                params, district.id
-            )
-            print(stat_in_district)
-            regions_info = await self.repository.get_definite_regions_in_district(
-                params, district.id
-            )
-
-            for region in regions_info:
-                stat_in_region = await self.repository.get_stat_in_region(
-                    params, region.id
-                )
-
+            for region_id, region_data in district_stats.get("regions", {}).items():
                 regions.append(
                     StatRegionSchema(
-                        name=region.name,
-                        id=region.id,
-                        count=get_count_from_stat(stat_in_region),
-                        stat=stat_in_region,
+                        id=region_id,
+                        name=region_data["name"],  # Используем сохраненное имя
+                        count=sum(region_data["stats"].values()),
+                        stat=[
+                            StatBaseSchema(name=k, count=v)
+                            for k, v in region_data["stats"].items()
+                        ],
                     )
                 )
 
             districts.append(
                 StatDistrictSchema(
+                    id=district_id,
                     name=district.name,
-                    id=district.id,
-                    count=get_count_from_stat(stat_in_district),
-                    stat=stat_in_district,
+                    count=sum(district_stats.get("total", {}).values()),
+                    stat=[
+                        StatBaseSchema(name=k, count=v)
+                        for k, v in district_stats.get("total", {}).items()
+                    ],
                     regions=regions,
                 )
             )
 
-        end_time = time.time()
-        print(end_time - start_time)
-
         return StatAllSchema(
             name="Вся статистика",
-            count=get_count_from_stat(stat_all),
-            stat=stat_all,
+            count=sum(stat_data["total"].values()),
+            stat=[
+                StatBaseSchema(name=k, count=v) for k, v in stat_data["total"].items()
+            ],
             districts=districts,
         )
 
