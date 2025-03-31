@@ -15,10 +15,9 @@ router = APIRouter(prefix="/statistics", tags=["statistics"])
 @router.get("")
 async def get_statistics(
     service: Annotated[Service, Depends(get_service)],
-    params: Annotated[RequestBodySchema, Query()] = None,
+    params: Annotated[RequestBodySchema, Query()],
 ) -> ResponseStatSchema:
 
-    print(params)
     statistics = await service.get_stat_in_districts(params)
     return ResponseStatSchema(
         data=statistics,
@@ -33,7 +32,7 @@ async def get_districts_stat(
     params: Annotated[RequestBodySchema, Query()],
 ) -> ResponseStatSchema:
 
-    statistics = await service.get_districts_stat(params)
+    statistics = await service.get_stat_districts(params)
     return ResponseStatSchema(
         data=statistics,
         startDate=params.start_date,
@@ -48,7 +47,7 @@ async def get_districts_stat(
     service: Annotated[Service, Depends(get_service)],
 ) -> ResponseStatSchema:
 
-    statistics = await service.get_regions_in_district(dist_id, params)
+    statistics = await service.get_stat_districts_by_id(dist_id, params)
     return ResponseStatSchema(
         data=statistics,
         startDate=params.start_date,

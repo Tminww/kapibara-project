@@ -48,3 +48,7 @@ class DocumentEntity(Base):
 
 
 # Index("idx_documents_eo_number", DocumentEntity.eo_number, unique=True)
+
+Index("idx_documents_view_date", DocumentEntity.view_date)
+Index("idx_documents_id_reg", DocumentEntity.id_reg)
+Index("idx_documents_id_type", DocumentEntity.id_type)

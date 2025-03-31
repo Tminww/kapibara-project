@@ -26,3 +26,4 @@ class RegionEntity(Base):
 
 # Если нужен уникальный индекс на code отдельно, можно добавить:
 # Index("idx_regions_code_unique", RegionEntity.code, unique=True)
+Index("idx_regions_id_dist", RegionEntity.id_dist)

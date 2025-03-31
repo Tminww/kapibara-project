@@ -9,6 +9,7 @@ from .request import (
     RequestMaxMinBodySchema,
     RequestRegionSchema,
     RequestSchema,
+    RequestNomenclatureSchema,
 )
 from .response import (
     ResponseSchema,

@@ -97,7 +97,7 @@ class RequestBodySchema(RequestSchema):
 
 
 class RequestMaxMinBodySchema(RequestSchema):
-    limit: int = None
+    limit: int = Query(gt=0, le=100, default=10)
     sort: Literal["max", "min"] = "max"
 
 
@@ -114,3 +114,7 @@ class RequestRegionSchema(BaseSchema):
             raise ValueError("districtName or districtId must be provided")
 
         return values
+
+
+class RequestNomenclatureSchema(RequestSchema):
+    detail: Optional[bool] = False

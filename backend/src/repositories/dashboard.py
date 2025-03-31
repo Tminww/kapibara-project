@@ -1,3 +1,4 @@
+from datetime import datetime
 from sqlalchemy import (
     asc,
     desc,
@@ -33,6 +34,16 @@ class DashboardRepository:
     @connection
     async def get_publication_by_nomenclature(self, params, session: AsyncSession):
 
+        start_date = (
+            datetime.strptime(params.start_date, "%Y-%m-%d").date()
+            if params.start_date
+            else None
+        )
+        end_date = (
+            datetime.strptime(params.end_date, "%Y-%m-%d").date()
+            if params.end_date
+            else None
+        )
         region_case = case(
             (RegionEntity.code.startswith("region"), "ОГВ Субъектов РФ"),
             else_=RegionEntity.name,
@@ -47,9 +58,9 @@ class DashboardRepository:
 
         # Условия фильтрации по дате
         date_filter = (
-            params.start_date is None
-            and params.end_date is None
-            or DocumentEntity.view_date.between(params.start_date, params.end_date)
+            start_date is None
+            and end_date is None
+            or DocumentEntity.view_date.between(start_date, end_date)
         )
         query = query.filter(date_filter)
 
@@ -61,6 +72,7 @@ class DashboardRepository:
 
         return res.all()
 
+    @connection
     async def get_publication_by_years(self, limit: int, session: AsyncSession):
 
         year_expr = func.date_part("year", DocumentEntity.view_date).label("name")
@@ -79,10 +91,20 @@ class DashboardRepository:
 
         return res.all()
 
+    @connection
     async def get_publication_by_districts(
         self, params: RequestBodySchema, session: AsyncSession
     ):
-
+        start_date = (
+            datetime.strptime(params.start_date, "%Y-%m-%d").date()
+            if params.start_date
+            else None
+        )
+        end_date = (
+            datetime.strptime(params.end_date, "%Y-%m-%d").date()
+            if params.end_date
+            else None
+        )
         query = (
             select(
                 DistrictEntity.name.label("name"),
@@ -101,9 +123,9 @@ class DashboardRepository:
 
         # Условия фильтрации по дате
         date_filter = (
-            params.start_date is None
-            and params.end_date is None
-            or DocumentEntity.view_date.between(params.start_date, params.end_date)
+            start_date is None
+            and end_date is None
+            or DocumentEntity.view_date.between(start_date, end_date)
         )
         query = query.filter(date_filter)
 
@@ -112,9 +134,21 @@ class DashboardRepository:
 
         return res.all()
 
+    @connection
     async def get_publication_by_regions(
         self, params: RequestMaxMinBodySchema, session: AsyncSession
     ):
+
+        start_date = (
+            datetime.strptime(params.start_date, "%Y-%m-%d").date()
+            if params.start_date
+            else None
+        )
+        end_date = (
+            datetime.strptime(params.end_date, "%Y-%m-%d").date()
+            if params.end_date
+            else None
+        )
 
         order_func = desc if params.sort == "max" else asc
 
@@ -128,8 +162,8 @@ class DashboardRepository:
                 DocumentEntity,
                 (DocumentEntity.id_reg == RegionEntity.id)
                 & (
-                    DocumentEntity.view_date.between(params.start_date, params.end_date)
-                    if params.start_date is not None and params.end_date is not None
+                    DocumentEntity.view_date.between(start_date, end_date)
+                    if start_date is not None and end_date is not None
                     else True
                 ),  # Условие по дате только внутри JOIN
             )
@@ -146,10 +180,21 @@ class DashboardRepository:
 
         return res.all()
 
+    @connection
     async def get_publication_by_nomenclature_detail_president_and_government(
         self, params: RequestBodySchema, session: AsyncSession
     ):
 
+        start_date = (
+            datetime.strptime(params.start_date, "%Y-%m-%d").date()
+            if params.start_date
+            else None
+        )
+        end_date = (
+            datetime.strptime(params.end_date, "%Y-%m-%d").date()
+            if params.end_date
+            else None
+        )
         # --- Часть 1: Запрос для актов президента ---
         # CTE для отфильтрованных документов президента
         filtered_documents_president = (
@@ -159,10 +204,8 @@ class DashboardRepository:
                 and_(
                     RegionEntity.code == "president",
                     (
-                        DocumentEntity.view_date.between(
-                            params.start_date, params.end_date
-                        )
-                        if params.start_date is not None and params.end_date is not None
+                        DocumentEntity.view_date.between(start_date, end_date)
+                        if start_date is not None and end_date is not None
                         else True
                     ),
                 )
@@ -237,10 +280,8 @@ class DashboardRepository:
                 and_(
                     RegionEntity.code == "government",
                     (
-                        DocumentEntity.view_date.between(
-                            params.start_date, params.end_date
-                        )
-                        if params.start_date is not None and params.end_date is not None
+                        DocumentEntity.view_date.between(start_date, end_date)
+                        if start_date is not None and end_date is not None
                         else True
                     ),
                 )
@@ -303,8 +344,8 @@ class DashboardRepository:
         filtered_documents_regions = (
             select(DocumentEntity.id_reg, DocumentEntity.id)
             .where(
-                DocumentEntity.view_date.between(params.start_date, params.end_date)
-                if params.start_date is not None and params.end_date is not None
+                DocumentEntity.view_date.between(start_date, end_date)
+                if start_date is not None and end_date is not None
                 else True
             )
             .cte("filtered_documents_regions")
@@ -346,10 +387,20 @@ class DashboardRepository:
 
         return result.all()
 
+    @connection
     async def get_publication_by_types(
         self, params: RequestBodySchema, session: AsyncSession
     ):
-
+        start_date = (
+            datetime.strptime(params.start_date, "%Y-%m-%d").date()
+            if params.start_date
+            else None
+        )
+        end_date = (
+            datetime.strptime(params.end_date, "%Y-%m-%d").date()
+            if params.end_date
+            else None
+        )
         query = (
             select(
                 TypeEntity.name.label("name"),
@@ -361,10 +412,8 @@ class DashboardRepository:
                 and_(
                     TypeEntity.id == DocumentEntity.id_type,
                     (
-                        DocumentEntity.view_date.between(
-                            params.start_date, params.end_date
-                        )
-                        if params.start_date is not None and params.end_date is not None
+                        DocumentEntity.view_date.between(start_date, end_date)
+                        if start_date is not None and end_date is not None
                         else True
                     ),
                 ),
