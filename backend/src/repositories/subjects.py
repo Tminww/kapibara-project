@@ -1,11 +1,11 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, or_
 
-from src.models import DistrictEntity, RegionEntity
+from models import DistrictEntity, RegionEntity
 
-from src.schemas import SubjectBaseSchema, RequestBodySchema
-from src.database import connection
-from src.errors import ResultIsEmptyError
+from schemas import SubjectBaseSchema, RequestBodySchema
+from database import connection
+from errors import ResultIsEmptyError
 
 
 class SubjectRepository:

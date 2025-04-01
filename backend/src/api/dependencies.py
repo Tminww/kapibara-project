@@ -1,6 +1,6 @@
-from src.repositories import StatisticRepository, SubjectRepository, DashboardRepository
+from repositories import StatisticRepository, SubjectRepository, DashboardRepository
 
-from src.services import StatisticService, DashboardService, SubjectService
+from services import StatisticService, DashboardService, SubjectService
 
 
 def get_statistics_service():

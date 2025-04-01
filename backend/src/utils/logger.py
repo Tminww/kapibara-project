@@ -1,4 +1,4 @@
-from src.config import settings
+from config import settings
 import logging
 from datetime import datetime
 

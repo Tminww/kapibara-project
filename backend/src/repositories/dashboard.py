@@ -14,19 +14,19 @@ from sqlalchemy import (
 )
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.models import (
+from models import (
     TypeEntity,
     DistrictEntity,
     DocumentEntity,
     RegionEntity,
 )
 
-from src.schemas import (
+from schemas import (
     RequestMaxMinBodySchema,
     RequestBodySchema,
 )
-from src.database import connection
-from src.errors import ResultIsEmptyError
+from database import connection
+from errors import ResultIsEmptyError
 
 
 class DashboardRepository:

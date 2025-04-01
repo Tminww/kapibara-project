@@ -11,14 +11,14 @@ from sqlalchemy import (
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 
-from src.models import (
+from models import (
     TypeEntity,
     DistrictEntity,
     DocumentEntity,
     RegionEntity,
 )
 
-from src.schemas import (
+from schemas import (
     RegionSchema,
     RegionInfoSchema,
     RequestMaxMinBodySchema,
@@ -28,8 +28,8 @@ from src.schemas import (
     StatDistrictSchema,
     StatRegionSchema,
 )
-from src.database.setup import connection
-from src.errors import ResultIsEmptyError
+from database.setup import connection
+from errors import ResultIsEmptyError
 
 
 class StatisticRepository:

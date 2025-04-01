@@ -1,10 +1,10 @@
-from src.schemas import (
+from schemas import (
     StatAllSchema,
     RequestBodySchema,
     ResponseStatSchema,
 )
-from src.errors import ResultIsEmptyError
-from src.repositories import StatisticRepository
+from errors import ResultIsEmptyError
+from repositories import StatisticRepository
 
 
 class StatisticService:

@@ -1,12 +1,12 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends, Query
 
-from src.schemas import (
+from schemas import (
     RequestBodySchema,
     ResponseStatSchema,
 )
 
-from src.services import StatisticService as Service
+from services import StatisticService as Service
 from .dependencies import get_statistics_service as get_service
 
 router = APIRouter(prefix="/statistics", tags=["statistics"])

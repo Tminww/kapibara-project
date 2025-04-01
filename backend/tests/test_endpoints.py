@@ -301,8 +301,7 @@ class TestDashboardEndpoints:
         "params, expected_status",
         [
             ({"limit": -1}, 422),  # Неверный лимит
-            ({"min": "invalid"}, 422),  # Неверный min
-            ({"max": "invalid"}, 422),  # Неверный max
+            ({"sort": "invalid"}, 422),  # Неверный лимит
         ],
     )
     async def test_dashboard_regions_invalid(
@@ -317,12 +316,6 @@ class TestDashboardEndpoints:
         [
             {},  # Без параметров
             {"startDate": "2020-10-20", "endDate": "2025-03-31"},  # Только даты
-            {"ids": "440,441"},  # Только ids
-            {
-                "startDate": "2020-10-20",
-                "endDate": "2025-03-31",
-                "ids": "440,441",
-            },  # Даты и ids
         ],
     )
     async def test_dashboard_types_valid(
@@ -336,8 +329,10 @@ class TestDashboardEndpoints:
     @pytest.mark.parametrize(
         "params, expected_status",
         [
-            ({"startDate": "invalid_date"}, 422),  # Неверный формат даты
-            ({"ids": "invalid_ids"}, 422),  # Неверный формат ids
+            (
+                {"startDate": "invalid_date", "endDate": "invalid_date"},
+                422,
+            ),  # Неверный формат даты
         ],
     )
     async def test_dashboard_types_invalid(

@@ -1,5 +1,5 @@
-from src.schemas import SubjectWithRegionsSchema, RequestRegionSchema, SubjectBaseSchema
-from src.repositories.subjects import SubjectRepository
+from schemas import SubjectWithRegionsSchema, RequestRegionSchema, SubjectBaseSchema
+from repositories.subjects import SubjectRepository
 
 
 class SubjectService:

@@ -2,8 +2,8 @@ from typing import Annotated, Optional
 
 from fastapi import APIRouter, Depends, Query
 
-from src.services import SubjectService as Service
-from src.schemas import RequestRegionSchema, ResponseSchema
+from services import SubjectService as Service
+from schemas import RequestRegionSchema, ResponseSchema
 from .dependencies import get_subjects_service as get_service
 
 router = APIRouter(prefix="/subjects", tags=["subjects"])

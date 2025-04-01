@@ -2,15 +2,18 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request, status, BackgroundTasks
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-from .api import routers
-from .errors import (
+import uvicorn
+
+from api import routers
+from errors import (
     DataDelitionError,
     DataInsertionError,
     DateValidationError,
     ResultIsEmptyError,
 )
-from .parser.main import parse
-from .utils import backend_logger as logger
+from parser.main import parse
+from utils import backend_logger as logger
+from config import settings
 
 
 @asynccontextmanager
@@ -22,7 +25,6 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="Вывод статистики по документам", lifespan=lifespan)
-
 
 # настройка CORS
 origins = [
@@ -79,3 +81,8 @@ async def data_deletion_exception_handler(request: Request, e: DataDelitionError
         status_code=status.HTTP_400_BAD_REQUEST,
         content={"detail": f"An error occurred while deleting: {str(error)}"},
     )
+
+
+if __name__ == "__main__":
+
+    uvicorn.run(app, host=settings.HOST, port=settings.PORT)

@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
-from src.config import settings
-from src.utils import database_logger as logger
+from config import settings
+from utils import database_logger as logger
 
 # Настройка логирования
 

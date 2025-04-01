@@ -1,12 +1,12 @@
 from sqlalchemy import Row
 from typing import Sequence
 
-from src.schemas import (
+from schemas import (
     RequestBodySchema,
     StatBaseSchema,
     StatPublicationSchema,
 )
-from src.repositories import DashboardRepository
+from repositories import DashboardRepository
 
 
 def get_count_from_stat(stat: list) -> int:
