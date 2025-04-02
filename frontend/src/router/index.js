@@ -1,242 +1,240 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { NotFound404 } from '@/pages/errors'
-import { HomePage, LoginPage, SubjectPage } from '@/pages'
 
 import { routes as dashboardRoutes } from '@/features/dashboard/router'
 
 const meta = {
-	requiresAuth: false,
-	forAdmin: false,
-	forUser: false,
-	forAll: true,
+    requiresAuth: false,
+    forAdmin: false,
+    forUser: false,
+    forAll: true
 }
 
 const routes = [
-	...dashboardRoutes,
-	{
-		path: '/root',
-		name: 'home',
-		component: () => import('@/pages/HomePage.vue'),
-		meta: {
-			...meta,
-			breadCrumb: [
-				{
-					text: '',
-				},
-			],
-		},
-	},
+    ...dashboardRoutes,
+    {
+        path: '/root',
+        name: 'home',
+        component: () => import('@/pages/HomePage.vue'),
+        meta: {
+            ...meta,
+            breadCrumb: [
+                {
+                    text: ''
+                }
+            ]
+        }
+    },
 
-	{
-		path: '/subjects',
-		name: 'subjects',
-		component: () => import('@/pages/SubjectPage.vue'),
+    {
+        path: '/subjects',
+        name: 'subjects',
+        component: () => import('@/pages/errors/NotFound404.vue'),
 
-		meta: {
-			...meta,
-			breadCrumb: [
-				{
-					text: 'Главная',
-					to: { name: 'home' },
-				},
-				{
-					text: 'Субъекты',
-				},
-			],
-		},
-	},
-	{
-		path: '/president',
-		name: 'president',
-		component: () => import('@/pages/errors/NotFound404.vue'),
-		meta: {
-			...meta,
-			breadCrumb: [
-				{
-					text: 'Главная',
-					to: { name: 'home' },
-				},
-				{
-					text: 'Президент',
-				},
-			],
-		},
-	},
-	{
-		path: '/council_1',
-		name: 'council_1',
-		component: () => import('@/pages/errors/NotFound404.vue'),
-		meta: {
-			...meta,
-			breadCrumb: [
-				{
-					text: 'Главная',
-					to: { name: 'home' },
-				},
-				{
-					text: 'Совет Федерации',
-				},
-			],
-		},
-	},
-	{
-		path: '/council_2',
-		name: 'council_2',
-		component: () => import('@/pages/errors/NotFound404.vue'),
-		meta: {
-			...meta,
-			breadCrumb: [
-				{
-					text: 'Главная',
-					to: { name: 'home' },
-				},
-				{
-					text: 'Государственная Дума',
-				},
-			],
-		},
-	},
-	{
-		path: '/government',
-		name: 'government',
-		component: () => import('@/pages/errors/NotFound404.vue'),
-		meta: {
-			...meta,
-			breadCrumb: [
-				{
-					text: 'Главная',
-					to: { name: 'home' },
-				},
-				{
-					text: 'Правительство',
-				},
-			],
-		},
-	},
-	{
-		path: '/federal_authorities',
-		name: 'federal_authorities',
-		component: () => import('@/pages/errors/NotFound404.vue'),
-		meta: {
-			...meta,
-			breadCrumb: [
-				{
-					text: 'Главная',
-					to: { name: 'home' },
-				},
-				{
-					text: 'ФОИВ и ФГО',
-				},
-			],
-		},
-	},
-	{
-		path: '/court',
-		name: 'court',
-		component: () => import('@/pages/errors/NotFound404.vue'),
-		meta: {
-			...meta,
-			breadCrumb: [
-				{
-					text: 'Главная',
-					to: { name: 'home' },
-				},
-				{
-					text: 'Конституционный Суд',
-				},
-			],
-		},
-	},
-	{
-		path: '/international',
-		name: 'international',
-		component: () => import('@/pages/errors/NotFound404.vue'),
-		meta: {
-			...meta,
-			breadCrumb: [
-				{
-					text: 'Главная',
-					to: { name: 'home' },
-				},
-				{
-					text: 'Международные договоры',
-				},
-			],
-		},
-	},
-	{
-		path: '/un_securitycouncil',
-		name: 'un_securitycouncil',
-		component: () => import('@/pages/errors/NotFound404.vue'),
-		meta: {
-			...meta,
-			breadCrumb: [
-				{
-					text: 'Главная',
-					to: { name: 'home' },
-				},
-				{
-					text: 'Совет Безопасности ООН',
-				},
-			],
-		},
-	},
+        meta: {
+            ...meta,
+            breadCrumb: [
+                {
+                    text: 'Главная',
+                    to: { name: 'home' }
+                },
+                {
+                    text: 'Субъекты'
+                }
+            ]
+        }
+    },
+    {
+        path: '/president',
+        name: 'president',
+        component: () => import('@/pages/errors/NotFound404.vue'),
+        meta: {
+            ...meta,
+            breadCrumb: [
+                {
+                    text: 'Главная',
+                    to: { name: 'home' }
+                },
+                {
+                    text: 'Президент'
+                }
+            ]
+        }
+    },
+    {
+        path: '/council_1',
+        name: 'council_1',
+        component: () => import('@/pages/errors/NotFound404.vue'),
+        meta: {
+            ...meta,
+            breadCrumb: [
+                {
+                    text: 'Главная',
+                    to: { name: 'home' }
+                },
+                {
+                    text: 'Совет Федерации'
+                }
+            ]
+        }
+    },
+    {
+        path: '/council_2',
+        name: 'council_2',
+        component: () => import('@/pages/errors/NotFound404.vue'),
+        meta: {
+            ...meta,
+            breadCrumb: [
+                {
+                    text: 'Главная',
+                    to: { name: 'home' }
+                },
+                {
+                    text: 'Государственная Дума'
+                }
+            ]
+        }
+    },
+    {
+        path: '/government',
+        name: 'government',
+        component: () => import('@/pages/errors/NotFound404.vue'),
+        meta: {
+            ...meta,
+            breadCrumb: [
+                {
+                    text: 'Главная',
+                    to: { name: 'home' }
+                },
+                {
+                    text: 'Правительство'
+                }
+            ]
+        }
+    },
+    {
+        path: '/federal_authorities',
+        name: 'federal_authorities',
+        component: () => import('@/pages/errors/NotFound404.vue'),
+        meta: {
+            ...meta,
+            breadCrumb: [
+                {
+                    text: 'Главная',
+                    to: { name: 'home' }
+                },
+                {
+                    text: 'ФОИВ и ФГО'
+                }
+            ]
+        }
+    },
+    {
+        path: '/court',
+        name: 'court',
+        component: () => import('@/pages/errors/NotFound404.vue'),
+        meta: {
+            ...meta,
+            breadCrumb: [
+                {
+                    text: 'Главная',
+                    to: { name: 'home' }
+                },
+                {
+                    text: 'Конституционный Суд'
+                }
+            ]
+        }
+    },
+    {
+        path: '/international',
+        name: 'international',
+        component: () => import('@/pages/errors/NotFound404.vue'),
+        meta: {
+            ...meta,
+            breadCrumb: [
+                {
+                    text: 'Главная',
+                    to: { name: 'home' }
+                },
+                {
+                    text: 'Международные договоры'
+                }
+            ]
+        }
+    },
+    {
+        path: '/un_securitycouncil',
+        name: 'un_securitycouncil',
+        component: () => import('@/pages/errors/NotFound404.vue'),
+        meta: {
+            ...meta,
+            breadCrumb: [
+                {
+                    text: 'Главная',
+                    to: { name: 'home' }
+                },
+                {
+                    text: 'Совет Безопасности ООН'
+                }
+            ]
+        }
+    },
 
-	{
-		path: '/:pathMatch(.*)*',
-		name: 'not-found',
-		component: () => import('@/pages/errors/NotFound404.vue'),
-		meta,
-	},
+    {
+        path: '/:pathMatch(.*)*',
+        name: 'not-found',
+        component: () => import('@/pages/errors/NotFound404.vue'),
+        meta
+    }
 ]
 
 const router = createRouter({
-	history: createWebHistory(),
-	routes,
+    history: createWebHistory(),
+    routes
 })
 
 router.beforeEach((to, from) => {
-	const isLoggedIn = localStorage.getItem('token')
-	const isAdmin = localStorage.getItem('role') === 'администратор'
+    const isLoggedIn = localStorage.getItem('token')
+    const isAdmin = localStorage.getItem('role') === 'администратор'
 
-	// Если маршрут доступен для всех, пропускаем его без редиректа
-	if (to.meta.forAll) {
-		return true
-	}
+    // Если маршрут доступен для всех, пропускаем его без редиректа
+    if (to.meta.forAll) {
+        return true
+    }
 
-	// Если маршрут требует авторизации, но пользователь не авторизован
-	if (to.meta.requiresAuth && !isLoggedIn) {
-		// Предотвращаем цикл перенаправлений на страницу входа
-		if (to.name !== 'login') {
-			return {
-				name: 'login',
-				query: { returnPage: to.name },
-			}
-		}
-	}
+    // Если маршрут требует авторизации, но пользователь не авторизован
+    if (to.meta.requiresAuth && !isLoggedIn) {
+        // Предотвращаем цикл перенаправлений на страницу входа
+        if (to.name !== 'login') {
+            return {
+                name: 'login',
+                query: { returnPage: to.name }
+            }
+        }
+    }
 
-	// Если маршрут только для администратора, но пользователь не админ
-	if (to.meta.forAdmin && !isAdmin) {
-		// Предотвращаем цикл перенаправлений на страницу 403
-		if (to.name !== 'forbidden') {
-			return {
-				name: 'forbidden',
-			}
-		}
-	}
+    // Если маршрут только для администратора, но пользователь не админ
+    if (to.meta.forAdmin && !isAdmin) {
+        // Предотвращаем цикл перенаправлений на страницу 403
+        if (to.name !== 'forbidden') {
+            return {
+                name: 'forbidden'
+            }
+        }
+    }
 
-	// Если маршрут только для обычных пользователей, но пользователь админ
-	if (to.meta.forUser && isAdmin) {
-		// Предотвращаем цикл перенаправлений на страницу 403
-		if (to.name !== 'forbidden') {
-			return {
-				name: 'forbidden',
-			}
-		}
-	}
+    // Если маршрут только для обычных пользователей, но пользователь админ
+    if (to.meta.forUser && isAdmin) {
+        // Предотвращаем цикл перенаправлений на страницу 403
+        if (to.name !== 'forbidden') {
+            return {
+                name: 'forbidden'
+            }
+        }
+    }
 
-	// Разрешаем переход, если все условия выполнены
-	return true
+    // Разрешаем переход, если все условия выполнены
+    return true
 })
 
 export default router

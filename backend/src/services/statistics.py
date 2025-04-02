@@ -22,7 +22,7 @@ class StatisticService:
         except Exception as e:
             # Логирование ошибки
             print(f"Error in get_stat_in_districts: {e}")
-            raise ResultIsEmptyError("Не удалось получить статистику")
+            raise ResultIsEmptyError("Не удалось получить статистику {e}")
 
     async def get_stat_districts(self, params: RequestBodySchema) -> StatAllSchema:
         """
@@ -34,8 +34,9 @@ class StatisticService:
         except Exception as e:
             # Логирование ошибки
             print(f"Error in get_districts_stat: {e}")
-            raise ResultIsEmptyError("Не удалось получить статистику по округам")
-
+            raise ResultIsEmptyError(
+                            f"Не удалось получить статистику для округа {e}"
+                        )
     async def get_stat_districts_by_id(
         self, district_id: int, params: RequestBodySchema
     ) -> StatAllSchema:
@@ -51,5 +52,5 @@ class StatisticService:
             # Логирование ошибки
             print(f"Error in get_regions_in_district: {e}")
             raise ResultIsEmptyError(
-                f"Не удалось получить статистику для округа {district_id}"
+                f"Не удалось получить статистику для округа {e}"
             )

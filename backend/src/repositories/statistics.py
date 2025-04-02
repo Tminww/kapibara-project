@@ -355,8 +355,12 @@ class StatisticRepository:
                 "region_ids": params.ids,  # Передаём список как массив
             },
         )
-        return result.scalar_one()
 
+        res = result.scalar_one_or_none()
+        if res:
+            return res
+        else:
+            return []
     @connection
     async def get_statistics_districts(
         self, params: RequestBodySchema, session: AsyncSession
@@ -453,7 +457,12 @@ class StatisticRepository:
                 "end_date": end_date,
             },
         )
-        return result.scalar_one()
+
+        res = result.scalar_one_or_none()
+        if res:
+            return res
+        else:
+            return []
 
     async def get_regions_in_district(
         self, district_id: int, params: RequestBodySchema

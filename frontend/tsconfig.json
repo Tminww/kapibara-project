@@ -1,0 +1,17 @@
+{
+    "extends": "@vue/tsconfig/tsconfig.json",
+    "compilerOptions": {
+        "baseUrl": ".", // Базовый путь относительно корня проекта
+        "paths": {
+            "@/*": ["./src/*"] // Указываем относительный путь к src
+        },
+        "noEmit": true,
+        "allowJs": true,
+        "target": "ES2020",
+        "moduleResolution": "bundler",
+        "skipLibCheck": true,
+        "strict": true,
+        "module": "ESNext"
+    },
+    "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.vue", "src/plugins/vuetify.js"]
+}

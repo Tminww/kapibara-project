@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import apiClient from '@/api'
+import api from '@/api'
 import { ref, computed } from 'vue'
 
 export const useSubjectStore = defineStore('subject', () => {
@@ -25,7 +25,7 @@ export const useSubjectStore = defineStore('subject', () => {
 	}
 
 	const loadSubjectsAPI = async () => {
-		const response = await apiClient.subjects.read()
+		const response = await api.subjects.read()
 		subjects.value = response
 	}
 	// Геттер для получения регионов в определенном округе
@@ -69,7 +69,7 @@ export const useSubjectStore = defineStore('subject', () => {
 
 	// Обновление статистики через API
 	const loadSubjectStatisticsAPI = async parameters => {
-		statistics.value = await apiClient.statistics.read(parameters)
+		statistics.value = await api.statistics.read(parameters)
 	}
 	// Обновление статистики через API
 

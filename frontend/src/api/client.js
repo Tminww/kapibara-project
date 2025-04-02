@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const axiosClient = axios.create({
+const client = axios.create({
 	baseURL:
 		import.meta.env.VITE_MODE === 'DEV'
 			? import.meta.env.VITE_DEV_PATH
@@ -9,9 +9,9 @@ const axiosClient = axios.create({
 })
 
 if (localStorage.getItem('token') !== null) {
-	axiosClient.defaults.withCredentials = true
-	axiosClient.defaults.headers.common['Authorization'] =
+	client.defaults.withCredentials = true
+	client.defaults.headers.common['Authorization'] =
 		`Bearer ${localStorage.getItem('token')}`
 }
 
-export default axiosClient
+export default client
