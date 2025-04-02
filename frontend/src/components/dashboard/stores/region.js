@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import apiClient from '@/api'
 import { ref, computed } from 'vue'
-import { getLastMonth, getLastQuarter, getLastYear } from '@/utils/utils.js' // Утилиты для дат
+import { getLastMonth, getLastQuarter, getLastYear } from '@/utils/utils.ts' // Утилиты для дат
 
 export const useRegionStore = defineStore('region', () => {
     // Состояние

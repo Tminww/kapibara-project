@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory, RouteLocationNormalized } from 'vue-router'
 
 import { routes as dashboardRoutes } from '@/components/dashboard/router'
 import { routes as subjectRoutes } from '@/components/subjects/router'
@@ -191,7 +191,7 @@ router.beforeEach((to, from) => {
         if (to.name !== 'login') {
             return {
                 name: 'login',
-                query: { returnPage: to.name }
+                query: { returnPage: to.name as string }
             }
         }
     }

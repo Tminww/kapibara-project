@@ -1,38 +1,40 @@
 import client from './client'
 
 class Dashboard {
+    endpoint: string
+
     constructor(endpoint = '/api/dashboard') {
         this.endpoint = endpoint
     }
 
     // Получение статистики по номенклатуре
-    readNomenclature = async function (params = {}) {
+    readNomenclature = async (params: Record<string, string>) => {
         return (await client.get(`${this.endpoint}/nomenclature`, { params })).data
     }
 
     // Получение статистики по номенклатуре
-    readNomenclatureDetail = async function (params = {}) {
+    readNomenclatureDetail = async (params: Record<string, string>) => {
         params.detail = 'True'
         return (await client.get(`${this.endpoint}/nomenclature`, { params })).data
     }
 
     // Получение статистики по годам
-    readYears = async function (params = {}) {
+    readYears = async (params: Record<string, string>) => {
         return (await client.get(`${this.endpoint}/years`, { params })).data
     }
 
     // Получение статистики по округам
-    readDistricts = async function (params = {}) {
+    readDistricts = async (params: Record<string, string>) => {
         return (await client.get(`${this.endpoint}/districts`, { params })).data
     }
 
     // Получение статистики по регионам
-    readRegions = async function (params = {}) {
+    readRegions = async (params: Record<string, string>) => {
         return (await client.get(`${this.endpoint}/regions`, { params })).data
     }
 
     // Получение статистики по типам
-    readTypes = async function (params = {}) {
+    readTypes = async (params: Record<string, string>) => {
         return (await client.get(`${this.endpoint}/types`, { params })).data
     }
 }

@@ -1,0 +1,28 @@
+{
+    "compilerOptions": {
+        "target": "ESNext",
+        "module": "ESNext",
+        "moduleResolution": "Node",
+        "strict": true,
+        "jsx": "preserve",
+        "esModuleInterop": true,
+        "allowJs": true,
+        "noEmit": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "strictNullChecks": true,
+        "noImplicitAny": false,
+        "noImplicitThis": true,
+        "resolveJsonModule": true, // Add this line
+        // "types": ["vue-i18n"],
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["src/*"]
+        }
+    },
+    "include": ["src/*", "vite-env.d.ts", "vuetify"],
+    "exclude": [
+        "node_modules",
+        "./dist/**/*" // This is what fixed it!
+    ]
+}

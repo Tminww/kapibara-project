@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia'
 import api from '@/api'
 import { ref, computed } from 'vue'
-import { allDocumentTypes, allOrgans } from '@/mock'
 
 export const useDashboardStore = defineStore('dashboard', () => {
     const subjects = ref([])

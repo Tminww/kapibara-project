@@ -134,7 +134,7 @@
 <script setup>
 import { TRegionCard, TDonutChart, TFilterSidebar, TFilterForm } from '../widgets'
 import { useRegionStore } from '../stores/region'
-import { dateFormat, getLastMonth } from '@/utils/utils'
+import { dateFormat, getLastMonth } from '@/utils/utils.ts'
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { toast } from 'vue-sonner'

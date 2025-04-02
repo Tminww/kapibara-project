@@ -5,26 +5,6 @@
                 {{ t('layouts.dashboard.header.title') }}
             </div>
         </template>
-
-        <!-- <template #login>
-			<div
-				v-if="authData.token === null"
-				@click="goToLogin()"
-				variant="plain"
-				:ripple="false"
-			>
-				{{ t('layouts.dashboard.header.login') }}
-			</div>
-			<div
-				v-else=""
-				@click="goToLogout()"
-				variant="plain"
-				:ripple="false"
-			>
-				({{ authData.username }})
-				{{ t('layouts.dashboard.header.logout') }}
-			</div>
-		</template> -->
     </t-header-widget>
 
     <v-main>
@@ -42,22 +22,15 @@
     <Toaster richColors :expand="true" position="bottom-right" />
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { THeaderWidget, TBreadcrumbs } from '@/components/widgets'
 import { Toaster } from 'vue-sonner'
-import { getAuthDataFromLocalStorage } from '@/utils/auth'
-import { computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
 const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()
-
-const authData = computed(() => {
-    console.log(getAuthDataFromLocalStorage())
-    return getAuthDataFromLocalStorage()
-})
 
 const breadcrumbs = [
     {

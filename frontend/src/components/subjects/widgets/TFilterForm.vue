@@ -69,7 +69,7 @@
 
 <script setup>
 import { onMounted, reactive, watchEffect } from 'vue'
-import { getLastMonth, getLastQuarter, getLastYear } from '@/utils/utils.js'
+import { getLastMonth, getLastQuarter, getLastYear } from '@/utils/utils.ts'
 import { VDateInput } from 'vuetify/labs/VDateInput'
 
 // Определяем props
