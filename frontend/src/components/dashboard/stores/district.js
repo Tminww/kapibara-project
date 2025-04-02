@@ -20,7 +20,7 @@ export const useDistrictStore = defineStore('district', () => {
     const isLoading = computed(() => loading.value)
     const getStatistics = computed(() => statistics.value || [])
     const getAllStatistics = computed(() => allStatistics.value || [])
-    const getAllStat = computed(() => allStatistics.value.stat || [])
+    const getAllStat = computed(() => allStatistics.value || [])
     const getDistrictsToRequest = computed(() => districtsToRequest.value)
     const getDistrictName = computed(() => allStatistics.value.name || 'Общая статистика')
 

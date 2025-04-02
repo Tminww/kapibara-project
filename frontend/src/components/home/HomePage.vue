@@ -70,13 +70,13 @@ const blocks = [
     // 	title: 'Конституционный Суд РФ',
     // 	count: 5,
     // },
-    {
-        linkName: 'subjects',
-        icon: 'subjects',
-        description: 'Законы и иные правовые акты субъектов РФ',
-        title: 'Органы государственной власти субъектов РФ',
-        count: 9 //29
-    },
+    // {
+    //     linkName: 'subjects',
+    //     icon: 'subjects',
+    //     description: 'Законы и иные правовые акты субъектов РФ',
+    //     title: 'Органы государственной власти субъектов РФ',
+    //     count: 9 //29
+    // },
     // {
     // 	linkName: 'international',
     // 	icon: 'international',

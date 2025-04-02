@@ -288,7 +288,7 @@
 </template>
 
 <script setup>
-import { TAreaCard, TDonutChart, THorizontalBarChart, TColumnChart } from '../components/widgets'
+import { TAreaCard, TDonutChart, THorizontalBarChart, TColumnChart } from '../widgets'
 import { useChartArea } from '../composables'
 
 import { useDashboardStore } from '../stores/dashboard'

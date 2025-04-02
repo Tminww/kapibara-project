@@ -1,9 +1,10 @@
 <template>
+    <!-- Фильтры в боковом меню -->
     <t-filter-sidebar v-model="leftMenu" :loading="loadingSubjects">
         <template #form>
             <t-filter-form
                 :loading="store.isLoading"
-                :items="store.getDistrictsToRequest"
+                :items="store.getSubjects"
                 @submit="(data) => onSubmit(data)"
             ></t-filter-form>
         </template>
@@ -18,7 +19,6 @@
             </v-container>
         </v-col>
     </v-row>
-
     <v-row v-if="errorStatistics || errorSubjects">
         <v-col>
             <v-container fluid>
@@ -33,20 +33,33 @@
             </v-container>
         </v-col>
     </v-row>
-
+    <v-row v-if="emptyStatistics">
+        <v-col>
+            <v-container fluid>
+                <v-alert
+                    v-if="errorSubjects"
+                    class="d-flex align-center justify-center"
+                    type="info"
+                    title="Упс..."
+                    text="Нет данных по выбранным фильтрам"
+                    variant="tonal"
+                ></v-alert>
+            </v-container>
+        </v-col>
+    </v-row>
     <v-row v-else no-gutters class="justify-space-around">
-        <v-col cols="auto" v-if="store.getAllStat?.length">
+        <v-col cols="auto">
             <v-container>
                 <t-region-card
-                    :title="store.getDistrictName || 'Общая статистика'"
+                    :title="store.getDistrictName"
                     :is-loading="isLoading"
                     :min-width="400"
                     :max-width="400"
                 >
                     <template #chart>
                         <t-donut-chart
-                            :labels="store.getAllStat.map((item) => item.name)"
-                            :series="store.getAllStat.map((item) => item.count)"
+                            :labels="store.getDistrictStat.map((item) => item.name)"
+                            :series="store.getDistrictStat.map((item) => item.count)"
                             :height="350"
                             :enable-logarithmic="false"
                             :log-base="10"
@@ -75,19 +88,18 @@
                 </t-region-card>
             </v-container>
         </v-col>
-
-        <v-col cols="auto" v-for="region in store.getStatistics" :key="region.name">
-            <v-container v-if="region?.stat?.length">
+        <v-col cols="auto" v-for="region of store.getRegions" :key="region">
+            <v-container>
                 <t-region-card
-                    :title="region.name || 'Без названия'"
+                    :title="region.name"
                     :is-loading="isLoading"
                     :min-width="400"
                     :max-width="400"
                 >
                     <template #chart>
                         <t-donut-chart
-                            :labels="region.stat.map((item) => item.name)"
-                            :series="region.stat.map((item) => item.count)"
+                            :labels="region?.stat?.map((item) => item.name)"
+                            :series="region?.stat?.map((item) => item.count)"
                             :height="350"
                             :enable-logarithmic="false"
                             :log-base="10"
@@ -120,13 +132,15 @@
 </template>
 
 <script setup>
-import { TRegionCard, TDonutChart, TFilterSidebar, TFilterForm } from '../components/widgets'
-import { useDistrictStore } from '../stores/district'
+import { TRegionCard, TDonutChart, TFilterSidebar, TFilterForm } from '../widgets'
+import { useRegionStore } from '../stores/region'
 import { dateFormat, getLastMonth } from '@/utils/utils'
 import { ref, computed, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 import { toast } from 'vue-sonner'
 
-const store = useDistrictStore()
+const route = useRoute()
+const store = useRegionStore()
 
 const leftMenu = ref(false)
 const isPreviousLoading = ref(false)
@@ -136,8 +150,15 @@ const errorSubjects = ref(null)
 const loadingStatistics = ref(false)
 const errorStatistics = ref(null)
 
-const isLoading = computed(() => store.isLoading || loadingStatistics.value)
+const emptyStatistics = computed(() => {
+    return store.allStatistics.length === 0
+})
+// Вычисляемое свойство для общего состояния загрузки
+const isLoading = computed(() => {
+    return store.isLoading || loadingStatistics.value
+})
 
+// Формирование параметров запроса
 const getParams = () => {
     const params = {
         startDate: store.startDate,
@@ -146,6 +167,7 @@ const getParams = () => {
     if (store.selectedItems.length > 0) {
         params.ids = store.selectedItems.toString()
     }
+
     return params
 }
 
@@ -158,13 +180,14 @@ const previousInterval = async () => {
 
         // Сдвигаем дату на месяц назад относительно текущего startDate
         const currentStart = new Date(store.startDate)
+        console.log(currentStart)
 
         const newInterval = getLastMonth(currentStart)
         store.startDate = newInterval.startDate
         store.endDate = newInterval.endDate
 
         const params = getParams()
-        await store.loadStatistics(params)
+        await store.loadStatisticsAPI(route.params.id, params)
     } catch (e) {
         errorStatistics.value = e.message
         store.dropStatistics()
@@ -197,7 +220,7 @@ const nextInterval = async () => {
         store.endDate = newInterval.endDate
 
         const params = getParams()
-        await store.loadStatistics(params)
+        await store.loadStatisticsAPI(route.params.id, params)
     } catch (e) {
         errorStatistics.value = e.message
         store.dropStatistics()
@@ -206,14 +229,15 @@ const nextInterval = async () => {
         loadingStatistics.value = false
     }
 }
-
 const convertDateToYYYYMMDDString = (date) => {
     const year = date.getFullYear()
-    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const month = String(date.getMonth() + 1).padStart(2, '0') // +1, так как месяцы с 0
     const day = String(date.getDate()).padStart(2, '0')
-    return `${year}-${month}-${day}`
+    const yyyyMMdd = `${year}-${month}-${day}`
+    return yyyyMMdd
 }
 
+// Формирование параметров запроса
 const paramsProcessing = (selected, startDate, endDate) => {
     const params = {}
     if (startDate) params.startDate = startDate
@@ -223,15 +247,21 @@ const paramsProcessing = (selected, startDate, endDate) => {
 }
 
 const onSubmit = async (data) => {
+    // Обработчик отправки формы (синхронизация с Pinia Store)
+    console.log('start')
+    console.log(data)
     try {
         await store.startLoading()
+
+        // Синхронизируем локальные данные с Pinia Store
         store.selectedItems = [...data.selectedItems]
         store.selectedPeriod = data.selectedPeriod
-        store.startDate = convertDateToYYYYMMDDString(data.startDate)
-        store.endDate = convertDateToYYYYMMDDString(data.endDate)
+        store.startDate = convertDateToYYYYMMDDString(data.startDate) // Передаём строку
+        store.endDate = convertDateToYYYYMMDDString(data.endDate) // Передаём строку
 
+        console.log(store.selectedItems)
         const params = paramsProcessing(store.selectedItems, store.startDate, store.endDate)
-        await store.loadStatistics(params)
+        await store.loadStatisticsAPI(route.params.id, params)
     } catch (e) {
         console.log(e)
         store.dropStatistics()
@@ -240,17 +270,18 @@ const onSubmit = async (data) => {
     }
 }
 
+// Загрузка начальных данных
 const loadInitialData = async () => {
     try {
         loadingSubjects.value = true
         errorSubjects.value = null
-        await store.loadDistrictsToRequest()
+        await store.loadSubjectsAPI(route.params.id)
 
         loadingStatistics.value = true
         errorStatistics.value = null
-        store.initializeForm()
+        store.initializeForm() // Инициализируем форму из стора
         const params = getParams()
-        await store.loadStatistics(params)
+        await store.loadStatisticsAPI(route.params.id, params)
     } catch (e) {
         errorSubjects.value = e.message
         errorStatistics.value = e.message
@@ -260,7 +291,6 @@ const loadInitialData = async () => {
         loadingStatistics.value = false
     }
 }
-
 onMounted(async () => {
     await loadInitialData()
 })

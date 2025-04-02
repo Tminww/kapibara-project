@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-import { routes as dashboardRoutes } from '@/features/dashboard/router'
-import { routes as subjectRoutes } from '@/features/subjects/router'
+import { routes as dashboardRoutes } from '@/components/dashboard/router'
+import { routes as subjectRoutes } from '@/components/subjects/router'
 const meta = {
     requiresAuth: false,
     forAdmin: false,
@@ -16,7 +16,7 @@ const routes = [
     {
         path: '/root',
         name: 'home',
-        component: () => import('@/pages/HomePage.vue'),
+        component: () => import('@/components/home/HomePage.vue'),
         meta: {
             ...meta,
             breadCrumb: [
@@ -29,7 +29,7 @@ const routes = [
     {
         path: '/president',
         name: 'president',
-        component: () => import('@/pages/errors/NotFound404.vue'),
+        component: () => import('@/components/errors/NotFound404.vue'),
         meta: {
             ...meta,
             breadCrumb: [
@@ -46,7 +46,7 @@ const routes = [
     {
         path: '/council_1',
         name: 'council_1',
-        component: () => import('@/pages/errors/NotFound404.vue'),
+        component: () => import('@/components/errors/NotFound404.vue'),
         meta: {
             ...meta,
             breadCrumb: [
@@ -63,7 +63,7 @@ const routes = [
     {
         path: '/council_2',
         name: 'council_2',
-        component: () => import('@/pages/errors/NotFound404.vue'),
+        component: () => import('@/components/errors/NotFound404.vue'),
         meta: {
             ...meta,
             breadCrumb: [
@@ -80,7 +80,7 @@ const routes = [
     {
         path: '/government',
         name: 'government',
-        component: () => import('@/pages/errors/NotFound404.vue'),
+        component: () => import('@/components/errors/NotFound404.vue'),
         meta: {
             ...meta,
             breadCrumb: [
@@ -97,7 +97,7 @@ const routes = [
     {
         path: '/federal_authorities',
         name: 'federal_authorities',
-        component: () => import('@/pages/errors/NotFound404.vue'),
+        component: () => import('@/components/errors/NotFound404.vue'),
         meta: {
             ...meta,
             breadCrumb: [
@@ -114,7 +114,7 @@ const routes = [
     {
         path: '/court',
         name: 'court',
-        component: () => import('@/pages/errors/NotFound404.vue'),
+        component: () => import('@/components/errors/NotFound404.vue'),
         meta: {
             ...meta,
             breadCrumb: [
@@ -131,7 +131,7 @@ const routes = [
     {
         path: '/international',
         name: 'international',
-        component: () => import('@/pages/errors/NotFound404.vue'),
+        component: () => import('@/components/errors/NotFound404.vue'),
         meta: {
             ...meta,
             breadCrumb: [
@@ -148,7 +148,7 @@ const routes = [
     {
         path: '/un_securitycouncil',
         name: 'un_securitycouncil',
-        component: () => import('@/pages/errors/NotFound404.vue'),
+        component: () => import('@/components/errors/NotFound404.vue'),
         meta: {
             ...meta,
             breadCrumb: [
@@ -166,7 +166,7 @@ const routes = [
     {
         path: '/:pathMatch(.*)*',
         name: 'not-found',
-        component: () => import('@/pages/errors/NotFound404.vue'),
+        component: () => import('@/components/errors/NotFound404.vue'),
         meta
     }
 ]

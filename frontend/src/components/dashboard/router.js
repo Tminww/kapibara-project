@@ -1,6 +1,6 @@
-import { DashboardPage } from './pages/'
-import { DistrictPage } from './pages/'
-import { RegionPage } from './pages/'
+import { DashboardPage } from './pages'
+import { DistrictPage } from './pages'
+import { RegionPage } from './pages'
 
 const meta = {
     requiresAuth: false,
