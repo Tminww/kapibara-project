@@ -122,7 +122,7 @@
 <script setup>
 import { TRegionCard, TDonutChart, TFilterSidebar, TFilterForm } from '../widgets'
 import { useDistrictStore } from '../stores/district'
-import { dateFormat, getLastMonth } from '@/utils/utils.ts'
+import { dateFormat, getLastMonth } from '@/utils/utils'
 import { ref, computed, onMounted } from 'vue'
 import { toast } from 'vue-sonner'
 

@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import apiClient from '@/api'
 import { ref, computed } from 'vue'
-import { getLastMonth, getLastQuarter, getLastYear } from '@/utils/utils.ts'
+import { getLastMonth, getLastQuarter, getLastYear } from '@/utils/utils'
 
 export const useDistrictStore = defineStore('district', () => {
     // Состояние

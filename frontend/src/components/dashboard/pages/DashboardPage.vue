@@ -292,7 +292,7 @@ import { TAreaCard, TDonutChart, THorizontalBarChart, TColumnChart } from '../wi
 import { useChartArea } from '../composables'
 
 import { useDashboardStore } from '../stores/dashboard'
-import { getLastMonth, getLastQuarter, getLastYear, getLastWeek } from '@/utils/utils.ts'
+import { getLastMonth, getLastQuarter, getLastYear, getLastWeek } from '@/utils/utils'
 import { computed } from 'vue'
 import { toast } from 'vue-sonner'
 import { useDate } from 'vuetify'
