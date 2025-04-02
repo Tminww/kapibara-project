@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 import { routes as dashboardRoutes } from '@/features/dashboard/router'
-
+import { routes as subjectRoutes } from '@/features/subjects/router'
 const meta = {
     requiresAuth: false,
     forAdmin: false,
@@ -11,6 +11,8 @@ const meta = {
 
 const routes = [
     ...dashboardRoutes,
+    ...subjectRoutes,
+
     {
         path: '/root',
         name: 'home',
@@ -20,25 +22,6 @@ const routes = [
             breadCrumb: [
                 {
                     text: ''
-                }
-            ]
-        }
-    },
-
-    {
-        path: '/subjects',
-        name: 'subjects',
-        component: () => import('@/pages/errors/NotFound404.vue'),
-
-        meta: {
-            ...meta,
-            breadCrumb: [
-                {
-                    text: 'Главная',
-                    to: { name: 'home' }
-                },
-                {
-                    text: 'Субъекты'
                 }
             ]
         }

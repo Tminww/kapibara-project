@@ -1,50 +1,32 @@
 import { defineStore } from 'pinia'
 import apiClient from '@/api'
 import { ref, computed } from 'vue'
-import { getLastMonth, getLastQuarter, getLastYear } from '@/utils/utils.js' // Утилиты для дат
+import { getLastMonth, getLastQuarter, getLastYear } from '@/utils/utils.js'
 
-export const useRegionStore = defineStore('region', () => {
+export const useDistrictStore = defineStore('district', () => {
     // Состояние
     const loading = ref(false)
     const selectedPeriod = ref('За прошлый месяц')
     const selectedItems = ref([])
     const startDate = ref('')
     const endDate = ref('')
-
-    const regionsToRequest = ref([])
-    const statistics = ref({})
+    const statistics = ref([])
     const allStatistics = ref([])
-    const selectedDistrictName = ref('')
-
-    const districts = ref([])
-    const districtsForRequest = ref([])
+    const districtsToRequest = ref([])
 
     // Геттеры
     const getStartDate = computed(() => startDate.value)
     const getEndDate = computed(() => endDate.value)
     const isLoading = computed(() => loading.value)
-
-    const getSubjects = computed(() => regionsToRequest.value)
-    const getDistrictName = computed(() => selectedDistrictName.value)
-    const getDistrictStat = computed(() => allStatistics.value)
-    const getStatistics = computed(() => statistics.value)
-
-    const getAllStatistics = computed(() => allStatistics.value)
-    const getRegions = computed(() => statistics.value)
-    const getDistrictsForRequest = computed(() => districtsForRequest.value)
-    const getDistricts = computed(() => districts.value)
+    const getStatistics = computed(() => statistics.value || [])
+    const getAllStatistics = computed(() => allStatistics.value || [])
+    const getAllStat = computed(() => allStatistics.value.stat || [])
+    const getDistrictsToRequest = computed(() => districtsToRequest.value)
+    const getDistrictName = computed(() => allStatistics.value.name || 'Общая статистика')
 
     // Действия
-    const dropSubjects = () => {
-        regionsToRequest.value = []
-    }
-
-    const dropDistricts = () => {
-        districts.value = []
-    }
-
-    const dropDistrictsForRequest = () => {
-        districtsForRequest.value = []
+    const dropDistrictsToRequest = () => {
+        districtsToRequest.value = []
     }
 
     const startLoading = async () => {
@@ -56,21 +38,20 @@ export const useRegionStore = defineStore('region', () => {
     }
 
     const setStatistics = (newValue) => {
-        statistics.value = newValue
+        statistics.value = Array.isArray(newValue) ? newValue : []
     }
 
     const dropStatistics = () => {
-        statistics.value = {}
+        statistics.value = []
+        allStatistics.value = []
     }
 
-    // Инициализация данных формы
     const initializeForm = () => {
-        selectedItems.value = regionsToRequest.value.map((s) => s.id)
+        selectedItems.value = districtsToRequest.value.map((s) => s.id)
         selectedPeriod.value = 'За прошлый месяц'
         updateDatesByPeriod(selectedPeriod.value)
     }
 
-    // Обновление дат по выбранному периоду
     const updateDatesByPeriod = (period) => {
         let interval
         switch (period) {
@@ -90,21 +71,18 @@ export const useRegionStore = defineStore('region', () => {
         endDate.value = interval.endDate
     }
 
-    // Сброс формы
     const resetForm = () => {
         startDate.value = null
         endDate.value = null
-        selectedItems.value = regionsToRequest.value.map((s) => s.id)
+        selectedItems.value = districtsToRequest.value.map((s) => s.id)
         selectedPeriod.value = 'За прошлый месяц'
         updateDatesByPeriod(selectedPeriod.value)
     }
 
-    // Загрузка статистики через API
-    const loadStatisticsAPI = async (distId, params) => {
+    const loadStatistics = async (params) => {
         try {
-            const response = await apiClient.statistics.readDistrictById(distId, params)
-            selectedDistrictName.value = response.data?.name || ''
-            statistics.value = response.data?.regions || []
+            const response = await apiClient.statistics.readDistricts(params)
+            statistics.value = response.data?.districts || []
             allStatistics.value = response.data?.stat || []
 
             startDate.value = response.startDate // Эти значения могут быть перезаписаны API
@@ -117,47 +95,37 @@ export const useRegionStore = defineStore('region', () => {
     }
 
     // Загрузка субъектов через API
-    const loadSubjectsAPI = async (districtId) => {
+    const loadDistrictsToRequest = async () => {
         try {
-            const response = await apiClient.subjects.readRegions({ districtId })
-            regionsToRequest.value = response.data
+            const response = await apiClient.subjects.read()
+            districtsToRequest.value = response.data
         } catch (error) {
             console.error('Ошибка при загрузке субъектов:', error)
-            dropSubjects()
+            dropDistrictsToRequest()
         }
     }
 
-    // Возвращаем все свойства и методы
     return {
         loading,
-        statistics,
-        allStatistics,
-        regionsToRequest,
+        districtsToRequest,
         startDate,
         endDate,
         selectedItems,
         selectedPeriod,
-
         getStartDate,
         getEndDate,
-        getDistrictName,
-        getDistrictStat,
         isLoading,
-        getRegions,
+        getDistrictsToRequest,
         getStatistics,
-        getSubjects,
-        getDistrictsForRequest,
-        getDistricts,
         getAllStatistics,
-
-        dropSubjects,
+        getAllStat,
+        getDistrictName,
         startLoading,
         endLoading,
         setStatistics,
         dropStatistics,
-        loadStatisticsAPI,
-        loadSubjectsAPI,
-
+        loadDistrictsToRequest,
+        loadStatistics,
         initializeForm,
         updateDatesByPeriod,
         resetForm
