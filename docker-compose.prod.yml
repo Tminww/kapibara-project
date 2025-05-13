@@ -1,0 +1,47 @@
+services:
+  database:
+    container_name: kapibara-postgres
+    image: postgres
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:54321:5432"
+    env_file:
+      - path: ./postgres.env
+        required: true
+    volumes:
+      - kapibara-postgres-data:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: kapibara-pgadmin
+    restart: unless-stopped
+    depends_on:
+      - database
+    ports:
+      - "0.0.0.0:8082:80"
+    env_file:
+      - path: ./pgadmin.env
+        required: true
+    volumes:
+      - kapibara-pgadmin-data:/var/lib/pgadmin
+
+  backend:
+    build: ./backend/
+    container_name: kapibara-backend
+    restart: unless-stopped
+    depends_on:
+      - database
+    ports:
+      - "127.0.0.1:8080:80"
+
+  frontend:
+    build: ./frontend/
+    container_name: kapibara-frontend
+    depends_on:
+      - backend
+    ports:
+      - "127.0.0.1:8081:5173"
+
+volumes:
+  kapibara-postgres-data:
+  kapibara-pgadmin-data:

@@ -1,0 +1,66 @@
+{
+    "layouts": {
+        "dashboard": {
+            "header": {
+                "title": "Программное средство оценки состояния банков НПА",
+                "login": "Войти",
+                "logout": "Выйти",
+                "color": "primary"
+            },
+            "footer": {
+                "title": "XXX, г. Орел",
+                "color": "primary"
+            }
+        }
+    },
+
+    "buttons": {
+        "save": "Сохранить",
+        "cancel": "Отменить",
+        "create": "Создать",
+        "edit": "Изменить",
+        "delete": "Удалить",
+        "add": "Добавить",
+        "search": "Поиск",
+        "show": "Показать",
+        "close": "Закрыть",
+        "apply": "Применить",
+        "clear": "Очистить",
+        "applyFilter": "Применить фильтр",
+        "view": "Просмотр",
+        "confirm": "Подтвердить",
+        "createSticker": "Сформировать наклейки для образца"
+    },
+    "icons": {
+        "read": "mdi-eye",
+        "search": "mdi-magnify",
+        "add": "mdi-plus",
+        "close": "mdi-close",
+        "edit": "mdi-pencil",
+        "delete": "mdi-delete",
+        "cancel": "mdi-cancel",
+        "save": "mdi-content-save"
+    },
+    "rules": {
+        "required": "Обязательное поле"
+    },
+    "errors": {
+        "unknown": "Неизвестная ошибка",
+        "notFound": {
+            "code": "404",
+            "title": "О нет! Вы потерялись.",
+            "title_en": "UH OH! You're lost.",
+            "text": "Страницу, которую вы ищете, не существует. Как вы сюда попали - загадка.",
+            "text_en": "The page you are looking for does not exist. How you got here is a mystery.",
+            "button": {
+                "color": "primary",
+                "text": "На главную"
+            }
+        },
+        "forbidden": {
+            "code": "403",
+            "title": "403",
+            "text": "403"
+        }
+    }
+}
