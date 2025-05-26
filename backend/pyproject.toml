@@ -40,8 +40,6 @@ dev = [
     "vulture>=2.14",
 ]
 
-[tool.uv]
-build_option = "wheel"
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"

@@ -3,10 +3,12 @@
 
 # Параметры
 TRANSFER_DIR="$HOME/transfer"
-BACKEND_DIR="/home/tminww/kapibara-prod/backend"
-FRONTEND_DIR="/home/tminww/kapibara-prod/frontend"
+BASE_DIR="$(pwd)"
+BACKEND_DIR="$BASE_DIR/backend"
+FRONTEND_DIR="$BASE_DIR/frontend"
 PYTHON_VERSION="3.10.12"
 
+echo $BASE_DIR
 # Проверка наличия BACKEND_DIR
 if [ ! -d "$BACKEND_DIR" ]; then
     echo "Ошибка: Директория $BACKEND_DIR не существует"
@@ -23,17 +25,34 @@ mkdir -p "$TRANSFER_DIR"/{python,uv,wheels,backend,frontend} || {
     }
 }
 
-# Скачивание Python 3.10
-wget https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tar.xz -O "$TRANSFER_DIR/python/Python-$PYTHON_VERSION.tar.xz" || {
-    echo "Ошибка: Не удалось скачать Python $PYTHON_VERSION"
-    exit 1
-}
+# Установка Python 3.10 через uv
+echo "Установка Python 3.10 через uv..."
+# uv python install 3.10
 
-# Скачивание uv
-curl -LsSf https://github.com/astral-sh/uv/releases/latest/download/uv-x86_64-unknown-linux-gnu.tar.gz -o "$TRANSFER_DIR/uv/uv.tar.gz" || {
-    echo "Ошибка: Не удалось скачать uv"
-    exit 1
-}
+
+# Скачивание uv бинарника
+echo "Скачивание uv..."
+# mkdir -p "$TRANSFER_DIR/uv"
+# curl -LsSf https://github.com/astral-sh/uv/releases/latest/download/uv-x86_64-unknown-linux-gnu.tar.gz -o "$TRANSFER_DIR/uv/uv.tar.gz"
+
+# Скачивание uv бинарника
+echo "Скачивание bun..."
+# mkdir -p "$TRANSFER_DIR/bun"
+# curl -LsSf https://github.com/oven-sh/bun/releases/latest/download/bun-linux-x64.zip -o "$TRANSFER_DIR/bun/bun.zip"
+
+# Скачивание Python 3.10 через uv
+echo "Подготовка Python 3.10..."
+UV_PYTHON_PATH=$(uv python find 3.10)
+if [ -z "$UV_PYTHON_PATH" ]; then
+    echo "Python 3.10 не найден через uv, устанавливаем..."
+    uv python install 3.10
+    UV_PYTHON_PATH=$(uv python find 3.10)
+fi
+
+# Копирование установленного Python
+UV_PYTHON_DIR=$(dirname $(dirname "$UV_PYTHON_PATH"))
+echo $UV_PYTHON_DIR
+cp -r "$UV_PYTHON_DIR" "$TRANSFER_DIR/python/"
 
 cp deploy_on_alse.sh "$TRANSFER_DIR/" || {
     echo "Ошибка: Не удалось скопировать deploy_on_alse.sh"
@@ -54,7 +73,7 @@ if ! command -v uv >/dev/null 2>&1; then
 fi
 
 # Экспорт зависимостей
-uv pip freeze > requirements.txt || {
+uv run pip freeze > requirements.txt || {
     echo "Ошибка: Не удалось экспортировать зависимости"
     exit 1
 }
@@ -80,7 +99,7 @@ if ! command -v pip >/dev/null 2>&1; then
 fi
 
 # Создание колесиков с помощью pip wheel
-pip wheel -r requirements.txt -w "$TRANSFER_DIR/wheels" || {
+uv run pip wheel -r requirements.txt -w "$TRANSFER_DIR/wheels" || {
     echo "Ошибка: Не удалось создать колесики зависимостей"
     exit 1
 }
@@ -89,8 +108,11 @@ cp requirements.txt "$TRANSFER_DIR/wheels/" || {
     exit 1
 }
 
-
-rsync -a --exclude='.venv' "$BACKEND_DIR/" "$TRANSFER_DIR/backend/" || {
+cd "$BACKEND_DIR" || {
+    echo "Ошибка: Не удалось перейти в $BACKEND_DIR"
+    exit 1
+}
+rsync -a --exclude='.venv' "$BACKEND_DIR/" "$TRANSFER_DIR/backend" || {
     echo "Ошибка: Не удалось переместить backend"
     exit 1
 }
@@ -112,8 +134,8 @@ bun install || {
     exit 1
 }
 
-bun run build --outDir "$TRANSFER_DIR/frontend/" || {
-    echo "Ошибка: Не удалось собрать проект bun"
+cp -r . "$TRANSFER_DIR/frontend/" || {
+    echo "Ошибка: Не удалось переместить фронтенд"
     exit 1
 }
 
@@ -124,7 +146,7 @@ cd "$TRANSFER_DIR" || {
     echo "Ошибка: Не удалось перейти в $TRANSFER_DIR"
     exit 1
 }
-tar -czf fastapi_project_transfer.tar.gz python uv wheels backend frontend deploy_on_alse.sh || {
+tar -czf fastapi_project_transfer.tar.gz python uv bun wheels backend frontend deploy_on_alse.sh || {
     echo "Ошибка: Не удалось создать финальный архив"
     exit 1
 }
