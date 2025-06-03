@@ -31,3 +31,5 @@ const currentIcon = computed(() => {
         </v-card-text>
     </v-card>
 </template>
+
+<style scoped></style>

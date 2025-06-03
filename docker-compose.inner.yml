@@ -1,0 +1,78 @@
+services:
+  database:
+    container_name: kapibara-postgres
+    image: postgres:15  # Конкретная версия для стабильности
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:54321:5432"
+    env_file:
+      - path: ./postgres.env
+        required: true
+    volumes:
+      - kapibara-postgres-data:/var/lib/postgresql/data
+    healthcheck:  # Проверка здоровья БД
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  broker:
+    container_name: kapibara-redis
+    image: redis:7-alpine  # Конкретная версия
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - kapibara-redis-data:/data
+    command: redis-server --appendonly yes
+    healthcheck:  # Проверка здоровья Redis
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  maildev:
+    container_name: kapibara-maildev
+    image: maildev/maildev
+    restart: unless-stopped  # Консистентно с другими сервисами
+    environment:
+      - TZ=Europe/Moscow
+      - MAILDEV_WEB_PORT=1080
+      - MAILDEV_SMTP_PORT=1025
+    ports:
+      - "127.0.0.1:8090:1080"  # Web интерфейс
+      - "127.0.0.1:8025:1025"  # SMTP порт
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "3"  # Ротация логов
+        
+  backend:
+    build: 
+      context: ./backend/
+    container_name: kapibara-backend
+    restart: unless-stopped
+    depends_on:
+      database:
+        condition: service_healthy  # Ждем готовности БД
+      broker:
+        condition: service_healthy  # Ждем готовности Redis
+    ports:
+      - "127.0.0.1:8080:80"
+
+  frontend:
+    build: 
+      context: ./frontend/
+    container_name: kapibara-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "127.0.0.1:5173:5173"
+
+volumes:
+  kapibara-postgres-data:
+    driver: local
+  kapibara-redis-data:
+    driver: local

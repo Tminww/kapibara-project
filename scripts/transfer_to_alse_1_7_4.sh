@@ -27,18 +27,18 @@ mkdir -p "$TRANSFER_DIR"/{python,uv,wheels,backend,frontend} || {
 
 # Установка Python 3.10 через uv
 echo "Установка Python 3.10 через uv..."
-# uv python install 3.10
+uv python install 3.10
 
 
 # Скачивание uv бинарника
 echo "Скачивание uv..."
-# mkdir -p "$TRANSFER_DIR/uv"
-# curl -LsSf https://github.com/astral-sh/uv/releases/latest/download/uv-x86_64-unknown-linux-gnu.tar.gz -o "$TRANSFER_DIR/uv/uv.tar.gz"
+mkdir -p "$TRANSFER_DIR/uv"
+curl -LsSf https://github.com/astral-sh/uv/releases/latest/download/uv-x86_64-unknown-linux-gnu.tar.gz -o "$TRANSFER_DIR/uv/uv.tar.gz"
 
 # Скачивание uv бинарника
 echo "Скачивание bun..."
-# mkdir -p "$TRANSFER_DIR/bun"
-# curl -LsSf https://github.com/oven-sh/bun/releases/latest/download/bun-linux-x64.zip -o "$TRANSFER_DIR/bun/bun.zip"
+mkdir -p "$TRANSFER_DIR/bun"
+curl -LsSf https://github.com/oven-sh/bun/releases/latest/download/bun-linux-x64.zip -o "$TRANSFER_DIR/bun/bun.zip"
 
 # Скачивание Python 3.10 через uv
 echo "Подготовка Python 3.10..."
@@ -123,30 +123,22 @@ cd "$FRONTEND_DIR" || {
     exit 1
 }
 
-# Проверка наличия uv
-if ! command -v bun >/dev/null 2>&1; then
-    echo "Ошибка: Bun не установлен. Установите с помощью: curl -fsSL https://bun.sh/install | bash"
-    exit 1
-fi
-
-bun install || {
-    echo "Ошибка: Не удалось установить зависимости bun"
-    exit 1
-}
 
 cp -r . "$TRANSFER_DIR/frontend/" || {
     echo "Ошибка: Не удалось переместить фронтенд"
     exit 1
 }
 
-
+# mkdir -p "$TRANSFER_DIR/redis"
+# cd $TRANSFER_DIR/redis
+# sudo apt download redis redis-server redis-tools liblzf1
 
 # Создание финального архива
 cd "$TRANSFER_DIR" || {
     echo "Ошибка: Не удалось перейти в $TRANSFER_DIR"
     exit 1
 }
-tar -czf fastapi_project_transfer.tar.gz python uv bun wheels backend frontend deploy_on_alse.sh || {
+tar -czf fastapi_project_transfer.tar.gz python uv bun wheels backend frontend redis deploy_on_alse.sh || {
     echo "Ошибка: Не удалось создать финальный архив"
     exit 1
 }

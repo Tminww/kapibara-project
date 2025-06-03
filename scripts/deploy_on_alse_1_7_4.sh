@@ -141,15 +141,15 @@ DEPLOY_DIR=$(read_input "Путь для развертывания" "$DEPLOY_DI
 echo
 print_color $INFO "=== НАСТРОЙКИ POSTGRESQL ==="
 echo
-DB_NAME=$(read_input "Имя базы данных" "kapibara")
-DB_USER=$(read_input "Пользователь базы данных" "kapibara")
-DB_PASSWORD=$(read_input "Пароль базы данных (оставьте пустым для автогенерации)" "")
-if [ -z "$DB_PASSWORD" ]; then
-    DB_PASSWORD=$(generate_password 16)
-    print_color $SUCCESS "Сгенерирован пароль: $DB_PASSWORD"
+DATABASE_NAME=$(read_input "Имя базы данных" "kapibara")
+DATABASE_USER=$(read_input "Пользователь базы данных" "kapibara")
+DATABASE_PASSWORD=$(read_input "Пароль базы данных (оставьте пустым для автогенерации)" "")
+if [ -z "$DATABASE_PASSWORD" ]; then
+    DATABASE_PASSWORD=$(generate_password 16)
+    print_color $SUCCESS "Сгенерирован пароль: $DATABASE_PASSWORD"
 fi
-DB_HOST=$(read_input "Хост базы данных" "localhost")
-DB_PORT=$(read_input "Порт базы данных" "5432" '[[ "$testval" =~ ^[0-9]+$ ]] && [ "$testval" -ge 1 ] && [ "$testval" -le 65535 ]')
+DATABASE_HOST=$(read_input "Хост базы данных" "localhost")
+DATABASE_PORT=$(read_input "Порт базы данных" "5432" '[[ "$testval" =~ ^[0-9]+$ ]] && [ "$testval" -ge 1 ] && [ "$testval" -le 65535 ]')
 
 # Настройки бэкенда
 echo
@@ -173,12 +173,14 @@ BACKEND_PORT=$(read_input "Порт бэкенда" "8080" '[[ "$testval" =~ ^[0
 # База данных
 echo
 # print_color $INFO "=== НАСТРОЙКИ БАЗЫ ДАННЫХ ==="
-DB_HOST=$(read_input "Хост базы данных" "localhost")
-DB_PORT=$(read_input "Порт базы данных" "5432" '[[ "$testval" =~ ^[0-9]+$ ]] && [ "$testval" -ge 1 ] && [ "$testval" -le 65535 ]')
-DB_USER=$(read_input "Пользователь базы данных" "kapibara")
-DB_PASS=$(read_input "Пароль базы данных (оставьте пустым для автогенерации)" "")
-DB_NAME=$(read_input "Имя базы данных" "kapibara")
-
+DB_HOST=$(read_input "Хост для подключения к базе данных" $DATABASE_HOST)
+DB_PORT=$(read_input "Порт для подключения к базе данных" $DATABASE_PORT '[[ "$testval" =~ ^[0-9]+$ ]] && [ "$testval" -ge 1 ] && [ "$testval" -le 65535 ]')
+DB_USER=$(read_input "Пользователь для подключения к базе данных" $DATABASE_USER)
+DB_PASS=$(read_input "Пароль для подключения к базе данных" $DATABASE_PASSWORD)
+DB_NAME=$(read_input "Имя базы данных" $DATABASE_NAME)
+echo $DB_PASS
+echo $DATABASE_PASSWORD
+echo $DATABASE_PORT
 # Redis
 echo
 # print_color $INFO "=== НАСТРОЙКИ REDIS ==="
@@ -262,10 +264,6 @@ echo
 print_color $INFO "=== НАСТРОЙКИ APACHE ==="
 echo
 APACHE_PORT=$(read_input "Порт Apache для фронтенда" "80")
-while ! validate_port "$APACHE_PORT" 80 65535; do
-    printf "\033[0;31mНекорректный порт. Введите число от 80 до 65535.\033[0m\n"
-    APACHE_PORT=$(read_input "Порт Apache для фронтенда" "80")
-done
 SERVER_NAME=$(read_input "Имя сервера" "localhost")
 
 echo
@@ -299,7 +297,7 @@ check_status "Обновление системы"
 
 # Установка базовых зависимостей
 print_color $CYAN "Установка базовых зависимостей..."
-show_progress 2 "Установка tesseract-ocr unzip"
+show_progress 2 "Установка tesseract-ocr, unzip"
 sudo apt install -y tesseract-ocr unzip >/dev/null 2>&1
 check_status "Установка базовых зависимостей"
 
@@ -320,13 +318,61 @@ check_status "Запуск PostgreSQL"
 # Настройка базы данных
 print_color $CYAN "Настройка базы данных..."
 sudo -u postgres psql <<EOF >/dev/null 2>&1
-CREATE DATABASE $DB_NAME;
-CREATE USER $DB_USER WITH ENCRYPTED PASSWORD '$DB_PASSWORD';
-GRANT ALL PRIVILEGES ON DATABASE $DB_NAME TO $DB_USER;
-ALTER USER $DB_USER CREATEDB;
+DROP DATABASE IF EXISTS $DATABASE_NAME;
+DROP USER IF EXISTS $DATABASE_USER;
+CREATE DATABASE $DATABASE_NAME;
+CREATE USER $DATABASE_USER WITH ENCRYPTED PASSWORD '$DATABASE_PASSWORD';
+GRANT ALL PRIVILEGES ON DATABASE $DATABASE_NAME TO $DATABASE_USER;
+ALTER USER $DATABASE_USER CREATEDB;
 \q
 EOF
 check_status "Создание базы данных и пользователя"
+
+print_color $INFO "\n=== УСТАНОВКА REDIS ==="
+
+# Установка Redis из локальных пакетов
+print_color $CYAN "Установка Redis из локальных пакетов..."
+if [ -d "$TRANSFER_DIR/redis" ]; then
+    cd "$TRANSFER_DIR/redis"
+    show_progress 3 "Установка Redis пакетов"
+    sudo dpkg -i *.deb >/dev/null 2>&1
+
+    # Исправление зависимостей если есть проблемы
+    sudo apt-get install -f -y >/dev/null 2>&1
+    check_status "Установка Redis"
+else
+    print_color $WARNING "Папка redis не найдена, устанавливаем из репозитория..."
+    sudo apt install -y redis-server >/dev/null 2>&1
+    check_status "Установка Redis из репозитория"
+fi
+
+# Настройка Redis
+print_color $CYAN "Настройка Redis..."
+sudo systemctl start redis-server
+sudo systemctl enable redis-server >/dev/null 2>&1
+
+# Проверка работы Redis
+if systemctl is-active --quiet redis-server; then
+    check_status "Запуск Redis"
+else
+    print_color $WARNING "⚠ Redis не запустился, попробуем перезапустить..."
+    sudo systemctl restart redis-server
+    sleep 2
+    if systemctl is-active --quiet redis-server; then
+        check_status "Перезапуск Redis"
+    else
+        print_color $ERROR "Не удалось запустить Redis"
+        exit 1
+    fi
+fi
+
+# Проверка подключения к Redis
+print_color $CYAN "Проверка подключения к Redis..."
+if redis-cli ping | grep -q "PONG"; then
+    check_status "Подключение к Redis"
+else
+    print_color $WARNING "⚠ Не удалось подключиться к Redis"
+fi
 
 print_color $INFO "\n=== УСТАНОВКА APACHE2 ==="
 
@@ -341,121 +387,45 @@ print_color $CYAN "Настройка модулей Apache..."
 sudo a2enmod rewrite proxy proxy_http >/dev/null 2>&1
 check_status "Включение модулей Apache"
 
-print_color $INFO "\n=== УСТАНОВКА UV И PYTHON ==="
+print_color $INFO "\n=== УСТАНОВКА BUN, UV И PYTHON ==="
 
-
-# Установка uv в пользовательскую папку
+# Установка uv
 print_color $CYAN "Установка uv..."
-
-# Создаем локальную папку bin если её нет
-mkdir -p "$HOME/.local/bin"
-
 if [ -d "$TRANSFER_DIR/uv" ]; then
     cd "$TRANSFER_DIR/uv"
     tar -xzf uv.tar.gz >/dev/null 2>&1
     cd uv-*
-    
-    # Копируем в локальную папку пользователя
-    cp uv "$HOME/.local/bin/"
-    chmod +x "$HOME/.local/bin/uv"
-    
-    # Добавляем в PATH если ещё не добавлено
-    if ! echo $PATH | grep -q "$HOME/.local/bin"; then
-        export PATH="$HOME/.local/bin:$PATH"
-        
-        # Добавляем в bashrc/profile для постоянного использования
-        if [ -f "$HOME/.bashrc" ]; then
-            if ! grep -q "export PATH=\"\$HOME/.local/bin:\$PATH\"" "$HOME/.bashrc"; then
-                echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$HOME/.bashrc"
-            fi
-        elif [ -f "$HOME/.profile" ]; then
-            if ! grep -q "export PATH=\"\$HOME/.local/bin:\$PATH\"" "$HOME/.profile"; then
-                echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$HOME/.profile"
-            fi
-        fi
-    fi
-    
+    mkdir -p $HOME/.local/bin
+    cp uv $HOME/.local/bin/uv
+    chmod +x $HOME/.local/bin/uv
     check_status "Установка uv"
-    print_color $SUCCESS "uv установлен в $HOME/.local/bin/"
-    print_color $INFO "Путь $HOME/.local/bin добавлен в PATH"
 else
     print_color $WARNING "Папка uv не найдена..."
+
 fi
 
-
-# Установка bun в пользовательскую папку
-print_color $CYAN "Установка bun..."
-
-# Создаем локальную папку bin если её нет
-mkdir -p "$HOME/.local/bin"
-
+# Установка Bun
+print_color $CYAN "Установка Bun..."
 if [ -d "$TRANSFER_DIR/bun" ]; then
     cd "$TRANSFER_DIR/bun"
     unzip -q bun.zip >/dev/null 2>&1
     cd bun-*
-    
-    # Копируем в локальную папку пользователя
-    cp bun "$HOME/.local/bin/"
-    chmod +x "$HOME/.local/bin/bun"
-    
-    # Добавляем в PATH если ещё не добавлено
-    if ! echo $PATH | grep -q "$HOME/.local/bin"; then
-        export PATH="$HOME/.local/bin:$PATH"
-        
-        # Добавляем в bashrc/profile для постоянного использования
-        if [ -f "$HOME/.bashrc" ]; then
-            if ! grep -q "export PATH=\"\$HOME/.local/bin:\$PATH\"" "$HOME/.bashrc"; then
-                echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$HOME/.bashrc"
-            fi
-        elif [ -f "$HOME/.profile" ]; then
-            if ! grep -q "export PATH=\"\$HOME/.local/bin:\$PATH\"" "$HOME/.profile"; then
-                echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$HOME/.profile"
-            fi
-        fi
-    fi
-    
-    check_status "Установка bun"
-    print_color $SUCCESS "bun установлен в $HOME/.local/bin/"
-    print_color $INFO "Путь $HOME/.local/bin добавлен в PATH"
+    mkdir -p $HOME/.local/bin
+    cp bun $HOME/.local/bin/bun
+    chmod +x $HOME/.local/bin/bun
+
 else
     print_color $WARNING "Папка bun не найдена..."
 fi
-
-
 # Установка Python 3.10
 print_color $CYAN "Установка Python 3.10..."
-
 if [ -d "$TRANSFER_DIR/python" ]; then
     cd "$TRANSFER_DIR/python"
-    show_progress 2 "Копирование Python в директорию uv"
-    
-    # Получаем директорию где uv хранит версии Python
-    UV_PYTHON_DIR=$("$HOME/.local/bin/uv" python dir 2>/dev/null)
-    
-    if [ -n "$UV_PYTHON_DIR" ]; then
-        # Создаем директорию если её нет
-        mkdir -p "$UV_PYTHON_DIR"
-        
-        # Копируем готовую версию Python в директорию uv
-        cp -r cpython-3.10.17-linux-x86_64-gnu "$UV_PYTHON_DIR/" >/dev/null 2>&1
-        
-        check_status "Установка Python 3.10"
-        
-        # Проверяем что Python доступен через uv
-        if "$HOME/.local/bin/uv" python list | grep -q "3.10"; then
-            print_color $SUCCESS "Python 3.10 успешно установлен в $UV_PYTHON_DIR"
-        else
-            print_color $INFO "Python скопирован, но может потребоваться время для обнаружения uv"
-        fi
-    else
-        print_color $WARNING "Не удалось определить директорию uv python, устанавливаем через uv install"
-        "$HOME/.local/bin/uv" python install 3.10 >/dev/null 2>&1
-        check_status "Установка Python 3.10"
-    fi
-else
-    print_color $WARNING "Python не найден в архиве, устанавливаем через uv..."
-    "$HOME/.local/bin/uv" python install 3.10 >/dev/null 2>&1
+    show_progress 2 "Копирование Python"
+    cp -r $TRANSFER_DIR/python/cpython-3.10.17-linux-x86_64-gnu $(uv python dir) >/dev/null 2>&1
     check_status "Установка Python 3.10"
+else
+    print_color $WARNING "Python не найден в архиве, используем системный Python"
 fi
 
 print_color $INFO "\n=== РАЗВЕРТЫВАНИЕ БЭКЕНДА ==="
@@ -474,35 +444,43 @@ show_progress 5 "Установка Python пакетов"
 uv sync >/dev/null 2>&1
 
 if [ -d "$TRANSFER_DIR/wheels" ]; then
-    uv run pip install --no-index --find-links="$TRANSFER_DIR/wheels" -r "$TRANSFER_DIR/wheels/requirements.txt" >/dev/null 2>&1
+    uv pip install --no-index --find-links="$TRANSFER_DIR/wheels" -r "$TRANSFER_DIR/wheels/requirements.txt" >/dev/null 2>&1
 fi
 check_status "Установка зависимостей бэкенда"
 
+print_color $CYAN "Применение миграций..."
+
+cd $DEPLOY_DIR/backend && uv run alembic upgrade head
+check_status "Применение миграций"
+
 print_color $INFO "\n=== РАЗВЕРТЫВАНИЕ ФРОНТЕНДА ==="
+
+cd $TRANSFER_DIR/frontend/
+bun install
+bun run build
+
+# Создание .env файла для фронтенда
+print_color $CYAN "Создание конфигурации фронтенда..."
+cat > "$TRANSFER_DIR/frontend/.env" <<EOF
+# Флаг для прода или дева
+VITE_MODE='PROD'
+
+# адреса backend'a
+VITE_DEV_PATH='http://localhost:8080/api'
+# VITE_PROD_PATH='http://192.168.111.203:8080/api'
+
+VITE_PROD_PATH='https://kapi.tminww.space/api'
+EOF
+check_status "Создание .env файла фронтенда"
 
 # Развертывание фронтенда
 print_color $CYAN "Копирование файлов фронтенда..."
 sudo mkdir -p "$DEPLOY_DIR/frontend"
-sudo cp -r "$TRANSFER_DIR/frontend/"* "$DEPLOY_DIR/frontend/" 2>/dev/null
+sudo cp -r "$TRANSFER_DIR/frontend/dist/"* "$DEPLOY_DIR/frontend/" 2>/dev/null
 sudo chown -R $USER:$USER "$DEPLOY_DIR/frontend"
 check_status "Копирование фронтенда"
 
-# Создание .env файла для фронтенда
-print_color $CYAN "Создание конфигурации фронтенда..."
-cat > "$DEPLOY_DIR/frontend/.env" <<EOF
-# API Configuration
-VITE_API_URL=$API_URL
-VITE_API_TIMEOUT=30000
 
-# Application Configuration
-VITE_APP_TITLE=$FRONTEND_TITLE
-VITE_APP_VERSION=1.0.0
-
-# Environment
-VITE_ENVIRONMENT=production
-VITE_DEBUG=false
-EOF
-check_status "Создание .env файла фронтенда"
 
 print_color $INFO "\n=== НАСТРОЙКА APACHE ==="
 
@@ -605,22 +583,32 @@ echo "   Фронтенд: http://$SERVER_NAME:$APACHE_PORT"
 echo "   API: http://$BACKEND_HOST:$BACKEND_PORT"
 echo
 print_color $INFO "🗄️  База данных:"
-echo "   Хост: $DB_HOST:$DB_PORT"
-echo "   База: $DB_NAME"
-echo "   Пользователь: $DB_USER"
-echo "   Пароль: $DB_PASSWORD"
+echo "   Хост: $DATABASE_HOST:$DATABASE_PORT"
+echo "   База: $DATABASE_NAME"
+echo "   Пользователь: $DATABASE_USER"
+echo "   Пароль: $DATABASE_PASSWORD"
 echo
+
+print_color $INFO "🔴 Redis:"
+echo "   Хост: $REDIS_HOST:$REDIS_PORT"
+echo "   База: $REDIS_DB"
+echo "   Проверка: redis-cli ping"
+echo
+
 print_color $INFO "🔧 Управление сервисами:"
 echo "   Статус бэкенда: sudo systemctl status fastapi-app"
 echo "   Перезапуск бэкенда: sudo systemctl restart fastapi-app"
 echo "   Статус Apache: sudo systemctl status apache2"
 echo "   Перезапуск Apache: sudo systemctl restart apache2"
 echo "   Статус PostgreSQL: sudo systemctl status postgresql"
+echo "   Статус Redis: sudo systemctl status redis-server"
+echo "   Перезапуск Redis: sudo systemctl restart redis-server"
 echo
 print_color $INFO "📋 Логи:"
 echo "   Бэкенд: sudo journalctl -u fastapi-app -f"
 echo "   Apache: sudo tail -f /var/log/apache2/frontend_error.log"
 echo "   PostgreSQL: sudo tail -f /var/log/postgresql/postgresql-*.log"
+echo "   Redis: sudo tail -f /var/log/redis/redis-server.log"
 echo
 
 # Сохранение информации в файл
@@ -642,6 +630,8 @@ cat > "$INFO_FILE" <<EOF
 - База: $DB_NAME
 - Пользователь: $DB_USER
 - Пароль: $DB_PASSWORD
+
+
 
 Команды управления:
 - Статус бэкенда: sudo systemctl status fastapi-app

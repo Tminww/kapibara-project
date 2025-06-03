@@ -1,5 +1,5 @@
 #!/bin/bash
-cd backend;
+cd ../backend;
 uv sync;
 source .venv/bin/activate;
 cd src;

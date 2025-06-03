@@ -1,5 +1,5 @@
 #!/bin/bash
-cd frontend;
+cd ../frontend;
 bun install;
 bun run build;
 cd dist;
