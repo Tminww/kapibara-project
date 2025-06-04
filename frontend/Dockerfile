@@ -9,8 +9,8 @@ RUN curl -fsSL https://bun.sh/install | bash
 ENV PATH="/root/.bun/bin:${PATH}"
 
 # Копируем файлы зависимостей
-COPY package.json /code/package.json
-COPY bun.lock /code/bun.lock
+COPY ./package.json .
+COPY ./bun.lock .
 
 # Копируем весь проект
 COPY . .

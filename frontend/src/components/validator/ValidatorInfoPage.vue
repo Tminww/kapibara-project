@@ -143,7 +143,9 @@
                         >
                             <template v-slot:item.error="{ item }">
                                 <v-checkbox-btn
-                                    v-if="item.error === 'INVALID'"
+                                    v-if="
+                                        item.error === 'INVALID' && typeof item.reason === 'object'
+                                    "
                                     v-model="item.reason.isValid"
                                     hide-details
                                     :true-value="true"
@@ -166,6 +168,7 @@
                             </template>
                             <template v-slot:item.="{ item }">
                                 <v-checkbox-btn
+                                    v-if="typeof item.reason === 'object'"
                                     v-model="item.reason.isValid"
                                     hide-details
                                     :true-value="true"
@@ -592,27 +595,28 @@ const chartOptions = computed(() => {
             },
             title: {
                 show: false
-            }
-        },
-        tooltip: {
-            y: {
-                formatter: function (value: number) {
-                    return formatDuration(value)
+            },
+            tooltip: {
+                y: {
+                    formatter: function (value: number) {
+                        return formatDuration(value)
+                    }
                 }
-            }
-        },
-        theme: {
-            mode: 'light',
-            palette: 'palette1',
-            monochrome: {
-                enabled: true,
-                color: '#1d4c86',
-                shadeTo: 'light',
-                shadeIntensity: 0.65
+            },
+            theme: {
+                mode: 'light',
+                palette: 'palette1',
+                monochrome: {
+                    enabled: true,
+                    color: '#1d4c86',
+                    shadeTo: 'light',
+                    shadeIntensity: 0.65
+                }
             }
         }
     }
 })
+
 const successfulRuns = computed((): number => {
     return history.value.filter((entry) => entry.state === 'SUCCESS').length
 })
