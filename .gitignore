@@ -7,6 +7,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+*.crt
+*.key
+
 # C extensions
 *.so
 .env

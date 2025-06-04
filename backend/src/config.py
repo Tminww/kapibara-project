@@ -23,6 +23,7 @@ class Config(BaseSettings):
 
     HOST: str
     PORT: int
+    CURRENT_IP: str
 
     REDIS_HOST: str = "localhost"
     REDIS_PORT: int = 6379

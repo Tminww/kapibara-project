@@ -36,9 +36,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="Вывод статистики по документам", lifespan=lifespan)
 
 # настройка CORS
-origins = [
-    "http://localhost:5173",
-]
+origins = ["http://localhost:5173", f"http://{settings.CURRENT_IP}"]
 
 # настройка middleware
 app.add_middleware(
