@@ -1,6 +1,6 @@
 services:
   apache:
-    build: 
+    build:
       context: ./apache/
     container_name: kapibara-apache
     restart: unless-stopped
@@ -11,7 +11,7 @@ services:
       - "0.0.0.0:80:80"
       - "0.0.0.0:443:443"
     volumes:
-      - ./apache/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro
+      - ./apache/httpd.80 .conf:/usr/local/apache2/conf/httpd.conf:ro
       - ./apache/conf.d:/usr/local/apache2/conf/conf.d:ro
       - ./apache/ssl:/usr/local/apache2/conf/ssl:ro
     healthcheck:
@@ -19,7 +19,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-      
+
   database:
     container_name: kapibara-postgres
     image: postgres:16
@@ -68,9 +68,9 @@ services:
       options:
         max-size: "1m"
         max-file: "3"
-        
+
   backend:
-    build: 
+    build:
       context: ./backend/
     container_name: kapibara-backend
     restart: unless-stopped
@@ -85,7 +85,7 @@ services:
 
   # Celery Worker
   celery-worker:
-    build: 
+    build:
       context: ./backend/
     container_name: kapibara-celery-worker
     restart: unless-stopped
@@ -102,7 +102,7 @@ services:
         max-file: "3"
 
   frontend:
-    build: 
+    build:
       context: ./frontend/
     container_name: kapibara-frontend
     restart: unless-stopped
