@@ -11,7 +11,7 @@ services:
       - "0.0.0.0:80:80"
       - "0.0.0.0:443:443"
     volumes:
-      - ./apache/httpd.80 .conf:/usr/local/apache2/conf/httpd.conf:ro
+      - ./apache/httpd.80.conf:/usr/local/apache2/conf/httpd.conf:ro
       - ./apache/conf.d:/usr/local/apache2/conf/conf.d:ro
       - ./apache/ssl:/usr/local/apache2/conf/ssl:ro
     healthcheck:
@@ -27,7 +27,7 @@ services:
     ports:
       - "127.0.0.1:54321:5432"
     env_file:
-      - path: ./postgres.env
+      - path: ./.env.postgres
         required: true
     volumes:
       - kapibara-postgres-data:/var/lib/postgresql/data
@@ -74,6 +74,9 @@ services:
       context: ./backend/
     container_name: kapibara-backend
     restart: unless-stopped
+    env_file:
+      - path: ./backend/.env.prod
+        required: true
     depends_on:
       database:
         condition: service_healthy
@@ -89,6 +92,9 @@ services:
       context: ./backend/
     container_name: kapibara-celery-worker
     restart: unless-stopped
+    env_file:
+      - path: ./backend/.env.prod
+        required: true
     depends_on:
       database:
         condition: service_healthy
@@ -106,11 +112,15 @@ services:
       context: ./frontend/
     container_name: kapibara-frontend
     restart: unless-stopped
+    env_file:
+      - path: ./frontend/.env
+        required: true
     depends_on:
       - backend
       - celery-worker
     ports:
       - "127.0.0.1:5173:80"
+    command: sh -c "bun run build && cp -r dist/* /var/www/html/ && nginx -g 'daemon off;'"
 
 volumes:
   kapibara-postgres-data:

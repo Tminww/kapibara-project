@@ -1,72 +1,91 @@
-## Installing uv
+# Запуск проекта в продакшен-среде на Astra Linux 1.7
 
-Install uv with our standalone installers or your package manager of choice.
-Standalone installer
+## 📦 Распаковка проекта
 
-uv provides a standalone installer to download and install uv:
-
-macOS and Linux
-
-Use curl to download the script and execute it with sh:
-
-curl -LsSf https://astral.sh/uv/install.sh | sh
-
-If your system doesn't have curl, you can use wget:
-
-wget -qO- https://astral.sh/uv/install.sh | sh
-
-Request a specific version by including it in the URL:
-
-curl -LsSf https://astral.sh/uv/0.7.8/install.sh | sh
-
-## Installing Bun
-
-### macOS and Linux
-
-```bash#macOS/Linux_(curl)
-$ curl -fsSL https://bun.sh/install | bash # for macOS, Linux, and WSL
-# to install a specific version
-$ curl -fsSL https://bun.sh/install | bash -s "bun-v$BUN_LATEST_VERSION"
+```bash
+./7zz ./kapibara.zip
 ```
 
+## ⚙️ Установка и настройка Docker
 
-## Checking installation
-
-To check that Bun was installed successfully, open a new terminal window and run `bun --version`.
-
-```sh
-$ bun --version
-1.x.y
-```
-If you've installed Bun but are seeing a `command not found` error, you may have to manually add the installation directory (`~/.bun/bin`) to your `PATH`.
-
-### How to add your `PATH`
-
-{% details summary="Linux / Mac" %}
-First, determine what shell you're using:
-
-```sh
-$ echo $SHELL
-/bin/zsh # or /bin/bash or /bin/fish
+```bash
+cd ./kapibara/scripts
+./install-docker.sh
+./load-docker-images.sh
 ```
 
-Then add these lines below to bottom of your shell's configuration file.
+Проверь, что Docker-образы загружены:
 
-```bash#~/.zshrc
-# add to ~/.zshrc
-export BUN_INSTALL="$HOME/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
+```bash
+docker images
 ```
 
-```bash#~/.bashrc
-# add to ~/.bashrc
-export BUN_INSTALL="$HOME/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
+---
+
+## 🛠️ Настройка переменных окружения
+
+### `kapibara/backend/.env.prod`
+
+- Укажите собственный IP-адрес сервера **CURRENT_IP**
+- Укажите URL для publication.pravo.gov.ru **EXTERNAL_URL** — например:
+
+```env
+EXTERNAL_URL=http://publication.pravo.gov.ru
+CURRENT_IP=10.0.16.123
 ```
 
-```sh#~/.config/fish/config.fish
-# add to ~/.config/fish/config.fish
-export BUN_INSTALL="$HOME/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
+### `kapibara/frontend/.env`
+
+- Укажите адрес сервера **Заменять только IP x.x.x.x!!**:
+
+```env
+VITE_PROD_PATH='http://127.0.0.1:80/api'
 ```
 
+---
+
+## 🐳 Запуск docker-compose в продакшене
+
+```bash
+docker-compose --file docker-compose.prod.yml up -d
+```
+
+Контейнеры будут запущены в фоновом режиме.
+
+---
+
+## 🧰 Администрирование
+
+Используйте **LazyDocker** для мониторинга и управления:
+
+```bash
+lazydocker
+```
+
+---
+
+## 📌 Примечания
+
+- Убедитесь, что порты, указанные в `docker-compose.prod.yml`, открыты на сервере.
+- После изменения `.env`-файлов можно перезапустить сервисы:
+
+```bash
+docker-compose --file docker-compose.prod.yml down
+docker-compose --file docker-compose.prod.yml up -d
+```
+
+## ПОДДЕРЖКА
+
+- В случае изменения исходного кода, а не переменных окружения придется заново пересобирать образы на машине с интернетом.
+- Для этого используется файл docker-compose.inner.yml с флагом --build
+
+```bash
+docker-compose --file docker-compose.inner.yml up -d --build
+```
+
+И после этого в дирректории scripts запускается скрипт на сохранение новых образов
+
+```bash
+cd scripts/
+./save-docker-images.sh
+```

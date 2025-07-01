@@ -1,47 +1,125 @@
 services:
+  apache:
+    image: kapibara-apache:latest
+    container_name: kapibara-apache
+    restart: unless-stopped
+    depends_on:
+      - frontend
+      - backend
+    ports:
+      - "0.0.0.0:80:80"
+      - "0.0.0.0:443:443"
+    volumes:
+      - ./apache/httpd.80.conf:/usr/local/apache2/conf/httpd.conf:ro
+      - ./apache/conf.d:/usr/local/apache2/conf/conf.d:ro
+      - ./apache/ssl:/usr/local/apache2/conf/ssl:ro
+    healthcheck:
+      test: ["CMD", "httpd", "-t"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
   database:
     container_name: kapibara-postgres
-    image: postgres
+    image: postgres:16
     restart: unless-stopped
     ports:
       - "127.0.0.1:54321:5432"
     env_file:
-      - path: ./postgres.env
+      - path: ./.env.postgres
         required: true
     volumes:
       - kapibara-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: kapibara-pgadmin
+  broker:
+    container_name: kapibara-redis
+    image: redis:7-alpine
     restart: unless-stopped
-    depends_on:
-      - database
     ports:
-      - "0.0.0.0:8082:80"
-    env_file:
-      - path: ./pgadmin.env
-        required: true
+      - "127.0.0.1:6379:6379"
     volumes:
-      - kapibara-pgadmin-data:/var/lib/pgadmin
+      - kapibara-redis-data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  maildev:
+    container_name: kapibara-maildev
+    image: maildev/maildev:latest
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/Moscow
+      - MAILDEV_WEB_PORT=1080
+      - MAILDEV_SMTP_PORT=1025
+    ports:
+      - "127.0.0.1:8090:1080"
+      - "127.0.0.1:8025:1025"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "3"
 
   backend:
-    build: ./backend/
+    image: kapibara-backend:latest
     container_name: kapibara-backend
     restart: unless-stopped
+    env_file:
+      - path: ./backend/.env.prod
+        required: true
     depends_on:
-      - database
+      database:
+        condition: service_healthy
+      broker:
+        condition: service_healthy
     ports:
       - "127.0.0.1:8080:80"
+    command: sh -c "uv run alembic upgrade head && cd src && uv run python main.py"
+
+  # Celery Worker
+  celery-worker:
+    image: kapibara-celery-worker:latest
+    container_name: kapibara-celery-worker
+    restart: unless-stopped
+    env_file:
+      - path: ./backend/.env.prod
+        required: true
+    depends_on:
+      database:
+        condition: service_healthy
+      broker:
+        condition: service_healthy
+    command: sh -c "cd src && uv run celery -A celery_worker worker --loglevel=info"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   frontend:
-    build: ./frontend/
+    image: kapibara-frontend:latest
     container_name: kapibara-frontend
+    restart: unless-stopped
+    env_file:
+      - path: ./frontend/.env
+        required: true
     depends_on:
       - backend
+      - celery-worker
     ports:
-      - "127.0.0.1:8081:5173"
+      - "127.0.0.1:5173:80"
+    command: sh -c "bun run build && cp -r dist/* /var/www/html/ && nginx -g 'daemon off;'"
 
 volumes:
   kapibara-postgres-data:
-  kapibara-pgadmin-data:
+    driver: local
+  kapibara-redis-data:
+    driver: local

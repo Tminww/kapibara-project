@@ -2,6 +2,7 @@ from typing import Optional
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from functools import lru_cache
 from pathlib import Path
+import os
 
 BASE_DIR = Path(__file__).resolve().parent
 
@@ -36,22 +37,36 @@ class Config(BaseSettings):
     SMTP_PASSWORD: str
     FROM_EMAIL: str = "your-app-name@your-domain.com"
 
-    CELERY_BROKER_URL: str = f"redis://{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}"
-    CELERY_RESULT_BACKEND: str = f"redis://{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}"
-
     TESSERACT_CMD: str
 
-    model_config = SettingsConfigDict(env_file=f"{BASE_DIR}/../.env", extra="ignore")
+    model_config = SettingsConfigDict(
+        # Убираем жесткую привязку к файлу .env
+        env_file=f"{BASE_DIR}/../.env" if os.path.exists(f"{BASE_DIR}/../.env") else None,
+        extra="ignore",
+        # Добавляем чтение из переменных окружения как приоритет
+        env_file_encoding='utf-8'
+    )
 
     @property
     def DATABASE_URL(self):
-        # postgresql+asyncpg://postgres:postgres@localhost:5432/sa
         return f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASS}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
 
     @property
     def SYNC_DATABASE_URL(self):
-        # postgresql+asyncpg://postgres:postgres@localhost:5432/sa
         return f"postgresql+psycopg://{self.DB_USER}:{self.DB_PASS}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
 
+    @property
+    def CELERY_BROKER_URL(self):
+        return f"redis://{self.REDIS_HOST}:{self.REDIS_PORT}/{self.REDIS_DB}"
 
-settings = Config()
+    @property
+    def CELERY_RESULT_BACKEND(self):
+        return f"redis://{self.REDIS_HOST}:{self.REDIS_PORT}/{self.REDIS_DB}"
+
+
+@lru_cache()
+def get_settings():
+    return Config()
+
+
+settings = get_settings()

@@ -1,36 +1,23 @@
-# Этап 1: Сборка приложения
-FROM node:latest AS build
+FROM node:latest
 
 # Устанавливаем рабочую директорию
-WORKDIR /code
+WORKDIR /app
 
 # Устанавливаем Bun
 RUN curl -fsSL https://bun.sh/install | bash
 ENV PATH="/root/.bun/bin:${PATH}"
 
-# Копируем файлы зависимостей
-COPY ./package.json .
-COPY ./bun.lock .
-
-# Копируем весь проект
+# Копируем файлы проекта
 COPY . .
 
-# Устанавливаем зависимости и выполняем сборку
+# Устанавливаем зависимости
 RUN bun install
-RUN bun run build
 
-# Этап 2: Настройка Nginx для продакшена
-FROM nginx:alpine
+# Устанавливаем nginx
+RUN apt update && apt install -y nginx && rm -rf /var/lib/apt/lists/*
 
-# Копируем сгенерированные файлы из этапа сборки
-COPY --from=build /code/dist /usr/share/nginx/html
+# Удаляем дефолтный html
+RUN rm -rf /var/www/html/*
 
-# Копируем конфигурацию Nginx (если есть кастомная, иначе используем дефолтную)
-# Если у вас есть свой nginx.conf, раскомментируйте следующую строку и добавьте файл
-# COPY nginx.conf /etc/nginx/nginx.conf
-
-# Открываем порт 80
+# Открываем порт
 EXPOSE 80
-
-# Запускаем Nginx
-CMD ["nginx", "-g", "daemon off;"]

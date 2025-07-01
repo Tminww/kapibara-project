@@ -25,6 +25,6 @@ RUN uv sync
 COPY ./src ./src
 COPY ./alembic ./alembic
 COPY ./alembic.ini .
-COPY ./.env.prod ./.env 
+# COPY ./.env.prod ./.env 
 
 # CMD ["uv", "run", "python", "src/main.py"]
