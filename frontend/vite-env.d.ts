@@ -4,6 +4,7 @@ interface ImportMetaEnv {
     readonly VITE_MODE: string
     readonly VITE_DEV_PATH: string
     readonly VITE_PROD_PATH: string
+    readonly VITE_PRAVO_GOV_RU_PATH: string
     // more env variables...
 }
 

@@ -301,7 +301,7 @@
                     </v-row>
                 </v-card-text>
                 <v-card-actions class="gap-4">
-                    <v-btn
+                    <!-- <v-btn
                         color="success"
                         variant="tonal"
                         @click="validateDocument(selectedItem?.id, true)"
@@ -316,6 +316,17 @@
                         :loading="validationLoading"
                     >
                         Не валиден
+                    </v-btn> -->
+                    <v-btn color="error" variant="tonal" @click="compareDialog = false">
+                        Закрыть
+                    </v-btn>
+                    <v-btn
+                        color="primary"
+                        variant="tonal"
+                        :href="urlPravoGovRuPath + selectedItem?.reason.eoNumber"
+                        target="_blank"
+                    >
+                        Открыть документ
                     </v-btn>
                 </v-card-actions>
             </v-card>
@@ -335,7 +346,6 @@ import { default as StatusCard } from '@/shared/StatusCard.vue'
 import { default as HistoryTableCard } from '@/shared/HistoryTableCard.vue'
 import { default as ReportTableCard } from '@/shared/ReportTableCard.vue'
 import { toast } from 'vue-sonner'
-import { send } from 'process'
 
 interface Header {
     title: string
@@ -346,6 +356,7 @@ interface Header {
 
 interface Reason {
     docExtId: string
+    eoNumber: string
     dbText: string
     ocrText: string
     similarity: number
@@ -411,6 +422,8 @@ const defaultStatus: Status = {
     }
 }
 
+const urlPravoGovRuPath =
+    import.meta.env.VITE_PRAVO_GOV_RU_PATH || 'https://publication.pravo.gov.ru/document/'
 const rules = {
     required: (value: any) => !!value || 'Required.',
     counter: (value: any) => value.length <= 20 || 'Max 20 characters',
