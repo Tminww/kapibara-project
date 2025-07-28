@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Literal, Optional
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from functools import lru_cache
 from pathlib import Path
@@ -22,6 +22,7 @@ class Config(BaseSettings):
 
     PROXY: Optional[str] = None
 
+    HOST_SCHEME: Literal['http', 'https'] = "http" # или "https"
     HOST: str
     PORT: int
     CURRENT_IP: str

@@ -25,6 +25,14 @@ RUN uv sync
 COPY ./src ./src
 COPY ./alembic ./alembic
 COPY ./alembic.ini .
+
+COPY crontab.txt /etc/cron.d/scheduler-cron
+
+RUN crontab /etc/cron.d/scheduler-cron
+
+
+# Запуск cron в фоновом режиме
+CMD ["cron", "-f"]
 # COPY ./.env.prod ./.env 
 
 # CMD ["uv", "run", "python", "src/main.py"]

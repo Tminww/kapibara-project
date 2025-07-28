@@ -1,11 +1,11 @@
 services:
   database:
     container_name: kapibara-postgres
-    image: postgres
+    image: postgres:16
     restart: unless-stopped
     ports:
       - "127.0.0.1:5434:5432"
-    env_file: "./postgres.env"
+    env_file: "./.env.postgres"
     volumes:
       - kapibara-postgres-data:/var/lib/postgresql/data
 

@@ -1,0 +1,1 @@
+0 0 * * * /home/tminww/kapibara/scripts/start_scheduler.sh
