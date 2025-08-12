@@ -124,3 +124,7 @@ class RequestRegionSchema(BaseSchema):
 
 class RequestNomenclatureSchema(RequestSchema):
     detail: Optional[bool] = False
+
+class RequestTableSchema(RequestSchema):
+    type: Optional[str]
+    label: Optional[str]

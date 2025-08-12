@@ -11,6 +11,7 @@ from .request import (
     RequestSchema,
     RequestNomenclatureSchema,
     RequestValidatorStartSchema,
+    RequestTableSchema
 )
 from .response import (
     ResponseSchema,
