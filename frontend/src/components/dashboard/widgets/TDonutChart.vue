@@ -88,22 +88,16 @@ const data = computed(() => {
             }
           },
           dataPointSelection: (event, chartContext, config) => {
-            const selectedIndex = config.dataPointIndex
-            const selectedLabel = props.labels[selectedIndex]
-            const selectedValue = props.series[selectedIndex]
+            // Правильный способ получить label для dataPointSelection
+            const label = chartContext.w.globals.labels[config.dataPointIndex]
 
-            console.log('Выбран столбец:', {
-              index: selectedIndex,
-              label: selectedLabel,
-              value: selectedValue
-            })
-
-            // Эмитим событие с данными выбранного столбца
-            emit('onColumnClick', {
-              index: selectedIndex,
-              label: selectedLabel,
-              value: selectedValue
-            })
+            if (props.isLegendClickable) {
+              router.push({
+                name: props.routeName,
+                params: { id: getDistrictIdByName(label) },
+                query: { label: label }
+              })
+            }
           }
         }
       },

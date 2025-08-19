@@ -6,7 +6,13 @@
           <template #chart>
             <t-column-chart
               v-if="!isFirstAreaLoading"
-              @onColumnClick="openTable"
+              @onColumnClick="
+                (eventData) =>
+                  openTable({
+                    eventData: eventData,
+                    type: 'year'
+                  })
+              "
               :labels="firstAreaLabels"
               :series="firstAreaSeries"
               :height="350"
@@ -31,7 +37,12 @@
             <t-column-chart
               @onColumnClick="
                 (eventData) =>
-                  openTable(eventData, secondAreaMonth.startDate, secondAreaMonth.endDate)
+                  openTable({
+                    eventData: eventData,
+                    type: 'types',
+                    startDate: secondAreaMonth.startDate,
+                    endDate: secondAreaMonth.endDate
+                  })
               "
               :labels="secondAreaLabels"
               :series="secondAreaSeries"
@@ -72,7 +83,12 @@
             <t-donut-chart
               @onColumnClick="
                 (eventData) =>
-                  openTable(eventData, thirdAreaQuarter.startDate, thirdAreaQuarter.endDate)
+                  openTable({
+                    eventData: eventData,
+                    type: 'district',
+                    startDate: thirdAreaQuarter.startDate,
+                    endDate: thirdAreaQuarter.endDate
+                  })
               "
               :labels="thirdAreaLabels"
               :series="thirdAreaSeries"
@@ -115,7 +131,12 @@
             <t-column-chart
               @onColumnClick="
                 (eventData) =>
-                  openTable(eventData, fourthAreaYear.startDate, fourthAreaYear.endDate)
+                  openTable({
+                    eventData: eventData,
+                    type: 'nomenclature',
+                    startDate: fourthAreaYear.startDate,
+                    endDate: fourthAreaYear.endDate
+                  })
               "
               :labels="fourthAreaLabels"
               :series="fourthAreaSeries"
@@ -167,11 +188,12 @@
             <t-column-chart
               @onColumnClick="
                 (eventData) =>
-                  openTable(
-                    eventData,
-                    nomenclatureDetailInterval.startDate,
-                    nomenclatureDetailInterval.endDate
-                  )
+                  openTable({
+                    eventData: eventData,
+                    type: 'nomenclature',
+                    startDate: nomenclatureDetailInterval.startDate,
+                    endDate: nomenclatureDetailInterval.endDate
+                  })
               "
               :labels="nomenclatureDetailLabels"
               :series="nomenclatureDetailSeries"
@@ -214,7 +236,12 @@
             <t-horizontal-bar-chart
               @onColumnClick="
                 (eventData) =>
-                  openTable(eventData, fifthAreaQuarter.startDate, fifthAreaQuarter.endDate)
+                  openTable({
+                    eventData: eventData,
+                    type: 'region',
+                    startDate: fifthAreaQuarter.startDate,
+                    endDate: fifthAreaQuarter.endDate
+                  })
               "
               :labels="fifthAreaLabels"
               :series="fifthAreaSeries"
@@ -256,7 +283,12 @@
             <t-horizontal-bar-chart
               @onColumnClick="
                 (eventData) =>
-                  openTable(eventData, sixthAreaQuarter.startDate, sixthAreaQuarter.endDate)
+                  openTable({
+                    eventData: eventData,
+                    type: 'region',
+                    startDate: sixthAreaQuarter.startDate,
+                    endDate: sixthAreaQuarter.endDate
+                  })
               "
               :labels="sixthAreaLabels"
               :series="sixthAreaSeries"
@@ -315,19 +347,23 @@ function toRouteName(routeName) {
   router.push({ name: routeName })
 }
 
-const openTable = (eventData, startDate, endDate) => {
-  console.log('OpenTable', eventData, startDate, endDate)
+const openTable = ({ eventData, startDate, endDate, type }) => {
+  const query = {
+    type: type,
+    label: eventData.label
+  }
+
+  // Добавляем даты только если они переданы
+  if (startDate) query.startDate = startDate
+  if (endDate) query.endDate = endDate
+
+  console.log('OpenTable', eventData, startDate, endDate, type)
+
   router.push({
     name: 'table',
-    query: {
-      type: 'types',
-      label: eventData.label,
-      startDate: startDate,
-      endDate: endDate
-    }
+    query: query
   })
 }
-
 const copyNomenclatureDetail = () => {
   try {
     // Начало с общего количества

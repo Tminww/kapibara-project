@@ -194,7 +194,24 @@ const routes = [
   {
     path: '/table',
     name: 'table',
-    component: () => import('@/components/table/TablePage.vue')
+    component: () => import('@/components/table/TablePage.vue'),
+    meta: {
+      requiresAuth: true,
+      breadCrumb: [
+        {
+          text: 'Главная',
+          to: { name: 'home' }
+        },
+
+        {
+          text: 'Информационная панель сбора данных',
+          to: { name: 'dashboard' }
+        },
+        {
+          text: 'Таблица документов'
+        }
+      ]
+    }
   },
 
   {

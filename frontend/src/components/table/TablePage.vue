@@ -1,133 +1,387 @@
+<template>
+  <v-container>
+    <!-- Информационная карточка -->
+    <v-card class="mb-6" elevation="2">
+      <v-card-title class="bg-primary text-white">
+        <v-icon icon="mdi-table" class="me-2"></v-icon>
+        Детальная таблица документов
+      </v-card-title>
+
+      <v-card-text class="pa-4">
+        <v-row>
+          <v-col cols="12" md="4">
+            <v-chip color="primary" variant="outlined" size="large">
+              <v-icon icon="mdi-filter" start></v-icon>
+              {{ filterTypeLabel }}
+            </v-chip>
+          </v-col>
+          <v-col cols="12" md="4">
+            <v-chip color="secondary" variant="outlined" size="large">
+              <v-icon icon="mdi-magnify" start></v-icon>
+              {{ filterLabel }}
+            </v-chip>
+          </v-col>
+          <v-col cols="12" md="4" v-if="dateRange">
+            <v-chip color="accent" variant="outlined" size="large">
+              <v-icon icon="mdi-calendar-range" start></v-icon>
+              {{ dateRange }}
+            </v-chip>
+          </v-col>
+          <v-col cols="12" md="4" class="mt-2">
+            <v-chip color="info" size="large">
+              <v-icon icon="mdi-file-document-multiple" start></v-icon>
+              Всего: {{ totalDocuments }} документов
+            </v-chip>
+          </v-col>
+        </v-row>
+      </v-card-text>
+    </v-card>
+
+    <!-- Панель управления таблицей -->
+    <!-- <v-card class="mb-4">
+      <v-card-text>
+        <v-row align="center">
+          <v-col cols="12" md="3">
+            <v-select
+              v-model="itemsPerPage"
+              :items="[10, 20, 50, 100]"
+              label="Записей на странице"
+              density="compact"
+              variant="outlined"
+              @update:model-value="loadDocuments"
+            ></v-select>
+          </v-col>
+
+          <v-col cols="12" md="3">
+            <v-select
+              v-model="sortBy"
+              :items="sortOptions"
+              item-title="text"
+              item-value="value"
+              label="Сортировать по"
+              density="compact"
+              variant="outlined"
+              @update:model-value="loadDocuments"
+            ></v-select>
+          </v-col>
+
+          <v-col cols="12" md="2">
+            <v-btn-toggle
+              v-model="sortOrder"
+              mandatory
+              density="compact"
+              @update:model-value="loadDocuments"
+            >
+              <v-btn value="desc" icon="mdi-sort-descending"></v-btn>
+              <v-btn value="asc" icon="mdi-sort-ascending"></v-btn>
+            </v-btn-toggle>
+          </v-col>
+
+          <v-col cols="12" md="4" class="d-flex justify-end"> </v-col>
+        </v-row>
+      </v-card-text>
+    </v-card> -->
+
+    <!-- Таблица документов -->
+    <v-card>
+      <v-data-table
+        :headers="headers"
+        :items="documents"
+        :loading="loading"
+        :items-per-page="itemsPerPage"
+        :page="currentPage"
+        hide-default-footer
+        class="elevation-1"
+      >
+        <!-- Колонка с номером документа -->
+        <template v-slot:item.eo_number="{ item }">
+          <v-chip v-if="item.eo_number" color="primary" variant="outlined" size="small">
+            {{ item.eo_number }}
+          </v-chip>
+          <span v-else class="text-grey">—</span>
+        </template>
+
+        <!-- Колонка с названием -->
+        <template v-slot:item.name="{ item }">
+          <div style="max-width: 300px">
+            <v-tooltip :text="item.name || item.title">
+              <template v-slot:activator="{ props }">
+                <span v-bind="props" class="text-truncate d-block">
+                  {{ item.name || item.title || '—' }}
+                </span>
+              </template>
+            </v-tooltip>
+          </div>
+        </template>
+
+        <!-- Колонка с типом документа -->
+        <template v-slot:item.type_name="{ item }">
+          <v-chip color="secondary" variant="tonal" size="small">
+            {{ item.type_name || '—' }}
+          </v-chip>
+        </template>
+
+        <!-- Колонка с регионом -->
+        <template v-slot:item.region_name="{ item }">
+          <div class="d-flex flex-column">
+            <span class="font-weight-medium">{{ item.region_name || '—' }}</span>
+            <span v-if="item.district_name" class="text-caption text-grey">
+              {{ item.district_name }}
+            </span>
+          </div>
+        </template>
+
+        <!-- Колонка с датами -->
+        <template v-slot:item.dates="{ item }">
+          <div class="d-flex flex-column">
+            <div v-if="item.date_of_publication">
+              <v-icon size="small" color="success">mdi-calendar-check</v-icon>
+              <span class="text-caption ml-1">
+                {{ formatDate(item.date_of_publication) }}
+              </span>
+            </div>
+            <div v-if="item.date_of_signing">
+              <v-icon size="small" color="info">mdi-pen</v-icon>
+              <span class="text-caption ml-1">
+                {{ formatDate(item.date_of_signing) }}
+              </span>
+            </div>
+          </div>
+        </template>
+
+        <!-- Колонка с количеством страниц -->
+        <template v-slot:item.pages_count="{ item }">
+          <v-chip v-if="item.pages_count" color="info" variant="outlined" size="small">
+            <v-icon start size="small">mdi-file-document</v-icon>
+            {{ item.pages_count }}
+          </v-chip>
+          <span v-else class="text-grey">—</span>
+        </template>
+
+        <!-- Колонка с действиями -->
+        <template v-slot:item.actions="{ item }">
+          <v-btn
+            v-if="item.eo_number"
+            color="primary"
+            variant="tonal"
+            size="small"
+            :href="urlPravoGovRuPath + item.eo_number"
+            target="_blank"
+            class="text-none"
+          >
+            <v-icon start size="small">mdi-open-in-new</v-icon>
+            Открыть
+          </v-btn>
+          <v-tooltip v-else text="Номер документа отсутствует">
+            <template v-slot:activator="{ props }">
+              <v-btn
+                v-bind="props"
+                color="grey"
+                variant="tonal"
+                size="small"
+                disabled
+                class="text-none"
+              >
+                <v-icon start size="small">mdi-open-in-new</v-icon>
+                Открыть
+              </v-btn>
+            </template>
+          </v-tooltip>
+        </template>
+
+        <!-- Загрузка -->
+        <template v-slot:loading>
+          <v-skeleton-loader type="table-row@5"></v-skeleton-loader>
+        </template>
+
+        <!-- Пустое состояние -->
+        <template v-slot:no-data>
+          <div class="text-center py-8">
+            <v-icon size="64" color="grey-lighten-2">mdi-file-document-remove</v-icon>
+            <div class="text-h6 text-grey mt-4">Документы не найдены</div>
+            <div class="text-body-2 text-grey">Попробуйте изменить параметры фильтрации</div>
+          </div>
+        </template>
+      </v-data-table>
+
+      <!-- Пагинация -->
+      <v-divider></v-divider>
+      <div class="d-flex justify-center pa-4">
+        <v-pagination
+          v-model="currentPage"
+          :length="totalPages"
+          :total-visible="7"
+          @update:model-value="loadDocuments"
+        ></v-pagination>
+      </div>
+    </v-card>
+
+    <!-- Кнопка возврата -->
+    <div class="d-flex justify-start mt-6">
+      <v-btn
+        prepend-icon="mdi-arrow-left"
+        color="primary"
+        variant="outlined"
+        size="large"
+        @click="goBack"
+      >
+        Назад к графикам
+      </v-btn>
+    </div>
+
+    <!-- Снекбар для ошибок -->
+    <v-snackbar v-model="errorSnackbar" color="error" timeout="5000" location="top right">
+      {{ errorMessage }}
+      <template v-slot:actions>
+        <v-btn variant="text" @click="errorSnackbar = false"> Закрыть </v-btn>
+      </template>
+    </v-snackbar>
+  </v-container>
+</template>
+
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router'
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
+import api from '@/api'
 
 const route = useRoute()
 const router = useRouter()
-const tableData = ref([])
 
-const productId = computed(() => route.params.id)
-const productName = computed(() => route.query.name)
-const productValue = computed(() => route.query.value)
+// Реактивные данные
+const documents = ref([])
+const loading = ref(false)
+const totalDocuments = ref(0)
+const currentPage = ref(1)
+const totalPages = ref(1)
+const itemsPerPage = ref(10)
+const sortBy = ref('date_of_publication')
+const sortOrder = ref('desc')
+const errorSnackbar = ref(false)
+const errorMessage = ref('')
 
-// Симуляция загрузки данных на основе ID
-const loadTableData = (id) => {
-  // Здесь вы можете загрузить данные с сервера по ID
-  const mockData = {
-    product_1: [
-      { period: 'Январь', value: 12, percent: 27.3, status: 'Активно' },
-      { period: 'Февраль', value: 15, percent: 34.1, status: 'Активно' },
-      { period: 'Март', value: 17, percent: 38.6, status: 'Завершено' }
-    ],
-    product_2: [
-      { period: 'Январь', value: 18, percent: 32.7, status: 'Активно' },
-      { period: 'Февраль', value: 20, percent: 36.4, status: 'Активно' },
-      { period: 'Март', value: 17, percent: 30.9, status: 'Приостановлено' }
-    ],
-    product_3: [
-      { period: 'Январь', value: 14, percent: 34.1, status: 'Активно' },
-      { period: 'Февраль', value: 13, percent: 31.7, status: 'Активно' },
-      { period: 'Март', value: 14, percent: 34.1, status: 'Активно' }
-    ],
-    product_4: [
-      { period: 'Январь', value: 22, percent: 32.8, status: 'Активно' },
-      { period: 'Февраль', value: 23, percent: 34.3, status: 'Активно' },
-      { period: 'Март', value: 22, percent: 32.8, status: 'Завершено' }
-    ],
-    product_5: [
-      { period: 'Январь', value: 8, percent: 36.4, status: 'Приостановлено' },
-      { period: 'Февраль', value: 7, percent: 31.8, status: 'Приостановлено' },
-      { period: 'Март', value: 7, percent: 31.8, status: 'Активно' }
-    ]
+// Параметры из URL
+const filterType = computed(() => route.query.type)
+const filterLabel = computed(() => route.query.label)
+const startDate = computed(() => route.query.startDate)
+const endDate = computed(() => route.query.endDate)
+
+// URL для открытия документов
+const urlPravoGovRuPath =
+  import.meta.env.VITE_PRAVO_GOV_RU_PATH || 'https://publication.pravo.gov.ru/document/'
+
+// Заголовки таблицы
+const headers = [
+  { title: '№ Документа', key: 'eo_number', width: 150 },
+  { title: 'Название', key: 'name', width: 300 },
+  { title: 'Тип', key: 'type_name', width: 200 },
+  { title: 'Регион', key: 'region_name', width: 200 },
+  { title: 'Даты', key: 'dates', width: 150, sortable: false },
+  { title: 'Страниц', key: 'pages_count', width: 100 },
+  { title: 'Действия', key: 'actions', width: 120, sortable: false }
+]
+
+// Опции сортировки
+const sortOptions = [
+  { text: 'Дата публикации', value: 'date_of_publication' },
+  { text: 'Дата подписания', value: 'date_of_signing' },
+  { text: 'Дата документа', value: 'document_date' },
+  { text: 'Название', value: 'name' },
+  { text: 'Заголовок', value: 'title' }
+]
+
+// Хлебные крошки
+const breadcrumbs = computed(() => [
+  { title: 'Главная', to: '/' },
+  { title: 'Графики', to: '/charts' },
+  { title: 'Детальная таблица', disabled: true }
+])
+
+// Лейблы для типов фильтров
+const filterTypeLabels = {
+  year: 'По году',
+  type: 'По типу документа',
+  district: 'По федеральному округу',
+  region: 'По региону',
+  nomenclature: 'По номенклатуре',
+  authority: 'По органу власти'
+}
+
+const filterTypeLabel = computed(() => {
+  return filterTypeLabels[filterType.value] || 'Фильтр'
+})
+
+// Диапазон дат
+const dateRange = computed(() => {
+  if (startDate.value && endDate.value) {
+    return `${startDate.value} - ${endDate.value}`
   }
+  return null
+})
 
-  return mockData[id] || []
+// Функции
+const openDocument = (eoNumber: string) => {
+  if (eoNumber) {
+    window.open(urlPravoGovRuPath + eoNumber, '_blank')
+  }
+}
+
+const formatDate = (dateString) => {
+  if (!dateString) return ''
+  const date = new Date(dateString)
+  return date.toLocaleDateString('ru-RU')
+}
+
+const loadDocuments = async () => {
+  loading.value = true
+
+  try {
+    const params = {
+      type: filterType.value,
+      label: filterLabel.value,
+      page: currentPage.value,
+      page_size: itemsPerPage.value,
+      sort_by: sortBy.value,
+      sort_order: sortOrder.value
+    }
+
+    if (startDate.value) params.startDate = startDate.value
+    if (endDate.value) params.endDate = endDate.value
+
+    const response = await api.table.getDocuments(params)
+
+    const data = response.data
+    documents.value = data.documents
+    totalDocuments.value = data.total_count
+    totalPages.value = data.total_pages
+  } catch (error) {
+    console.error('Ошибка загрузки документов:', error)
+    errorMessage.value = 'Ошибка при загрузке данных. Попробуйте позже.'
+    errorSnackbar.value = true
+  } finally {
+    loading.value = false
+  }
 }
 
 const goBack = () => {
-  router.go(-1) // или router.push('/chart')
+  router.go(-1)
 }
 
+// Следим за изменениями параметров URL
+watch([filterType, filterLabel, startDate, endDate], () => {
+  currentPage.value = 1
+  loadDocuments()
+})
+
+// Загружаем данные при монтировании
 onMounted(() => {
-  tableData.value = loadTableData(productId.value)
+  loadDocuments()
 })
 </script>
 
-<template>
-  <div>
-    {{}}
-    <h2>Детальная таблица для: {{ productName }}</h2>
-
-    <div class="product-info">
-      <p><strong>ID:</strong> {{ productId }}</p>
-      <p><strong>Название:</strong> {{ productName }}</p>
-      <p><strong>Значение:</strong> {{ productValue }}</p>
-    </div>
-
-    <table class="data-table">
-      <thead>
-        <tr>
-          <th>Период</th>
-          <th>Значение</th>
-          <th>Процент</th>
-          <th>Статус</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="row in tableData" :key="row.period">
-          <td>{{ row.period }}</td>
-          <td>{{ row.value }}</td>
-          <td>{{ row.percent }}%</td>
-          <td>{{ row.status }}</td>
-        </tr>
-      </tbody>
-    </table>
-
-    <button @click="goBack" class="back-button">← Назад к графику</button>
-  </div>
-</template>
-
 <style scoped>
-.product-info {
-  background: #f5f5f5;
-  padding: 20px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-}
-
-.data-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 20px;
-}
-
-.data-table th,
-.data-table td {
-  border: 1px solid #ddd;
-  padding: 12px;
-  text-align: left;
-}
-
-.data-table th {
-  background-color: #f2f2f2;
-  font-weight: bold;
-}
-
-.data-table tr:nth-child(even) {
-  background-color: #f9f9f9;
-}
-
-.back-button {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-.back-button:hover {
-  background-color: #0056b3;
+.text-truncate {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 </style>

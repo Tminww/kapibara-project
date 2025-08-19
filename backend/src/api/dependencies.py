@@ -15,4 +15,4 @@ def get_dashboard_service():
     return DashboardService(DashboardRepository)
 
 def get_table_service():
-    return TableService(TableRepository)
+    return TableService()
