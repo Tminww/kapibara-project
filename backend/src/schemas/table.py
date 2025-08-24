@@ -5,7 +5,6 @@ from enum import Enum
 
 
 class FilterTypeEnum(str, Enum):
-<<<<<<< HEAD
     # Существующие типы
     YEAR = "year"
     YEARS = "years"
@@ -22,36 +21,9 @@ class FilterTypeEnum(str, Enum):
     DISTRICT_TYPE = "district-type"        # конкретный тип документа в федеральном округе
     REGION_TYPE = "region-type"            # конкретный тип документа в регионе
     DISTRICTS_TYPE_ALL = "districts-type-all"  # конкретный тип документа во всех регионах
-=======
-    """Типы фильтрации для разных графиков дашборда"""
-    
-    # График "Опубликование по годам" 
-    YEAR = "year"
-    YEARS = "years"
-    
-    # График "Опубликование по типам документов"
-    TYPE = "type"
-    TYPES = "types"
-    
-    # График "Опубликование по федеральным округам"
-    DISTRICT = "district"
-    DISTRICTS = "districts"
-    
-    # График "Опубликование по субъектам РФ (топ-10)"
-    REGION = "region"
-    REGIONS = "regions"
-    
-    # График "Номенклатура" (общий и детальный для президента/правительства)
-    NOMENCLATURE = "nomenclature"
-    
-    # Дополнительные фильтры
-    AUTHORITY = "authority"  # Фильтр по органу власти
->>>>>>> a6fcbac (add: Сделал страницу с таблицей для всех графиков со страницы Dashboard)
-
 
 class RequestTableSchema(BaseModel):
     """Схема запроса для получения таблицы документов"""
-<<<<<<< HEAD
     type: FilterTypeEnum = Field(..., description="Тип фильтра")
     label: str = Field(..., description="Значение для поиска (тип документа для новых фильтров)")
     name: Optional[str] = Field(None, description="Название федерального округа или региона")
@@ -82,7 +54,6 @@ class DocumentResponseSchema(BaseModel):
     date_of_signing: Optional[date] = None
     updated_at: Optional[date] = None
     is_valid: Optional[bool] = None
-=======
     
     # Основные параметры фильтрации
     type: FilterTypeEnum = Field(..., description="Тип фильтра")
@@ -119,7 +90,6 @@ class DocumentResponseSchema(BaseModel):
     signatory_authority_id: Optional[str] = None
     number: Optional[str] = None
     external_id: Optional[str] = None
->>>>>>> a6fcbac (add: Сделал страницу с таблицей для всех графиков со страницы Dashboard)
     
     # Связанные данные
     type_name: Optional[str] = None
@@ -140,10 +110,7 @@ class TableResponseSchema(BaseModel):
     has_next: bool
     has_prev: bool
 
-<<<<<<< HEAD
-=======
 
->>>>>>> a6fcbac (add: Сделал страницу с таблицей для всех графиков со страницы Dashboard)
 class ResponseSchema(BaseModel):
     """Общая схема ответа"""
     data: TableResponseSchema

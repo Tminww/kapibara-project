@@ -107,7 +107,7 @@ class TableService:
             else:
                 conditions.append(RegionEntity.name == params.label)
         
-<<<<<<< HEAD
+
         # 5. НОВЫЕ ТИПЫ ФИЛЬТРОВ
         
         # 5.1. Конкретный тип документов в федеральном округе
@@ -129,9 +129,7 @@ class TableService:
             conditions.append(RegionEntity.code.like("region%"))
         
         # 6. График "Номенклатура" - объединенный запрос (get_publication_by_nomenclature)
-=======
-        # 5. График "Номенклатура" - объединенный запрос (get_publication_by_nomenclature)
->>>>>>> a6fcbac (add: Сделал страницу с таблицей для всех графиков со страницы Dashboard)
+
         # и детальный запрос (get_publication_by_nomenclature_detail_president_and_government)
         elif params.type == FilterTypeEnum.NOMENCLATURE:
             if params.label == "ОГВ Субъектов РФ":
@@ -174,11 +172,7 @@ class TableService:
                     )
                 )
         
-<<<<<<< HEAD
-        # 7. Фильтр по органу власти (для случаев когда нужно отфильтровать по signatory_authority_id)
-=======
-        # 6. Фильтр по органу власти (для случаев когда нужно отфильтровать по signatory_authority_id)
->>>>>>> a6fcbac (add: Сделал страницу с таблицей для всех графиков со страницы Dashboard)
+
         elif params.type == FilterTypeEnum.AUTHORITY:
             conditions.append(
                 DocumentEntity.signatory_authority_id.ilike(f"%{params.label}%")

@@ -108,7 +108,6 @@ const data = computed(() => {
           },
 
           dataPointSelection: (event, chartContext, config) => {
-<<<<<<< HEAD
             // Получаем данные для выбранной точки данных
             const selectedIndex = config.dataPointIndex
             const selectedLabel = chartContext.w.globals.labels[config.dataPointIndex]
@@ -134,16 +133,6 @@ const data = computed(() => {
                 index: selectedIndex,
                 label: selectedLabel,
                 value: selectedValue
-=======
-            // Правильный способ получить label для dataPointSelection
-            const label = chartContext.w.globals.labels[config.dataPointIndex]
-
-            if (props.isLegendClickable) {
-              router.push({
-                name: props.routeName,
-                params: { id: getDistrictIdByName(label) },
-                query: { label: label }
->>>>>>> a6fcbac (add: Сделал страницу с таблицей для всех графиков со страницы Dashboard)
               })
             }
           }

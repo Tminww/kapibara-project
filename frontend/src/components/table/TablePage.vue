@@ -1,7 +1,6 @@
 <template>
   <v-container>
     <!-- Информационная карточка -->
-<<<<<<< HEAD
     <!-- Кнопка возврата -->
     <div class="d-flex justify-start mb-6">
       <v-btn
@@ -14,8 +13,6 @@
         Назад к графикам
       </v-btn>
     </div>
-=======
->>>>>>> a6fcbac (add: Сделал страницу с таблицей для всех графиков со страницы Dashboard)
     <v-card class="mb-6" elevation="2">
       <v-card-title class="bg-primary text-white">
         <v-icon icon="mdi-table" class="me-2"></v-icon>
@@ -24,27 +21,18 @@
 
       <v-card-text class="pa-4">
         <v-row>
-<<<<<<< HEAD
           <v-col cols="12" md="3">
-=======
-          <v-col cols="12" md="4">
->>>>>>> a6fcbac (add: Сделал страницу с таблицей для всех графиков со страницы Dashboard)
             <v-chip color="primary" variant="outlined" size="large">
               <v-icon icon="mdi-filter" start></v-icon>
               {{ filterTypeLabel }}
             </v-chip>
           </v-col>
-<<<<<<< HEAD
           <v-col cols="12" md="3">
-=======
-          <v-col cols="12" md="4">
->>>>>>> a6fcbac (add: Сделал страницу с таблицей для всех графиков со страницы Dashboard)
             <v-chip color="secondary" variant="outlined" size="large">
               <v-icon icon="mdi-magnify" start></v-icon>
               {{ filterLabel }}
             </v-chip>
           </v-col>
-<<<<<<< HEAD
           <v-col cols="12" md="3" v-if="filterName">
             <v-chip color="accent" variant="outlined" size="large">
               <v-icon icon="mdi-map-marker" start></v-icon>
@@ -53,19 +41,11 @@
           </v-col>
           <v-col cols="12" md="3" v-if="dateRange">
             <v-chip color="warning" variant="outlined" size="large">
-=======
-          <v-col cols="12" md="4" v-if="dateRange">
-            <v-chip color="accent" variant="outlined" size="large">
->>>>>>> a6fcbac (add: Сделал страницу с таблицей для всех графиков со страницы Dashboard)
               <v-icon icon="mdi-calendar-range" start></v-icon>
               {{ dateRange }}
             </v-chip>
           </v-col>
-<<<<<<< HEAD
           <v-col cols="12" md="3" class="mt-2">
-=======
-          <v-col cols="12" md="4" class="mt-2">
->>>>>>> a6fcbac (add: Сделал страницу с таблицей для всех графиков со страницы Dashboard)
             <v-chip color="info" size="large">
               <v-icon icon="mdi-file-document-multiple" start></v-icon>
               Всего: {{ totalDocuments }} документов
@@ -254,22 +234,6 @@
       </div>
     </v-card>
 
-<<<<<<< HEAD
-=======
-    <!-- Кнопка возврата -->
-    <div class="d-flex justify-start mt-6">
-      <v-btn
-        prepend-icon="mdi-arrow-left"
-        color="primary"
-        variant="outlined"
-        size="large"
-        @click="goBack"
-      >
-        Назад к графикам
-      </v-btn>
-    </div>
-
->>>>>>> a6fcbac (add: Сделал страницу с таблицей для всех графиков со страницы Dashboard)
     <!-- Снекбар для ошибок -->
     <v-snackbar v-model="errorSnackbar" color="error" timeout="5000" location="top right">
       {{ errorMessage }}
@@ -303,10 +267,7 @@ const errorMessage = ref('')
 // Параметры из URL
 const filterType = computed(() => route.query.type)
 const filterLabel = computed(() => route.query.label)
-<<<<<<< HEAD
 const filterName = computed(() => route.query.name) // Новый параметр
-=======
->>>>>>> a6fcbac (add: Сделал страницу с таблицей для всех графиков со страницы Dashboard)
 const startDate = computed(() => route.query.startDate)
 const endDate = computed(() => route.query.endDate)
 
@@ -341,25 +302,17 @@ const breadcrumbs = computed(() => [
   { title: 'Детальная таблица', disabled: true }
 ])
 
-<<<<<<< HEAD
 // Лейблы для типов фильтров (расширенные)
-=======
-// Лейблы для типов фильтров
->>>>>>> a6fcbac (add: Сделал страницу с таблицей для всех графиков со страницы Dashboard)
 const filterTypeLabels = {
   year: 'По году',
   type: 'По типу документа',
   district: 'По федеральному округу',
   region: 'По региону',
   nomenclature: 'По номенклатуре',
-<<<<<<< HEAD
   authority: 'По органу власти',
   'district-type': 'Тип документа в ФО',
   'region-type': 'Тип документа в регионе',
   'districts-type-all': 'Тип документа во всех регионах'
-=======
-  authority: 'По органу власти'
->>>>>>> a6fcbac (add: Сделал страницу с таблицей для всех графиков со страницы Dashboard)
 }
 
 const filterTypeLabel = computed(() => {
@@ -400,14 +353,11 @@ const loadDocuments = async () => {
       sort_order: sortOrder.value
     }
 
-<<<<<<< HEAD
     // Добавляем параметр name, если он присутствует
     if (filterName.value) {
       params.name = filterName.value
     }
 
-=======
->>>>>>> a6fcbac (add: Сделал страницу с таблицей для всех графиков со страницы Dashboard)
     if (startDate.value) params.startDate = startDate.value
     if (endDate.value) params.endDate = endDate.value
 
@@ -431,11 +381,7 @@ const goBack = () => {
 }
 
 // Следим за изменениями параметров URL
-<<<<<<< HEAD
 watch([filterType, filterLabel, filterName, startDate, endDate], () => {
-=======
-watch([filterType, filterLabel, startDate, endDate], () => {
->>>>>>> a6fcbac (add: Сделал страницу с таблицей для всех графиков со страницы Dashboard)
   currentPage.value = 1
   loadDocuments()
 })

@@ -15,14 +15,10 @@ async def get_table(
     
     # Основные параметры фильтрации
     type: FilterTypeEnum = Query(..., description="Тип фильтра для документов"),
-<<<<<<< HEAD
     label: str = Query(..., description="Значение для поиска (тип документа для новых фильтров)"),
     
     # Новый параметр для названия округа/региона
     name: str = Query(None, description="Название федерального округа или региона"),
-=======
-    label: str = Query(..., description="Значение для поиска"),
->>>>>>> a6fcbac (add: Сделал страницу с таблицей для всех графиков со страницы Dashboard)
     
     # Даты (опциональные) - используется view_date как в дашборде
     startDate: str = Query(None, description="Начальная дата в формате DD.MM.YYYY"),
@@ -73,7 +69,6 @@ async def get_table(
     /table?type=types&label=Постановление
     ```
     
-<<<<<<< HEAD
     ### 6. НОВЫЕ типы фильтров:
     
     #### 6.1. Конкретный тип документа в федеральном округе:
@@ -102,26 +97,16 @@ async def get_table(
     
     ### 7. С дополнительной фильтрацией по датам:
     ```
-<<<<<<< HEAD
     /table?type=district-type&label=Постановление&name=Северо-Кавказский ФО&startDate=01.07.2025&endDate=31.07.2025
     /table?type=region-type&label=Закон&name=Красноярский край&startDate=01.01.2024&endDate=31.12.2024
     /table?type=districts-type-all&label=Постановление&startDate=01.06.2025&endDate=30.06.2025
-=======
     /table?type=nomenclature&label=ОГВ Субъектов РФ&startDate=01.07.2025&endDate=31.07.2025
     /table?type=districts&label=Сибирский федеральный округ&startDate=01.01.2024&endDate=31.12.2024
->>>>>>> a6fcbac (add: Сделал страницу с таблицей для всех графиков со страницы Dashboard)
     ```
     
     ## Примечания:
     - Фильтрация по датам использует поле `view_date` (как в дашборде)
-<<<<<<< HEAD
-    - Для новых типов фильтров `label` содержит тип документа
-    - `name` содержит название федерального округа или региона (для соответствующих типов)
-    - Для `districts-type-all` параметр `name` игнорируется
-=======
-    - Для точного соответствия графикам используется точное совпадение значений label
-    - Специальная обработка для "ОГВ Субъектов РФ" (региональные документы)
->>>>>>> a6fcbac (add: Сделал страницу с таблицей для всех графиков со страницы Dashboard)
+
     - Поддержка детальной номенклатуры для документов президента и правительства
     """
     
@@ -130,10 +115,7 @@ async def get_table(
         params_dict = {
             "type": type,
             "label": label,
-<<<<<<< HEAD
             "name": name,
-=======
->>>>>>> a6fcbac (add: Сделал страницу с таблицей для всех графиков со страницы Dashboard)
             "page": page,
             "page_size": page_size,
             "sort_by": sort_by,
@@ -170,7 +152,6 @@ async def get_table(
                 detail=f"Недопустимое поле для сортировки: {sort_by}. Доступные поля: {allowed_sort_fields}"
             )
         
-<<<<<<< HEAD
         # Валидация новых типов фильтров
         if type in [FilterTypeEnum.DISTRICT_TYPE, FilterTypeEnum.REGION_TYPE] and not name:
             raise HTTPException(
@@ -178,8 +159,6 @@ async def get_table(
                 detail=f"Для типа фильтра '{type}' параметр 'name' является обязательным"
             )
         
-=======
->>>>>>> a6fcbac (add: Сделал страницу с таблицей для всех графиков со страницы Dashboard)
         params = RequestTableSchema(**params_dict)
         response = await service.get_rows_from_table(params)
         
@@ -201,77 +180,48 @@ async def get_available_filters() -> dict:
             "year": {
                 "name": "Год",
                 "description": "Фильтрация по году публикации документа",
-<<<<<<< HEAD
                 "example": "2024",
                 "requires_name": False
-=======
-                "example": "2024"
->>>>>>> a6fcbac (add: Сделал страницу с таблицей для всех графиков со страницы Dashboard)
             },
             "years": {
                 "name": "Года", 
                 "description": "Фильтрация по году публикации документа (альтернативный вариант)",
-<<<<<<< HEAD
                 "example": "2024",
                 "requires_name": False
-=======
-                "example": "2024"
->>>>>>> a6fcbac (add: Сделал страницу с таблицей для всех графиков со страницы Dashboard)
             },
             "type": {
                 "name": "Тип документа", 
                 "description": "Фильтрация по типу нормативно-правового акта",
-<<<<<<< HEAD
                 "example": "Закон о внесении поправок в Устав Красноярского края",
                 "requires_name": False
-=======
-                "example": "Закон о внесении поправок в Устав Красноярского края"
->>>>>>> a6fcbac (add: Сделал страницу с таблицей для всех графиков со страницы Dashboard)
             },
             "types": {
                 "name": "Типы документов",
                 "description": "Фильтрация по типам нормативно-правовых актов (альтернативный вариант)",
-<<<<<<< HEAD
                 "example": "Закон о внесении поправок в Устав Красноярского края",
                 "requires_name": False
-=======
-                "example": "Закон о внесении поправок в Устав Красноярского края"
->>>>>>> a6fcbac (add: Сделал страницу с таблицей для всех графиков со страницы Dashboard)
             },
             "district": {
                 "name": "Федеральный округ",
                 "description": "Фильтрация по федеральному округу",
-<<<<<<< HEAD
                 "example": "Сибирский федеральный округ",
                 "requires_name": False
-=======
-                "example": "Сибирский федеральный округ"
->>>>>>> a6fcbac (add: Сделал страницу с таблицей для всех графиков со страницы Dashboard)
             },
             "region": {
                 "name": "Субъект РФ",
                 "description": "Фильтрация по региону/субъекту Российской Федерации",
-<<<<<<< HEAD
                 "example": "Красноярский край",
                 "requires_name": False
-=======
-                "example": "Красноярский край"
->>>>>>> a6fcbac (add: Сделал страницу с таблицей для всех графиков со страницы Dashboard)
             },
             "nomenclature": {
                 "name": "Номенклатура",
                 "description": "Поиск в названии, заголовке или полном наименовании документа",
-<<<<<<< HEAD
                 "example": "Постановление",
                 "requires_name": False
-=======
-                "example": "Постановление"
->>>>>>> a6fcbac (add: Сделал страницу с таблицей для всех графиков со страницы Dashboard)
             },
             "authority": {
                 "name": "Орган власти",
                 "description": "Фильтрация по подписывающему органу власти",
-<<<<<<< HEAD
                 "example": "Правительство",
                 "requires_name": False
             },
@@ -292,9 +242,6 @@ async def get_available_filters() -> dict:
                 "description": "Фильтрация по конкретному типу документа во всех региональных документах",
                 "example": "label=Постановление",
                 "requires_name": False
-=======
-                "example": "Правительство"
->>>>>>> a6fcbac (add: Сделал страницу с таблицей для всех графиков со страницы Dashboard)
             }
         },
         "sort_fields": [
@@ -303,7 +250,6 @@ async def get_available_filters() -> dict:
             "document_date",
             "view_date",
             "name",
-<<<<<<< HEAD
             "title",
             "eo_number",
             "pages_count"
@@ -313,8 +259,4 @@ async def get_available_filters() -> dict:
             "region_type": "/table?type=region-type&label=Закон&name=Красноярский край",
             "districts_type_all": "/table?type=districts-type-all&label=Постановление"
         }
-=======
-            "title"
-        ]
->>>>>>> a6fcbac (add: Сделал страницу с таблицей для всех графиков со страницы Dashboard)
     }
