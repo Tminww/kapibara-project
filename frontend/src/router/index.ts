@@ -196,6 +196,9 @@ const routes = [
     name: 'table',
     component: () => import('@/components/table/TablePage.vue'),
     meta: {
+<<<<<<< HEAD
+      requiresAuth: true
+=======
       requiresAuth: true,
       breadCrumb: [
         {
@@ -211,6 +214,7 @@ const routes = [
           text: 'Таблица документов'
         }
       ]
+>>>>>>> a6fcbac (add: Сделал страницу с таблицей для всех графиков со страницы Dashboard)
     }
   },
 

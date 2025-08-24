@@ -16,6 +16,7 @@ const props = defineProps({
     validators: ['top', 'bottom', 'left', 'right']
   },
   isLegendClickable: { type: Boolean, default: false },
+  isLegendOpenTablePage: { type: Boolean, default: false },
   routeName: { type: String, default: 'region' }
 })
 const emit = defineEmits(['onColumnClick'])
@@ -77,17 +78,63 @@ const data = computed(() => {
         },
         events: {
           legendClick: (chart, seriesIndex, config) => {
-            // Используем Vue Router
-            const label = config.globals.labels[seriesIndex]
+            // Получаем данные для выбранной серии
+            const selectedIndex = seriesIndex
+            const selectedLabel = config.globals.labels[seriesIndex]
+            const selectedValue = config.globals.series[seriesIndex] || props.series[seriesIndex]
+
+            console.log('Выбрана легенда:', {
+              index: selectedIndex,
+              label: selectedLabel,
+              value: selectedValue
+            })
+
             if (props.isLegendClickable) {
               router.push({
                 name: props.routeName,
-                params: { id: getDistrictIdByName(label) },
-                query: { label: label }
-              }) // или другой маршрут
+                params: { id: getDistrictIdByName(selectedLabel) },
+                query: { label: selectedLabel }
+              })
+            }
+
+            if (props.isLegendOpenTablePage) {
+              // Эмитим событие с данными выбранной серии
+              emit('onColumnClick', {
+                index: selectedIndex,
+                label: selectedLabel,
+                value: selectedValue
+              })
             }
           },
+
           dataPointSelection: (event, chartContext, config) => {
+<<<<<<< HEAD
+            // Получаем данные для выбранной точки данных
+            const selectedIndex = config.dataPointIndex
+            const selectedLabel = chartContext.w.globals.labels[config.dataPointIndex]
+            const selectedValue = props.series[config.dataPointIndex]
+
+            console.log('Выбран столбец:', {
+              index: selectedIndex,
+              label: selectedLabel,
+              value: selectedValue
+            })
+
+            if (props.isLegendClickable) {
+              router.push({
+                name: props.routeName,
+                params: { id: getDistrictIdByName(selectedLabel) },
+                query: { label: selectedLabel }
+              })
+            }
+
+            if (props.isLegendOpenTablePage) {
+              // Эмитим событие с данными выбранного столбца
+              emit('onColumnClick', {
+                index: selectedIndex,
+                label: selectedLabel,
+                value: selectedValue
+=======
             // Правильный способ получить label для dataPointSelection
             const label = chartContext.w.globals.labels[config.dataPointIndex]
 
@@ -96,6 +143,7 @@ const data = computed(() => {
                 name: props.routeName,
                 params: { id: getDistrictIdByName(label) },
                 query: { label: label }
+>>>>>>> a6fcbac (add: Сделал страницу с таблицей для всех графиков со страницы Dashboard)
               })
             }
           }

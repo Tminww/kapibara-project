@@ -107,7 +107,31 @@ class TableService:
             else:
                 conditions.append(RegionEntity.name == params.label)
         
+<<<<<<< HEAD
+        # 5. НОВЫЕ ТИПЫ ФИЛЬТРОВ
+        
+        # 5.1. Конкретный тип документов в федеральном округе
+        elif params.type == FilterTypeEnum.DISTRICT_TYPE:
+            conditions.append(TypeEntity.name == params.label)  # фильтр по типу документа
+            if params.name:  # дополнительный фильтр по названию округа
+                conditions.append(DistrictEntity.name == params.name)
+        
+        # 5.2. Конкретный тип документов в регионе
+        elif params.type == FilterTypeEnum.REGION_TYPE:
+            conditions.append(TypeEntity.name == params.label)  # фильтр по типу документа
+            if params.name:  # дополнительный фильтр по названию региона
+                conditions.append(RegionEntity.name == params.name)
+        
+        # 5.3. Конкретный тип документов во всех регионах
+        elif params.type == FilterTypeEnum.DISTRICTS_TYPE_ALL:
+            conditions.append(TypeEntity.name == params.label)  # фильтр только по типу документа
+            # Дополнительно можно ограничить только региональными документами
+            conditions.append(RegionEntity.code.like("region%"))
+        
+        # 6. График "Номенклатура" - объединенный запрос (get_publication_by_nomenclature)
+=======
         # 5. График "Номенклатура" - объединенный запрос (get_publication_by_nomenclature)
+>>>>>>> a6fcbac (add: Сделал страницу с таблицей для всех графиков со страницы Dashboard)
         # и детальный запрос (get_publication_by_nomenclature_detail_president_and_government)
         elif params.type == FilterTypeEnum.NOMENCLATURE:
             if params.label == "ОГВ Субъектов РФ":
@@ -150,7 +174,11 @@ class TableService:
                     )
                 )
         
+<<<<<<< HEAD
+        # 7. Фильтр по органу власти (для случаев когда нужно отфильтровать по signatory_authority_id)
+=======
         # 6. Фильтр по органу власти (для случаев когда нужно отфильтровать по signatory_authority_id)
+>>>>>>> a6fcbac (add: Сделал страницу с таблицей для всех графиков со страницы Dashboard)
         elif params.type == FilterTypeEnum.AUTHORITY:
             conditions.append(
                 DocumentEntity.signatory_authority_id.ilike(f"%{params.label}%")

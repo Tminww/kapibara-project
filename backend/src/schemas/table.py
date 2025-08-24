@@ -5,6 +5,24 @@ from enum import Enum
 
 
 class FilterTypeEnum(str, Enum):
+<<<<<<< HEAD
+    # Существующие типы
+    YEAR = "year"
+    YEARS = "years"
+    TYPE = "type"
+    TYPES = "types"
+    DISTRICT = "district"
+    DISTRICTS = "districts"
+    REGION = "region"
+    REGIONS = "regions"
+    NOMENCLATURE = "nomenclature"
+    AUTHORITY = "authority"
+    
+    # Новые типы фильтров
+    DISTRICT_TYPE = "district-type"        # конкретный тип документа в федеральном округе
+    REGION_TYPE = "region-type"            # конкретный тип документа в регионе
+    DISTRICTS_TYPE_ALL = "districts-type-all"  # конкретный тип документа во всех регионах
+=======
     """Типы фильтрации для разных графиков дашборда"""
     
     # График "Опубликование по годам" 
@@ -28,10 +46,43 @@ class FilterTypeEnum(str, Enum):
     
     # Дополнительные фильтры
     AUTHORITY = "authority"  # Фильтр по органу власти
+>>>>>>> a6fcbac (add: Сделал страницу с таблицей для всех графиков со страницы Dashboard)
 
 
 class RequestTableSchema(BaseModel):
     """Схема запроса для получения таблицы документов"""
+<<<<<<< HEAD
+    type: FilterTypeEnum = Field(..., description="Тип фильтра")
+    label: str = Field(..., description="Значение для поиска (тип документа для новых фильтров)")
+    name: Optional[str] = Field(None, description="Название федерального округа или региона")
+    start_date: Optional[date] = Field(None, description="Начальная дата")
+    end_date: Optional[date] = Field(None, description="Конечная дата")
+    page: int = Field(1, ge=1, description="Номер страницы")
+    page_size: int = Field(20, ge=1, le=100, description="Размер страницы")
+    sort_by: str = Field("view_date", description="Поле для сортировки")
+    sort_order: str = Field("desc", pattern="^(asc|desc)$", description="Направление сортировки")
+
+
+class DocumentResponseSchema(BaseModel):
+    """Схема ответа для документа"""
+    id: int
+    eo_number: Optional[str] = None
+    complex_name: Optional[str] = None
+    pages_count: Optional[int] = None
+    pdf_file_length: Optional[int] = None
+    name: Optional[str] = None
+    document_date: Optional[date] = None
+    signatory_authority_id: Optional[str] = None
+    number: Optional[str] = None
+    title: Optional[str] = None
+    view_date: Optional[date] = None
+    external_id: Optional[str] = None
+    hash: Optional[str] = None
+    date_of_publication: Optional[date] = None
+    date_of_signing: Optional[date] = None
+    updated_at: Optional[date] = None
+    is_valid: Optional[bool] = None
+=======
     
     # Основные параметры фильтрации
     type: FilterTypeEnum = Field(..., description="Тип фильтра")
@@ -68,6 +119,7 @@ class DocumentResponseSchema(BaseModel):
     signatory_authority_id: Optional[str] = None
     number: Optional[str] = None
     external_id: Optional[str] = None
+>>>>>>> a6fcbac (add: Сделал страницу с таблицей для всех графиков со страницы Dashboard)
     
     # Связанные данные
     type_name: Optional[str] = None
@@ -88,7 +140,10 @@ class TableResponseSchema(BaseModel):
     has_next: bool
     has_prev: bool
 
+<<<<<<< HEAD
+=======
 
+>>>>>>> a6fcbac (add: Сделал страницу с таблицей для всех графиков со страницы Dashboard)
 class ResponseSchema(BaseModel):
     """Общая схема ответа"""
     data: TableResponseSchema
