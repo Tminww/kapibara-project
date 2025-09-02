@@ -37,8 +37,15 @@ class DocumentEntity(Base):
     date_of_publication: Mapped[datetime] = mapped_column(Date, nullable=True)
     date_of_signing: Mapped[datetime] = mapped_column(Date, nullable=True)
     updated_at: Mapped[datetime] = mapped_column(Date, nullable=True)
-
+    
+    is_spellchek_valid: Mapped[bool] = mapped_column(Boolean, nullable=True, default=None)
     is_valid: Mapped[bool] = mapped_column(Boolean, nullable=True, default=None)
+    
+    ocr_name: Mapped[str] = mapped_column(Text, nullable=True, default=None)
+    ocr_similarity: Mapped[float] = mapped_column(nullable=True, default=None)
+    
+    spellcheck_errors: Mapped[str]= mapped_column(Text, nullable=True, default=None)
+    
     # id_reg: Mapped[int] = mapped_column(ForeignKey("region.id"), nullable=False)
     # act = relationship("TypeEntity", overlaps="act", innerjoin=True)
     # region = relationship("RegionEntity", overlaps="region", innerjoin=True)
