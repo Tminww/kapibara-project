@@ -62,10 +62,16 @@ def connection(method):
         session_maker, engine = await create_session_maker()
         async with session_maker() as session:
             try:
-                async with session.begin():
+                # Для методов, которые только читают данные, не нужна явная транзакция
+                if method.__name__.startswith('get_') or method.__name__.startswith('select_'):
                     result = await method(*args, session=session, **kwargs)
+                else:
+                    # Для методов, которые изменяют данные, используем транзакцию
+                    async with session.begin():
+                        result = await method(*args, session=session, **kwargs)
                 return result
             except Exception as e:
+                logger.error(f"Ошибка в методе {method.__name__}: {e}")
                 raise e
             finally:
                 await engine.dispose()  # Важно закрывать engine!

@@ -11,7 +11,7 @@ import re
 from spellchecker import SpellChecker
 from Levenshtein import ratio
 from datetime import datetime, date
-from sqlalchemy import select, func, and_
+from sqlalchemy import select, func, and_, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from database import connection
 from httpx import Response, Timeout, AsyncClient
@@ -31,7 +31,7 @@ THRESHOLD = 90
 class ValidationModule:
     def __init__(self):
         pytesseract.pytesseract.tesseract_cmd = settings.TESSERACT_CMD
-        self.spell = SpellChecker(language="ru")  # Инициализация проверки орфографии
+        self.spell = SpellChecker(language="ru")
 
     @connection
     async def get_documents_from_db(
@@ -42,13 +42,12 @@ class ValidationModule:
     ) -> List[Dict]:
         """Получает документы из базы данных на основе фильтров"""
 
-        # Преобразование строковых дат в объекты date, если необходимо
         if isinstance(start_date, str):
             start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
         if isinstance(end_date, str):
             end_date = datetime.strptime(end_date, "%Y-%m-%d").date()
 
-        # Подготовка основного запроса
+        # Подготовка основного запроса с дополнительными полями
         query = select(
             DocumentEntity.id,
             DocumentEntity.external_id,
@@ -59,20 +58,20 @@ class ValidationModule:
             DocumentEntity.id_reg,
             DocumentEntity.id_type,
             DocumentEntity.is_valid,
+            DocumentEntity.is_spellchek_valid,
+            DocumentEntity.ocr_name,
+            DocumentEntity.ocr_similarity,
         ).select_from(DocumentEntity)
 
         if start_date and end_date:
-            # Использование объектов даты напрямую вместо функции to_date
             query = query.filter(DocumentEntity.view_date.between(start_date, end_date))
 
-        # Добавляем order by и лимит
         query = query.order_by(DocumentEntity.document_date.desc())
-
-        # Выполняем запрос
         result = await session.execute(query)
         documents = result.all()
-        print(len(documents))
-        # Преобразуем объекты SQLAlchemy в словари для дальнейшей обработки
+        print(f"Найдено документов: {len(documents)}")
+        
+        # Преобразуем объекты SQLAlchemy в словари
         docs_as_dicts = []
         for doc in documents:
             doc_dict = {
@@ -85,10 +84,128 @@ class ValidationModule:
                 "id_reg": doc[6],
                 "id_type": doc[7],
                 "is_valid": doc[8],
+                "is_spellchek_valid": doc[9],
+                "ocr_name": doc[10],
+                "ocr_similarity": doc[11],
             }
             docs_as_dicts.append(doc_dict)
 
         return docs_as_dicts
+
+    @connection
+    async def update_document_validation(
+        self,
+        session: AsyncSession,
+        document_id: int,
+        is_valid: bool,
+        ocr_text: str,
+        similarity: float,
+        is_spellcheck_valid: bool = None,
+        spellcheck_errors: str = None,
+    ) -> bool:
+        """Обновляет результаты валидации документа в базе данных"""
+        try:
+            values_dict = {
+                'is_valid': is_valid,
+                'ocr_name': ocr_text[:1000] if ocr_text else None,
+                'ocr_similarity': similarity,
+            }
+            
+            if is_spellcheck_valid is not None:
+                values_dict['is_spellchek_valid'] = is_spellcheck_valid
+            
+            if spellcheck_errors is not None:
+                values_dict['spellcheck_errors'] = spellcheck_errors[:2000] if spellcheck_errors else None
+            
+            stmt = (
+                update(DocumentEntity)
+                .where(DocumentEntity.id == document_id)
+                .values(**values_dict)
+            )
+            
+            await session.execute(stmt)
+            await session.commit()
+            
+            logger.info(f"Документ {document_id} обновлен: is_valid={is_valid}, similarity={similarity}, spellcheck_valid={is_spellcheck_valid}")
+            return True
+            
+        except Exception as e:
+            logger.error(f"Ошибка при обновлении документа {document_id}: {e}")
+            await session.rollback()
+            return False
+
+    def check_spelling(self, text: str) -> Dict:
+        """Проверяет текст на орфографические ошибки"""
+        if not text or not text.strip():
+            return {
+                "is_valid": True,
+                "errors": [],
+                "error_count": 0,
+                "total_words": 0,
+                "corrected_text": text,
+                "error_details": ""
+            }
+        
+        cleaned_text = re.sub(r'[^\w\s\-]', ' ', text.lower())
+        words = cleaned_text.split()
+        
+        if not words:
+            return {
+                "is_valid": True,
+                "errors": [],
+                "error_count": 0,
+                "total_words": 0,
+                "corrected_text": text,
+                "error_details": ""
+            }
+        
+        unknown_words = list(self.spell.unknown(words))
+        errors_info = []
+        corrected_words = []
+        
+        for word in words:
+            if word in unknown_words:
+                candidates = self.spell.candidates(word)
+                if candidates:
+                    corrected = min(candidates, key=lambda x: abs(len(x) - len(word)))
+                    corrected_words.append(corrected)
+                    errors_info.append({
+                        "original": word,
+                        "suggested": corrected,
+                        "candidates": list(candidates)[:3]
+                    })
+                else:
+                    corrected_words.append(word)
+                    errors_info.append({
+                        "original": word,
+                        "suggested": word,
+                        "candidates": []
+                    })
+            else:
+                corrected_words.append(word)
+        
+        corrected_text = " ".join(corrected_words)
+        
+        error_details = ""
+        if errors_info:
+            error_details = "; ".join([
+                f"{err['original']} -> {err['suggested']}" 
+                for err in errors_info
+            ])
+        
+        error_rate = len(unknown_words) / len(words) if words else 0
+        is_valid = error_rate <= 0.1  # Допускаем до 10% ошибок
+        
+        return {
+            "is_valid": is_valid,
+            "errors": unknown_words,
+            "error_count": len(unknown_words),
+            "total_words": len(words),
+            "error_rate": round(error_rate * 100, 2),
+            "corrected_text": corrected_text,
+            "error_details": error_details,
+            "errors_info": errors_info
+        }
 
     async def get_image(self, document_id: str, page_number: int = 1) -> Image.Image:
         async with AsyncClient(proxy=settings.PROXY, timeout=Timeout(30.0)) as client:
@@ -101,7 +218,7 @@ class ValidationModule:
                         "pageNumper": page_number,
                     },
                 )
-                print(response)
+                print(f"Получен ответ для документа {document_id}: {response.status_code}")
                 response.raise_for_status()
                 return Image.open(io.BytesIO(response.content))
             except Exception as e:
@@ -122,30 +239,15 @@ class ValidationModule:
         text = re.sub(r"[^\w\s]", "", text.lower())
         return " ".join(text.split())
 
-    def correct_text(self, text: str) -> str:
-        """Исправление орфографических ошибок"""
-        words = text.split()
-        corrected = []
-        for word in words:
-            if self.spell.unknown([word]):
-                corrected_word = self.spell.correction(word)
-                corrected.append(corrected_word if corrected_word is not None else word)
-            else:
-                corrected.append(word)
-        return " ".join(corrected)
-
     def compare_texts(self, db_text: str, ocr_text: str) -> Dict:
         """Сравнение текстов с поиском названия внутри OCR-текста"""
-        # Очистка текстов
         db_clean = self.clean_text(db_text)
         ocr_clean = self.clean_text(ocr_text)
 
-        # Поиск точного совпадения названия в OCR-тексте
         if db_clean in ocr_clean:
             similarity = 100.0
             is_valid = True
         else:
-            # Нечёткое сравнение: найти фрагмент в OCR-тексте, который максимально похож на название
             max_similarity = 0.0
             db_words = db_clean.split()
             ocr_words = ocr_clean.split()
@@ -158,9 +260,8 @@ class ValidationModule:
                     max_similarity = sim
 
             similarity = max_similarity
-            is_valid = similarity > THRESHOLD  # Порог валидности
+            is_valid = similarity > THRESHOLD
 
-        # Результат
         result = {
             "original_db": db_text,
             "original_ocr": ocr_text,
@@ -175,31 +276,26 @@ class ValidationModule:
         end_date: str,
         progress_callback: Optional[Callable] = None,
     ) -> Dict:
-        """
-        Обрабатывает документы из базы данных на основе указанных фильтров.
-
-        Args:
-            start_date: Начальная дата для фильтрации
-            end_date: Конечная дата для фильтрации
-            progress_callback: Функция для отслеживания прогресса (опционально)
-
-        Returns:
-            Dict: Статистика по обработанным документам
-        """
+        """Обрабатывает документы из базы данных на основе указанных фильтров."""
+        
         report_data = {
             "details": {},
             "summary": {
                 "total": 0,
                 "processed": 0,
+                "skipped_already_valid": 0,
                 "validation_successful": 0,
                 "validation_failed": 0,
                 "failed": 0,
+                "updated_in_db": 0,
+                "spellcheck_performed": 0,
+                "spellcheck_valid": 0,
+                "spellcheck_invalid": 0,
                 "start_date": start_date,
                 "end_date": end_date,
             },
         }
 
-        # Получаем документы из базы данных
         documents = await self.get_documents_from_db(
             start_date=start_date,
             end_date=end_date,
@@ -209,6 +305,7 @@ class ValidationModule:
             logger.warning("Не удалось получить документы из базы данных")
             if progress_callback:
                 progress_callback(100, "Документы не найдены", report_data)
+            return report_data
 
         total_documents = len(documents)
         report_data["summary"]["total"] = total_documents
@@ -225,6 +322,10 @@ class ValidationModule:
             doc_id = doc.get("id")
             doc_ext_id = doc.get("external_id")
             doc_eo_number = doc.get("eo_number")
+            
+            # Определяем тексты для проверки
+            name_text = doc.get("name", "").strip() if doc.get("name") else ""
+            
             if doc.get("name", None):
                 db_text = doc.get("name")
             elif doc.get("complex_name", None):
@@ -235,14 +336,48 @@ class ValidationModule:
                 db_text = ""
 
             if progress_callback:
-                progress = 10 + int(80 * (idx + 1) / report_data["summary"]["total"])
+                progress = 10 + int(80 * (idx + 1) / total_documents)
                 progress_callback(
                     progress,
                     f"Обработка документа {idx+1}/{total_documents}",
                     report_data,
                 )
-            if doc.get("is_valid"):
-                report_data["summary"]["validation_successful"] += 1
+
+            # Проверяем орфографию для поля name (если оно есть)
+            spellcheck_result = None
+            if name_text:
+                spellcheck_result = self.check_spelling(name_text)
+                logger.info(f"Проверка орфографии для документа {doc_id}: "
+                           f"ошибок {spellcheck_result['error_count']} из {spellcheck_result['total_words']} слов, "
+                           f"валидность: {spellcheck_result['is_valid']}")
+
+            # Пропускаем уже проверенные документы
+            if doc.get("is_valid") is True:
+                report_data["summary"]["skipped_already_valid"] += 1
+                logger.info(f"Документ {doc_id} уже проверен и валиден, пропускаем")
+                
+                # Но проверяем орфографию, если она еще не была проверена
+                if name_text and spellcheck_result and doc.get("is_spellchek_valid") is None:
+                    try:
+                        update_success = await self.update_document_validation(
+                            document_id=doc_id,
+                            is_valid=True,
+                            ocr_text=doc.get("ocr_name", "") or "",
+                            similarity=doc.get("ocr_similarity", 0.0) or 0.0,
+                            is_spellcheck_valid=spellcheck_result["is_valid"],
+                            spellcheck_errors=spellcheck_result["error_details"]
+                        )
+                        if update_success:
+                            report_data["summary"]["updated_in_db"] += 1
+                            report_data["summary"]["spellcheck_performed"] += 1
+                            if spellcheck_result["is_valid"]:
+                                report_data["summary"]["spellcheck_valid"] += 1
+                            else:
+                                report_data["summary"]["spellcheck_invalid"] += 1
+                            logger.info(f"Обновлена только орфография для документа {doc_id}")
+                    except Exception as e:
+                        logger.error(f"Ошибка при обновлении орфографии для документа {doc_id}: {e}")
+                
                 continue
 
             if not doc_ext_id:
@@ -257,7 +392,17 @@ class ValidationModule:
                 }
                 continue
 
-            # Обновляем прогресс
+            if not db_text.strip():
+                logger.warning(f"Отсутствует текст для проверки в документе: {doc_id}")
+                report_data["summary"]["failed"] += 1
+                report_data["details"][doc_id] = {
+                    "state": "FAILURE",
+                    "error": "DATABASE", 
+                    "id_reg": doc.get("id_reg"),
+                    "id_type": doc.get("id_type"),
+                    "reason": f"Отсутствует текст для проверки",
+                }
+                continue
 
             # Получаем изображение первой страницы
             image = await self.get_image(doc_ext_id)
@@ -276,7 +421,6 @@ class ValidationModule:
             ocr_text = self.extract_text_from_image(image)
             if not ocr_text:
                 report_data["summary"]["failed"] += 1
-
                 report_data["details"][doc_id] = {
                     "state": "FAILURE",
                     "error": "OCR",
@@ -303,8 +447,28 @@ class ValidationModule:
 
             processed += 1
             report_data["summary"]["processed"] += 1
-
             total_similarity += comparison["similarity_percent"]
+            
+            # Обновляем статистику проверки орфографии
+            if spellcheck_result:
+                report_data["summary"]["spellcheck_performed"] += 1
+                if spellcheck_result["is_valid"]:
+                    report_data["summary"]["spellcheck_valid"] += 1
+                else:
+                    report_data["summary"]["spellcheck_invalid"] += 1
+
+            # Обновляем документ в базе данных
+            update_success = await self.update_document_validation(
+                document_id=doc_id,
+                is_valid=comparison["is_valid"],
+                ocr_text=ocr_text,
+                similarity=comparison["similarity_percent"],
+                is_spellcheck_valid=spellcheck_result["is_valid"] if spellcheck_result else None,
+                spellcheck_errors=spellcheck_result["error_details"] if spellcheck_result else None,
+            )
+
+            if update_success:
+                report_data["summary"]["updated_in_db"] += 1
 
             # Подробная информация о документе
             doc_detail = {
@@ -318,10 +482,11 @@ class ValidationModule:
                 ),
                 "similarity": comparison["similarity_percent"],
                 "is_valid": comparison["is_valid"],
+                "updated_in_db": update_success,
+                "spellcheck": spellcheck_result if spellcheck_result else None,
                 "status": "success",
             }
 
-            # Детальное логирование для каждого документа
             logger.info("Документ: %s", doc_detail)
 
             if comparison["is_valid"]:
@@ -336,22 +501,24 @@ class ValidationModule:
                     "reason": doc_detail,
                 }
 
-            if processed > 0:
-                report_data["summary"]["average_similarity"] = round(
-                    total_similarity / processed, 2
-                )
+        # Подсчитываем среднее значение схожести
+        if processed > 0:
+            report_data["summary"]["average_similarity"] = round(
+                total_similarity / processed, 2
+            )
 
         if progress_callback:
             progress_callback(
                 100,
-                f"Обработка завершена. Всего обработано {processed} / {total_documents} документов",
+                f"Обработка завершена. Всего обработано {processed} / {total_documents} документов. "
+                f"Пропущено уже проверенных: {report_data['summary']['skipped_already_valid']}",
                 report_data,
             )
 
-        logger.info(f"Итоговая статистика: %s", report_data)
+        logger.info(f"Итоговая статистика: %s", report_data["summary"])
+        return report_data
 
 
-# Пример использования
 if __name__ == "__main__":
     validator = ValidationModule()
     asyncio.run(validator.process_documents("2025-01-01", "2025-12-31", print))
