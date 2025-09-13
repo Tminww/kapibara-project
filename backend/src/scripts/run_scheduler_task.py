@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 
 class TaskScheduler:
     def __init__(self):
-        self.base_url = f"{settings.HOST_SCHEME}://{settings.HOST}:{settings.PORT}/api"
+        self.base_url = f"{settings.HOST_SCHEME}://{settings.DOCKER_HOST}:{settings.DOCKER_PORT}/api"
         self.session = requests.Session()
         self.session.headers.update({'Content-Type': 'application/json'})
     

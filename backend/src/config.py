@@ -24,7 +24,9 @@ class Config(BaseSettings):
 
     HOST_SCHEME: Literal['http', 'https'] = "http" # или "https"
     HOST: str
+    DOCKER_HOST: str = "backend"  # Имя сервиса в Docker Compose
     PORT: int
+    DOCKER_PORT: int = 80  # Порт внутри Docker
     CURRENT_IP: str
 
     REDIS_HOST: str = "localhost"

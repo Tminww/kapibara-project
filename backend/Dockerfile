@@ -1,38 +1,51 @@
+# backend/Dockerfile
 FROM alpine:3.22
 
-RUN apk add --no-cache curl
+# Устанавливаем необходимые пакеты
+RUN apk add --no-cache \
+    curl \
+    bash \
+    tesseract-ocr \
+    tesseract-ocr-data-rus \
+    dcron \
+    postgresql-client
 
-RUN apk add --no-cache tesseract-ocr
-RUN apk add --no-cache tesseract-ocr-data-rus
-
-
+# Устанавливаем uv
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
-
 ENV PATH="/root/.local/bin:$PATH"
 
+# В Dockerfile добавьте:
+RUN wget -O /usr/local/bin/supercronic https://github.com/aptible/supercronic/releases/download/v0.2.29/supercronic-linux-amd64 \
+    && chmod +x /usr/local/bin/supercronic
+    
+# Создаем рабочую директорию
 WORKDIR /code
 
-COPY ./.python-version /code/.python-version
+# Копируем только файлы конфигурации для установки зависимостей
+COPY .python-version pyproject.toml requirements.txt uv.lock ./
 
-RUN uv python install $(cat .python-version)
+# Устанавливаем Python и зависимости
+RUN uv python install $(cat .python-version) && \
+    uv sync
 
-COPY ./pyproject.toml .
-COPY ./requirements.txt .
-COPY ./uv.lock .
+# Создаем необходимые директории
+RUN mkdir -p \
+    /var/log/cron \
+    /var/log/celery \
+    /var/log/celery-beat \
+    /var/log/backend \
+    /code/celerybeat
 
-RUN uv sync 
+# Настраиваем права доступа
+RUN touch /var/log/cron/cron.log && \
+    chmod 644 /var/log/cron/cron.log
 
-COPY ./src ./src
-COPY ./alembic ./alembic
-COPY ./alembic.ini .
+# Точки монтирования для исходного кода
+VOLUME ["/code/src", "/code/alembic", "/code/scripts"]
 
-COPY crontab.txt /etc/cron.d/scheduler-cron
+# Переменные окружения
+ENV PYTHONPATH=/code
+ENV PYTHONUNBUFFERED=1
 
-RUN crontab /etc/cron.d/scheduler-cron
-
-
-# Запуск cron в фоновом режиме
-CMD ["cron", "-f"]
-# COPY ./.env.prod ./.env 
-
-# CMD ["uv", "run", "python", "src/main.py"]
+# По умолчанию запускаем bash (команда будет переопределена в docker-compose)
+CMD ["bash"]

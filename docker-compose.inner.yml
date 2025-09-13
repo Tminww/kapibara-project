@@ -5,15 +5,15 @@ services:
     container_name: kapibara-apache
     restart: unless-stopped
     depends_on:
-      - frontend
       - backend
     ports:
       - "0.0.0.0:80:80"
       - "0.0.0.0:443:443"
     volumes:
-      - ./apache/httpd.80.conf:/usr/local/apache2/conf/httpd.conf:ro
-      - ./apache/conf.d:/usr/local/apache2/conf/conf.d:ro
-      - ./apache/ssl:/usr/local/apache2/conf/ssl:ro
+      - ./apache/httpd.80.conf:/usr/local/apache2/conf/httpd.conf
+      - ./apache/conf.d:/usr/local/apache2/conf/conf.d
+      - ./apache/ssl:/usr/local/apache2/conf/ssl
+      - ./frontend/dist:/usr/local/apache2/htdocs # Статические файлы фронтенда
     healthcheck:
       test: ["CMD", "httpd", "-t"]
       interval: 30s
@@ -84,7 +84,21 @@ services:
         condition: service_healthy
     ports:
       - "127.0.0.1:8080:80"
-    command: sh -c "uv run alembic upgrade head && cd src && uv run python main.py"
+    volumes:
+      - ./backend/src:/code/src # Исходный код только для чтения
+      - ./backend/alembic:/code/alembic # Миграции только для чтения
+      - ./backend/alembic.ini:/code/alembic.ini
+      - backend-logs:/var/log/backend # Логи backend
+
+    environment:
+      - PYTHONPATH=/code
+      - TZ=Europe/Moscow
+    command: sh -c "uv run alembic upgrade head && cd /code/src && uv run python main.py"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   # Celery Worker
   celery-worker:
@@ -100,30 +114,61 @@ services:
         condition: service_healthy
       broker:
         condition: service_healthy
-    command: sh -c "cd src && uv run celery -A celery_worker worker --loglevel=info"
+    volumes:
+      - ./backend/src:/code/src # Исходный код только для чтения
+      - celery-logs:/var/log/celery # Логи celery
+
+    environment:
+      - PYTHONPATH=/code
+      - TZ=Europe/Moscow
+
+    command: sh -c "cd /code/src && uv run celery -A celery_worker worker --loglevel=info"
     logging:
       driver: "json-file"
       options:
         max-size: "10m"
         max-file: "3"
 
-  frontend:
+  # Celery Beat (Scheduler) с cron
+  celery-beat:
     build:
-      context: ./frontend/
-    container_name: kapibara-frontend
+      context: ./backend/
+    container_name: kapibara-celery-beat
     restart: unless-stopped
     env_file:
-      - path: ./frontend/.env
+      - path: ./backend/.env.prod
         required: true
     depends_on:
-      - backend
-      - celery-worker
-    ports:
-      - "127.0.0.1:5173:80"
-    command: sh -c "bun run build && cp -r dist/* /var/www/html/ && nginx -g 'daemon off;'"
+      database:
+        condition: service_healthy
+      broker:
+        condition: service_healthy
+    volumes:
+      - ./backend/src:/code/src # Исходный код только для чтения
+      - ./backend/scripts:/code/scripts # Скрипты для cron
+      - ./backend/crontab.txt:/etc/cron.d/scheduler-cron
+      - celery-beat-logs:/var/log/celery-beat
+
+    environment:
+      - PYTHONPATH=/code
+      - TZ=Europe/Moscow
+    command: sh -c "echo 'Starting supercronic' && supercronic /etc/cron.d/scheduler-cron"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 volumes:
   kapibara-postgres-data:
     driver: local
   kapibara-redis-data:
+    driver: local
+  backend-logs:
+    driver: local
+  celery-logs:
+    driver: local
+  celery-beat-logs:
+    driver: local
+  celery-beat-data:
     driver: local

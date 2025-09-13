@@ -1,1 +1,15 @@
-0 0 * * * /home/tminww/kapibara/scripts/start_scheduler.sh
+# Запускать каждый день в полночь ваш scheduler
+0 0 * * * /bin/bash /code/scripts/start_scheduler.sh
+
+# Запускать каждый день в полночь ваш scheduler
+# * * * * * /bin/bash /code/scripts/start_scheduler.sh
+
+# Дополнительные задачи (примеры - раскомментируйте если нужны)
+# Каждый час проверка системы
+# 0 * * * * /bin/bash /code/scripts/health_check.sh
+
+# Каждые 5 минут очистка временных файлов  
+# */5 * * * * /bin/bash /code/scripts/cleanup_temp.sh
+
+# Запуск каждые 30 минут (если нужно чаще)
+# */30 * * * * /bin/bash /code/scripts/start_scheduler.sh
