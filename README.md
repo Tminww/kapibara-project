@@ -34,13 +34,20 @@ EXTERNAL_URL=http://publication.pravo.gov.ru
 CURRENT_IP=10.0.16.123
 ```
 
-### `kapibara/frontend/.env`
+### `kapibara/frontend`
 
-- Укажите адрес сервера **Заменять только IP x.x.x.x!!**:
+перейдите в kapibara/scripts
 
-```env
-VITE_PROD_PATH='http://127.0.0.1:80/api'
-```
+откройте replace_frontend_env.sh
+
+замените значения
+NEW_IP="192.168.1.100"
+NEW_PRAVO="new.pravo.gov.ru"
+
+на реальные, как указывали для бекенда
+
+В случае если NEW_PRAVO будет иметь не доменное имя, а ip, нужно будет укзать порт
+Например X.X.X.X:80
 
 ---
 
